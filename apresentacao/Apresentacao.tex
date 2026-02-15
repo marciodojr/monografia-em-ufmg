@@ -34,14 +34,24 @@
 \newcommand{\bra}[1]{\langle #1 \rvert}
 \newcommand{\braket}[2]{\langle #1 | #2 \rangle}
 \newcommand{\proj}[1]{\ket{#1}\!\bra{#1}}
+\newtheorem{teorema}{Teorema}
 
 \DeclareMathOperator{\sen}{sen}
 
+
+% Idioma
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
 % --- Tema ---
-\usetheme{Madrid}
+\usetheme{CambridgeUS}
 \usecolortheme{dolphin}
 \setbeamertemplate{navigation symbols}{}
 \setbeamertemplate{caption}[numbered]
+
+
+\usefonttheme{professionalfonts}
 
 % --- Metadados (ajuste se quiser) ---
 \title[Computação Quântica]{Um Estudo sobre Computação Quântica}
@@ -769,13 +779,13 @@ Assim, um circuito quântico implementa uma
 \textbf{distribuição de probabilidade} sobre sequências binárias.
 \end{frame}
 
-\begin{frame}{Teorema da Não clonagem}
-  \begin{theorem}[Teorema da não clonagem para um qubit]\label{th:clone}
+\begin{frame}{Teorema da não clonagem}
+  \begin{teorema}[Não clonagem para um qubit]\label{th:clone}
     Não existem $\ket{s}\in \C^2$ e $U:\C^4\to \C^4$, um operador unitário, tais que $U(\ket{\psi}\otimes \ket{s}) = \ket{\psi}\otimes\ket{\psi}$ para todo $\ket{\psi}\in \C^2$. Em outras palavras, não é possível construir um circuito quântico que realize a cópia de um qubit arbitrário $\ket{\psi}$.
-  \end{theorem}
+  \end{teorema}
 \end{frame}
 
-\begin{frame}{Teorema da Não clonagem}
+\begin{frame}{Teorema da não clonagem}
     Se a cópia funciona para os estados $\ket{\psi}$ e $\ket{\varphi}$, temos
         %
             \begin{align*}
@@ -800,7 +810,7 @@ Assim, um circuito quântico implementa uma
         que só é possível se $\ket{\varphi}=\ket{\psi}$ ou se $\ket{\varphi}$ e $\ket{\psi}$ são ortogonais.
 \end{frame}
 
-\begin{frame}{Teleporte Quântico: cenário e objetivo}
+\begin{frame}{Teleporte quântico: cenário e objetivo}
 \textbf{Objetivo:} transferir um qubit desconhecido
 $$
 \ket{\psi}=a\ket{0}+b\ket{1}
@@ -1358,7 +1368,7 @@ $$
 \end{frame}
 
 %------------------------------------------------
-\begin{frame}{Ideia central: aproximar o ótimo aumentando $p$}
+\begin{frame}{Aumentando o número de passos $p$}
 Em geral, pode não existir $(\gamma,\beta)$ tal que
 $$
 \ket{\gamma,\beta}=\ket{e_1}.
