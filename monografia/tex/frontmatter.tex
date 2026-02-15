@@ -1,0 +1,309 @@
+\selectlanguage{brazil}
+
+% Retira espaço extra obsoleto entre as frases.
+\frenchspacing 
+
+% ----------------------------------------------------------
+% ELEMENTOS PRÉ-TEXTUAIS
+% ----------------------------------------------------------
+% \pretextual
+
+% ---
+% Capa
+% ---
+\imprimircapa
+% ---
+
+% ---
+% Folha de rosto
+% (o * indica que haverá a ficha bibliográfica)
+% ---
+\imprimirfolhaderosto*
+% ---
+
+% ---
+% Inserir a ficha bibliografica
+% ---
+
+% Isto é um exemplo de Ficha Catalográfica, ou ``Dados internacionais de
+% catalogação-na-publicação''. Você pode utilizar este modelo como referência. 
+% Porém, provavelmente a biblioteca da sua universidade lhe fornecerá um PDF
+% com a ficha catalográfica definitiva após a defesa do trabalho. Quando estiver
+% com o documento, salve-o como PDF no diretório do seu projeto e substitua todo
+% o conteúdo de implementação deste arquivo pelo comando abaixo:
+%
+% \begin{fichacatalografica}
+%     \includepdf{fig_ficha_catalografica.pdf}
+% \end{fichacatalografica}
+
+% TODO
+% \begin{fichacatalografica}
+% 	\sffamily
+% 	\vspace*{\fill}					% Posição vertical
+% 	\begin{center}					% Minipage Centralizado
+% 	\fbox{\begin{minipage}[c][8cm]{13.5cm}		% Largura
+% 	\small
+% 	\imprimirautor
+% 	%Sobrenome, Nome do autor
+	
+% 	\hspace{0.5cm} \imprimirtitulo  / \imprimirautor. --
+% 	\imprimirlocal, \imprimirdata-
+	
+% 	\hspace{0.5cm} \thelastpage p. : il. (algumas color.) ; 30 cm.\\
+	
+% 	\hspace{0.5cm} \imprimirorientadorRotulo~\imprimirorientador\\
+	
+% 	\hspace{0.5cm}
+% 	\parbox[t]{\textwidth}{\imprimirtipotrabalho~--~\imprimirinstituicao,
+% 	\imprimirdata.}\\
+	
+% 	\hspace{0.5cm}
+% 		1. Palavra-chave1.
+% 		2. Palavra-chave2.
+% 		2. Palavra-chave3.
+% 		I. Orientador.
+% 		II. Universidade xxx.
+% 		III. Faculdade de xxx.
+% 		IV. Título 			
+% 	\end{minipage}}
+% 	\end{center}
+% \end{fichacatalografica}
+% ---
+
+
+% ---
+% Inserir folha de aprovação
+% ---
+
+% Isto é um exemplo de Folha de aprovação, elemento obrigatório da NBR
+% 14724/2011 (seção 4.2.1.3). Você pode utilizar este modelo até a aprovação
+% do trabalho. Após isso, substitua todo o conteúdo deste arquivo por uma
+% imagem da página assinada pela banca com o comando abaixo:
+%
+% \begin{folhadeaprovacao}
+% \includepdf{folhadeaprovacao_final.pdf}
+% \end{folhadeaprovacao}
+%
+
+% TODO
+% \begin{folhadeaprovacao}
+
+%   \begin{center}
+%     {\ABNTEXchapterfont\large\imprimirautor}
+
+%     \vspace*{\fill}\vspace*{\fill}
+%     \begin{center}
+%       \ABNTEXchapterfont\bfseries\Large\imprimirtitulo
+%     \end{center}
+%     \vspace*{\fill}
+    
+%     \hspace{.45\textwidth}
+%     \begin{minipage}{.5\textwidth}
+%         \imprimirpreambulo
+%     \end{minipage}%
+%     \vspace*{\fill}
+%    \end{center}
+        
+%    Trabalho aprovado. \imprimirlocal, 24 de novembro de 2012:
+
+%    \assinatura{\textbf{\imprimirorientador} \\ Orientador} 
+%    \assinatura{\textbf{Professor} \\ Convidado 1}
+%    \assinatura{\textbf{Professor} \\ Convidado 2}
+%    %\assinatura{\textbf{Professor} \\ Convidado 3}
+%    %\assinatura{\textbf{Professor} \\ Convidado 4}
+      
+%    \begin{center}
+%     \vspace*{0.5cm}
+%     {\large\imprimirlocal}
+%     \par
+%     {\large\imprimirdata}
+%     \vspace*{1cm}
+%   \end{center}
+  
+% \end{folhadeaprovacao}
+% ---
+
+% ---
+% Dedicatória
+% ---
+% TODO
+% \begin{dedicatoria}
+%    \vspace*{\fill}
+%    \centering
+%    \noindent
+%    \textit{ Este trabalho é dedicado às crianças adultas que,\\
+%    quando pequenas, sonharam em se tornar cientistas.} \vspace*{\fill}
+% \end{dedicatoria}
+% ---
+
+% ---
+% Agradecimentos
+% ---
+% TODO
+\begin{agradecimentos}
+
+Agradeço, primeiramente, ao professor orientador Csaba Schneider, por ter aceitado
+o convite para orientar esta monografia, bem como pela dedicação, paciência e
+genuíno interesse no tema proposto. Agradeço pela postura descontraída e ao mesmo 
+tempo rigorosa em nossas reuniões.
+
+Registro também meus sinceros agradecimentos aos professores das disciplinas
+ofertadas no curso de Especialização em Matemática da Universidade Federal de
+Minas Gerais. O empenho em lecionar e a paixão pelos temas apresentados
+contribuíram de forma decisiva para a minha formação. Em cada disciplina, além
+do conteúdo abordado, tive a oportunidade de conhecer diferentes formas de
+trabalhar e, certamente, distintas maneiras de compreender e encarar a vida.
+
+Agradeço, ainda, aos responsáveis administrativos do curso, pelo suporte,
+atenção e por todo o trabalho que, muitas vezes, permanece invisível, mas cuja
+ausência impactaria de forma significativa o bom andamento do curso.
+
+Por fim, deixo um agradecimento especial à minha companheira, Elizandra Cruz,
+por me incentivar a retomar os estudos e pela paciência ao longo desse processo,
+seja pela distância, seja por me ouvir falar sobre matemática sempre que retornava.
+
+\end{agradecimentos}
+% ---
+
+
+\chapter*{Epígrafe}
+
+
+\thispagestyle{empty}
+
+\vspace{2cm} % ajuste fino aqui
+
+% ---
+% Epígrafe
+% ---
+% TODO
+\begin{epigrafe}
+	\begin{flushright}
+		\begin{minipage}{0.6\textwidth}
+		\itshape
+		``We can only see a short distance ahead, but we can see plenty there that needs to be done.''
+
+		\vspace{0.5em}
+		\raggedleft
+		— Alan Turing
+		\end{minipage}
+	\end{flushright}
+\end{epigrafe}
+
+% ---
+
+% ---
+% RESUMOS
+% ---
+
+% resumo em português
+% TODO
+\setlength{\absparsep}{18pt} % ajusta o espaçamento dos parágrafos do resumo
+\begin{resumo}
+
+Este trabalho apresenta um estudo introdutório da computação quântica a partir dos conceitos matemáticos de álgebra linear até a a implementação prática de algoritmos quânticos por meio de circuitos utilizando a biblioteca de circuitos quânticos da IBM denominada Qiskit. Inicialmente, são introduzidos conceitos essenciais de álgebra linear, tais como espaços de Hilbert, operadores lineares e produto tensorial, estabelecendo a base matemática mínima necessária para a descrição de sistemas quânticos. Em seguida, são discutidos os postulados da mecânica quântica, com destaque para a evolução unitária, o processo de medição e a descrição de sistemas compostos, fundamentais para a compreensão do comportamento quântico e de fenômenos como superposição e emaranhamento.
+
+Na sequência, o trabalho aborda o modelo de computação baseado em circuitos quânticos, fazendo um paralelo com circuitos clássicos e enfatizando as restrições impostas pela reversibilidade e pela impossibilidade de clonagem de estados quânticos. São apresentados exemplos centrais da computação quântica, como a geração de estados de Bell e o protocolo de teleporte quântico, além de uma introdução prática ao framework Qiskit, utilizado para construção, simulação e execução de circuitos quânticos.
+
+Por fim, são estudados e implementados dois algoritmos quânticos: o algoritmo de Grover, para busca não estruturada, e o Algoritmo Quântico de Otimização Aproximada (QAOA), aplicado ao problema do corte máximo em grafos. Para ambos, são discutidos os princípios teóricos e a correspondência entre a formulação matemática e sua implementação computacional. No caso do QAOA, é apresentada ainda uma justificativa (informal) baseada na aproximação da evolução adiabática e na fórmula de Lie--Trotter. O trabalho busca, aproximar os fundamentos matemáticos com a noção de circuitos clássica e a prática de implementação dos algoritmos quânticos utilizando o Qiskit.
+
+ \textbf{Palavras-chave}: computação quântica; circuitos quânticos; algoritmo de Grover; QAOA; Qiskit.
+\end{resumo}
+
+% resumo em inglês
+% TODO:
+% \begin{resumo}[Abstract]
+%  \begin{otherlanguage*}{english}
+%    This is the english abstract.
+
+%    \vspace{\onelineskip}
+ 
+%    \noindent 
+%    \textbf{Keywords}: latex. abntex. text editoration.
+%  \end{otherlanguage*}
+% \end{resumo}
+
+% ---
+% inserir lista de ilustrações
+% ---
+\pdfbookmark[0]{\listfigurename}{lof}
+\listoffigures*
+\cleardoublepage
+% ---
+
+% ---
+% inserir lista de quadros
+% ---
+% \pdfbookmark[0]{\listofquadrosname}{loq}
+% \listofquadros*
+% \cleardoublepage
+% ---
+
+% ---
+% inserir lista de tabelas
+% ---
+% \pdfbookmark[0]{\listtablename}{lot}
+% \listoftables*
+% \cleardoublepage
+% ---
+
+% ---
+% inserir lista de abreviaturas e siglas
+% ---
+% TODO
+% \begin{siglas}
+%   \item[ABNT] Associação Brasileira de Normas Técnicas
+%   \item[abnTeX] ABsurdas Normas para TeX
+% \end{siglas}
+% ---
+
+% ---
+% inserir lista de símbolos
+% ---
+% TODO
+\begin{simbolos}
+
+  \item[$\mathbb{C}$] Conjunto dos números complexos
+  \item[$\mathbb{R}$] Conjunto dos números reais
+
+  \item[$\mathcal{H}$] Espaço de Hilbert complexo associado a um sistema quântico
+  \item[$\dim(\mathcal{H})$] Dimensão do espaço de Hilbert
+
+  \item[$\ket{\psi}$] Vetor de estado quântico (ket)
+  \item[$\bra{\psi}$] Vetor dual associado a $\ket{\psi}$ (bra)
+  \item[$\braket{\phi|\psi}$] Produto interno entre os estados $\ket{\phi}$ e $\ket{\psi}$
+  \item[$\ket{\phi}\bra{\psi}$] Produto externo (ou produto ``ket por bra'')
+
+  \item[$\otimes$] Produto tensorial
+  \item[$I$] Operador identidade
+  \item[$U$] Operador unitário
+
+  \item[$H$] Porta de Hadamard
+  \item[$X$] Matriz de Pauli $X$
+  \item[$Y$] Matriz de Pauli $Y$
+  \item[$Z$] Matriz de Pauli $Z$
+  \item[$CX$] Porta controlada-NOT
+  \item[$CZ$] Porta controlada-Z
+
+  \item[$M_m$] Operador de medição associado ao resultado $m$
+  \item[$p(m)$] Probabilidade do resultado $m$ na medição
+
+  \item[$G=(V,E)$] Grafo com vértices $V$ e arestas $E$
+  \item[$C(z)$] Função custo do problema de otimização
+
+  \item[$U(C,\gamma)$] Operador unitário associado ao hamiltoniano de custo
+  \item[$U(B,\beta)$] Operador unitário associado ao hamiltoniano misturador
+  \item[$F_p(\boldsymbol{\gamma},\boldsymbol{\beta})$] Valor esperado da função custo no nível $p$ do QAOA
+
+  \item[$O(\cdot)$] Notação assintótica de complexidade
+
+\end{simbolos}
+% ---
+
+% ---
+% inserir o sumario
+% ---
+\pdfbookmark[0]{\contentsname}{toc}
+\tableofcontents*
+\cleardoublepage
+% ---

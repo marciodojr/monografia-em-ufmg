@@ -1,0 +1,344 @@
+% !TEX root = Monografia.tex
+
+\chapter[Conceitos Iniciais]{Conceitos Iniciais}
+\label{chap:notacoes}
+
+\section{Introdução}
+
+Neste capítulo apresentamos as notações utilizadas ao longo do texto. A computação quântica possui um conjunto de notações herdadas da física, da matemática e da computação. Essa mescla de áreas do conhecimento da origem a uma notação bastante elegante, mas que exige uma boa preparação para que o leitor possa desfrutar dos resultados apresentados.
+
+O texto apresentado adiante admite que o leitor está familiarizado com resultados de álgebra linear tais como espaços vetoriais, vetores, matrizes, bases, independência linear, operadores lineares e outros resultados comuns. Uma boa sugestão de leitura para tais tópicos é \cite{coelho2001curso}. Também é esperado que o leitor tenha conhecimento básico de computabilidade, análise de algoritmos e complexidade computacional tal como notação assintótica ou de Landau; uma boa referência de leitura é \cite{arora2009computational}. Os resultados e notações aqui apresentadas são baseadas no capítulo 2 de \cite{nielsen2010quantum}.
+
+\section{Espaços de Hilbert}
+
+Denotamos por $\C$ o conjunto dos números complexos. Dado $z \in \C$, denotamos por $z^*$ seu conjugado. Assim,
+%
+\begin{equation*}
+	z = a+bi \iff z^* = a-bi.
+\end{equation*}
+%
+Todos os espaços vetoriais utilizados serão espaços vetoriais de dimensão finita sobre o corpo dos números complexos e serão denotados por letras latinas maiúsculas, por exemplo, $V,Z,W, \dotso$ ou pela letra curva $\mathcal{H}$, sem índices subscritos ou com índices tal como $\mathcal{H}_1, \mathcal{H}_2, \dotso, \mathcal{H}_A, \mathcal{H}_B, \dotso$. Se dissermos que um sistema quântico é formado por um espaço vetorial com produto interno, estamos nos referindo a um espaço vetorial de dimensão finita com produto interno sobre o corpo dos complexos. Um elemento arbitrário do espaço vetorial (um vetor) será denotado por $\ket{\cdot}$ (``\textit{ket}'') onde o símbolo ``$\cdot$'' poderá ser uma letra minúscula do alfabeto latino ou grego, por exemplo, $\ket{a}, \ket{b}, \ket{c}, \dotso, \ket{\psi}, \ket{\varphi}, \dotso$. A única exceção a esta regra é o vetor nulo que será denotado por $0$, o vetor $\ket{0}$, como veremos mais a frente, não denotará o vetor nulo. Omitiremos o corpo ao qual os espaços vetoriais estão definidos, o leitor deve assumir que o corpo de todos os espaços vetoriais apresentados é o corpo dos números complexos.
+
+Representaremos o produto interno definido entre dois vetores $\ket{\psi}$ e $\ket{\varphi}$, em um espaço vetorial $V$, por $\braket{\psi|\varphi}$. Além disso, se $V$ possui produto interno definido, indicamos por $\bra{\psi}$ (``\textit{bra}'') o vetor dual relativo ao produto interno de $\ket{\psi}$. Deste modo, $\bra{\psi}$ é o funcional linear no espaço dual ao espaço de $\ket{\psi}$ tal que
+%
+\begin{equation}\label{eq:riesz}
+	\bra{\psi}(\ket{\varphi}) = \braket{\psi|\varphi}, \quad \text{ para todo } \ket{\psi}\in V,
+\end{equation}
+%
+que indica que a notação para o vetor dual é bastante intuitiva e decorre como resultado do teorema da Representação de Riesz.
+%
+\begin{theorem}[Teorema da Representação de Riesz]
+	Seja $\mathcal{H}$ um espaço vetorial de dimensão finita sobre $\C$, munido de produto interno, e $f: \mathcal{H} \to \C$ um funcional linear. Então existe um único $\ket{y_0}\in \mathcal{H}$ tal que
+	$$
+	f(x) = \braket{y_0|x}, \forall \ket{x} \in \mathcal{H}.
+	$$
+\end{theorem}
+%
+\noindent
+Dois vetores $\ket{v_1}$, $\ket{v_2}$ são ortogonais se $\braket{v_1|v_2} = 0$. Sendo $V$ um espaço vetorial, uma função $||\cdot||: V\to \R$ que satisfaz as propriedades:
+\begin{itemize}
+	\item $||\ket{v}||\geq 0$
+	\item $||\lambda \ket{v}|| = |\lambda||\ket{v}||$
+	\item $||\ket{v}+\ket{w}|| \leq ||\ket{v}|| + ||\ket{w}||$,
+\end{itemize}
+é denominada \emph{norma}. A função $||\ket{v}|| = \sqrt{\braket{v|v}}$ é a norma induzida pelo produto interno. Se $\ket{v}$ é tal que $||\ket{v}||=1$ então $\ket{v}$ é um vetor \emph{unitário}. Para qualquer $\ket{w}\neq 0$ podemos produzir um vetor unitário tomando $\ket{v} = \ket{w}/||\ket{w}||$.
+
+Uma base é dita \emph{ortogonal} se para todo par de vetores $\ket{v_i} e \ket{v_j}$ distintos ocorrer $\braket{v_i|v_j} = 0$. Se além de ortogonais, todos os vetores da base forem unitários diremos que a base é \emph{ortonormal}. Caso uma base não seja ortogonal podemos utilizar o processo de ortogonalização de vetores de Gram-Schmidt para obter uma base ortonormal.
+
+\begin{theorem}[Processo de ortogonalização de vetores de Gram-Schmidt]
+	Seja $\{\ket{w_i}\}_{i=1}^d$ uma base para um espaço vetorial $V$ com produto interno. Defina
+
+	\begin{enumerate}
+		\item $\ket{v_1} := \ket{w_1}$
+		\item $\ket{v_{k+1}} := \ket{w_{k+1}}-\sum_{i=1}^k\frac{\braket{v_i|w_{k+1}}\ket{v_i}}{||\ket{v_i}||^2}$.
+	\end{enumerate}
+	Então, o conjunto $\{\ket{v_1}\}_{i=1}^d$ é base ortogonal para $V$. Além disso, se fizermos, para cada $i=1, \dotso, d$,
+$$
+	\ket{v'_i} = \frac{\ket{v_i}}{||\ket{v_i}||},
+$$
+então $\{\ket{v'_i}\}_{i=1}^d$ é base ortonormal de $V$.
+\end{theorem}
+
+Por vezes, ao nos referirmos a um sistema quântico, ao invés de mencionar, por exemplo, que um sistema quântico é um espaço vetorial sobre $\C$ com produto interno, diremos apenas que o sistema quântico é um \emph{espaço de Hilbert} sobre $\C$ ou, simplesmente, um espaço de Hilbert. Um espaço de Hilbert é um espaço vetorial com produto interno que é completo em relação a norma induzida pelo produto interno. Como trabalharemos somente com espaços vetoriais de dimensão finita e com o produto interno canônico dos complexos temos que tais espaços vetoriais são completos.
+
+\begin{example}\label{defket0}
+	$\mathcal{H}=\C^2$ sobre o corpo $\mathbb{C}$ e com o produto interno canônico dos complexos é um espaço de Hilbert. Além disso, os vetores
+	\begin{align*}
+		\ket{0} &= \begin{bmatrix}
+			1 \\
+			0 \\
+		\end{bmatrix} \\
+		\ket{1} &= \begin{bmatrix}
+			0 \\
+			1 \\
+		\end{bmatrix},
+	\end{align*}
+	formam uma base ortonormal para $\mathcal{H}$. O par de vetores $\ket{+}$ e $\ket{-}$ também é base ortonormal para $\mathcal{H}$,
+	\begin{align*}
+		\ket{+} &:= \frac{1}{\sqrt{2}}\begin{bmatrix}
+			1 \\
+			1 \\
+		\end{bmatrix} = \frac{1}{\sqrt{2}}(\ket{0} + \ket{1}) \\
+		\ket{-} &:= \frac{1}{\sqrt{2}}\begin{bmatrix}
+			1 \\
+			-1 \\
+		\end{bmatrix} = \frac{1}{\sqrt{2}}(\ket{0} - \ket{1}), \\
+	\end{align*}
+	Bem como o par $\ket{+i}, \ket{-i}$ também é base para $\mathcal{H}$,
+	\begin{align*}
+		\ket{+i} &:= \frac{1}{\sqrt{2}}\begin{bmatrix}
+			1 \\
+			i \\
+		\end{bmatrix} = \frac{1}{\sqrt{2}}(\ket{0} + i\ket{1}) \\
+		\ket{-i} &:= \frac{1}{\sqrt{2}}\begin{bmatrix}
+			1 \\
+			-i \\
+		\end{bmatrix} = \frac{1}{\sqrt{2}}(\ket{0} - i\ket{1}). \\
+	\end{align*}
+	\noindent
+	Como generalização, dado o espaço de Hilbert $\mathcal{H}=\C^m$ sobre $\C$, os vetores com $m$ coordenadas
+		\begin{equation*}
+		\ket{0} = \begin{bmatrix}
+			1 	\\
+			0 	\\
+			\vdots \\
+			0 \\
+			\vdots \\
+			0
+		\end{bmatrix}, \dotso, \ket{j} = \begin{bmatrix}
+			0 	\\
+			0 	\\
+			\vdots \\
+			1 \\
+			\vdots \\
+			0
+		\end{bmatrix}, \dotso, \ket{m-1} = \begin{bmatrix}
+			0 	\\
+			0 	\\
+			\vdots \\
+			0 \\
+			\vdots \\
+			1
+		\end{bmatrix},
+	\end{equation*}
+	formam uma base ortonormal.
+\end{example}
+
+\section{Operadores}\label{sec:ops}
+
+Matrizes ou transformações lineares serão denotadas por letras latinas maiúsculas, por exemplo, $I$ (a matriz identidade $2\times 2$) ou
+%
+\begin{equation}\label{eq:ma}
+	A = \begin{bmatrix}
+		10 & 3-4i &  0 \\
+		5  & 0    &  0 \\
+		1  & 0    &  2 \\
+		0  & i    & -1 \\
+	\end{bmatrix}.
+\end{equation}
+%
+Uma transformação linear $T$ é uma função $T: V\to W$ onde $V$ e $W$ são espaços vetoriais e que satisfaz as seguintes condições:
+\begin{enumerate}
+	\item $T(a\ket{v}) = aT(\ket{v}) = aT\ket{v}, \quad \forall a\in \C \text{ e } \forall \ket{v} \in V$.
+	\item $T(\ket{v_1}+\ket{v_2}) = T(\ket{v_1})+ T(\ket{v_2})=T\ket{v_1}+ T\ket{v_2}, \quad \forall \ket{v_1}, \ket{v_2}\in V$.
+\end{enumerate}
+%
+Estendemos a notação do produto interno dos vetores $\ket{w}$ e $A\ket{v}$ e denotamos seu produto interno por $\braket{w|A|v}$. Dadas duas transformações lineares $T_1: V \to W$ e $T_2: W \to Z$ a composição $T_2T_1: V \to Z$ também é uma transformação linear, além disso, dada uma base $B=\{\ket{v_1}, \ket{v_2}, \dotso, \ket{v_n}\}$ de um espaço vetorial $V$ e $\{\ket{w_1}, \ket{w_2}, \dotso, \ket{w_n}\}\subset W$ então existe uma única transformação linear $T: V \to W$ tal que $T\ket{v_i}=\ket{w_i}$ para todo $i$. Escolhendo-se bases para $V$ e $W$, cada transformação linear pode ser representada como uma matriz (matriz de transformação) e, analogamente, toda matriz representa uma transformação linear.
+
+Podemos fazer a aplicação do conjugado complexo. Sendo $A$ dada pela equação \eqref{eq:ma} temos
+%
+\begin{equation*}
+	A^* = \begin{bmatrix}
+		10 & 3+4i &  0 \\
+		5  & 0    &  0 \\
+		1  & 0    &  2 \\
+		0  & -i    & -1 \\
+	\end{bmatrix}.
+\end{equation*}
+%
+A transposta da matriz $A$ é denotada por $A^T$ e denotamos por $A^\dagger$
+%
+\begin{equation*}
+	A^\dagger := (A^T)^* = \begin{bmatrix}
+		10    &  5 &  1 &  0  \\
+		3+4i  &  0 &  0 & -i  \\
+		0     &  0 &  2 &  1  \\
+	\end{bmatrix}.
+\end{equation*}
+%
+Note que $A^\dagger = (A^T)^* = (A^*)^T$. As matrizes 
+\begin{equation}\label{eq:pauli}
+\sigma_x = X =\begin{bmatrix}
+	0 & 1 \\
+	1 & 0 \\
+\end{bmatrix}, \quad \sigma_y = Y =\begin{bmatrix}
+	0 & -i \\
+	i &  0 \\
+\end{bmatrix} \quad \text{e} \quad \sigma_z = Z =\begin{bmatrix}
+	1 & 0 \\
+	0 & -1 \\
+\end{bmatrix},
+\end{equation}
+são conhecidas como \emph{matrizes de Pauli} e são muito utilizadas na mecânica quântica. Neste texto, utilizaremos os termos \emph{operador linear} ou \emph{operador} como sinônimos para transformações lineares.
+
+Um autovetor de uma transformação linear $A: V \to V$ é um vetor não nulo $\ket{v}$ tal que $A\ket{v} = \lambda \ket{v}$, onde $\lambda$ é um número complexo chamado autovalor de $A$ associado ao autovetor $\ket{v}$. A função característica de um operador linear $A$ é dada por
+$$
+c(\lambda) = \det{(A-\lambda I)}.
+$$
+As soluções para $c(\lambda) = 0$ são os autovalores de $A$.
+
+	Seja $\ket{v}$ um vetor em um espaço vetorial $V$ com produto interno e seja $\ket{w}$ um vetor em um espaço vetorial $W$ com produto interno. Chamaremos de \emph{produto externo} ou \emph{produto ``ket por bra''} o operador linear dado por
+\begin{equation}
+	\ket{w}\bra{v}: V\mapsto W, \quad \ket{v'}\mapsto \ket{w}\braket{v|v'},  \quad \forall\ket{v'} \in V.
+\end{equation}
+Em outras palavras, $(\ket{w}\bra{v})(\ket{v'})$ é o resultado da multiplicação do vetor $\ket{w}$ pelo número complexo $\braket{v|v'}$. Naturalmente, podemos fazer combinações lineares com operadores de produto externo; dados $\ket{v_0}, \dotso, \ket{v_{n-1}}\in V$ e $\ket{w_0}, \dotso, \ket{w_{n-1}}\in W$,
+\begin{equation*}
+	\sum_{i=0}^{n-1} a_i \ketbra{w_i}{v_i}: V \to W,\quad \ket{v'} \mapsto \sum_{i=0}^{n-1} a_i \braket{v_i|v'} \ket{w_i}.
+\end{equation*}
+Observe que, dada uma base $\{\ket{0}, \ket{1}, \dotso, \ket{n-1}\}$, podemos escrever qualquer vetor $\ket{v}$ como
+$$
+\ket{v} = \sum_{i=0}^{n-1} b_i \ket{i}
+$$
+para alguns números complexos $b_i$ e, deste modo,
+$$
+\sum_{i=0}^{n-1} \ket{i}\bra{i}\ket{v} = \sum_{i=0}^{n-1}\braket{i|v}\ket{i} = \sum_{i=0}^{n-1} b_i\ket{i} = \ket{v}.
+$$
+Portanto,
+%
+\begin{equation}
+	\sum_{i=0}^{n-1} \ket{i}\bra{i} = I	
+\end{equation}
+que é denominada \emph{relação de completude} para vetores ortonormais. Podemos representar qualquer operador linear utilizando a notação de produto externo, para tal, seja $A: V\to W$ um operador, $\{\ket{v_i}\}_{j=1}^m$ base ortonormal de $V$ e $\{\ket{w_i}\}_{i=1}^n$ base ortonormal de $W$ então
+\begin{align}
+	I_V &= \sum_{j=1}^m\ket{v_j}\bra{v_j}, \quad I_W = \sum_{i=1}^n\ket{w_i}\bra{w_i} \\
+	A &= I_WAI_V \\
+	&=  \left ( \sum_{i=1}^n\ketbra{w_i}{w_i} \right ) A \left (\sum_{j=1}^m\ketbra{v_j}{v_j} \right ) \\
+	&= \sum_{ij} \ket{w_i}(\bra{w_i}A\ket{v_j})\bra{v_j} \\
+	&= \sum_{ij}(\braket{w_i|A|v_j})\ketbra{w_i}{v_j} \\
+	&= \sum_{ij}A_{ij}\ketbra{w_i}{v_j},
+\end{align}
+onde $A_{ij}$ é a entrada na posição $(i,j)$ de $A$.
+
+\begin{example}
+	As matrizes de Pauli são representadas na notação de produto externo como
+	$$
+		\sigma_x = \ket{0}\bra{1} + \ket{1}\bra{0}, \quad
+		\sigma_y = -i\ket{0}\bra{1} + i\ket{1}\bra{0}, \quad
+		\sigma_z = \ket{0}\bra{0} - \ket{1}\bra{1}.
+	$$
+\end{example}
+
+Um operador $A: V\to V$ é diagonalizável se existe base onde a matriz de $A$ é diagonal. Em outras palavras, existe base $\{\ket{v_i}\}_{i=1}^n$ de $V$ formada por autovetores de $A$, tal que
+
+$$
+A\ket{v_i} = \lambda_i\ket{v_i}.
+$$
+Nesta base, a matriz que representa $A$ é diagonal com $\lambda_i, \dotso, \lambda_n$ na diagonal principal. Ademais se a base $\{\ket{v_i}\}_{i=0}^n$ é ortonormal, então
+\begin{equation}\label{fdiag}
+	A = \sum_{i=1}^n \lambda_i \ket{v_i}\bra{v_i}.
+\end{equation}
+Chamamos a equação $\eqref{fdiag}$ de \emph{representação diagonal} do operador $A$; se tomarmos $P_i = \ket{v_i}\bra{v_i}$ para cada $i$, temos
+$$
+A = \sum_{i=1}^n \lambda_i P_i.
+$$
+Cada operador $P_i$ é projeção ortogonal sobre o espaço unidimensional gerado por $v_i$. A forma diagonal de um operador é bastante útil, pois permite identificar com facilidade seus autovetores e autovalores associados.
+
+\begin{example}
+	É fácil verificar que para o operador $\sigma_x$ os autovalores são $1$ e $-1$ com  autovetores correspondentes ortogonais $\ket{+}$ e $\ket{-}$. Portanto, a representação diagonal de $\sigma_x$  é dada por
+$$
+\sigma_x = \ketbra{+}{+} - \ketbra{-}{-}.
+$$
+As outras matrizes de Pauli também podem ser representadas desta forma. De fato, 
+\begin{equation*}
+	\sigma_y = \ket{+i}\bra{+i} - \ket{-i}\bra{-i}, \quad	\sigma_z = \ket{0}\bra{0} - \ket{1}\bra{1}.
+\end{equation*}
+Lembrando que os vetores $\ket{-}, \ket{+}, \ket{+i}$ e $\ket{-i}$ foram definidos no exemplo \ref{defket0}.
+\end{example}
+
+Seja $A$ um operador em um espaço de Hilbert $V$ chamamos de $A^\dagger$ o único operador em $V$ tal que
+\begin{equation}
+	\braket{v|A|w} = \braket{(A^\dagger\ket{v})|w}.
+\end{equation}
+Nos casos onde $A=A^\dagger$ dizemos que $A$ é um operador autoadjunto ou hermitiano. Um operador linear $U$ é chamado de unitário quando ocorrer de $U^\dagger U = I$, operadores unitários tem papel fundamental na mecânica quântica, pois preservam a norma de vetores, além de serem operadores invertíveis que, para mecânica quântica, significa que eles correspondem a \emph{operações reversíveis}.
+
+\section{Produto tensorial}
+\label{sec:tensor}
+
+O produto tensorial é fundamental para a mecânica quântica; veremos suas propriedades gerais a seguir, para uma definição formal consulte \cite[capítulo ~14]{Roman2008}. Sejam $\mathcal{H}_V$ e $\mathcal{H}_W$ dois espaços de Hilbert. O produto tensorial desses espaços, denotado por
+$$
+\mathcal{H}_V \otimes \mathcal{H}_W,
+$$
+é um novo espaço de Hilbert. Para vetores $\ket{\psi} \in \mathcal{H}_V$ e $\ket{\varphi} \in \mathcal{H}_W$, define-se o vetor
+$$
+\ket{\psi} \otimes \ket{\varphi} \in \mathcal{H}_V \otimes \mathcal{H}_W,
+$$
+satisfazendo a propriedade de bilinearidade:
+\begin{align*}
+(a\ket{\psi_1} + b\ket{\psi_2}) \otimes (c\ket{\varphi_1} + d\ket{\varphi_2}) &= ac\,\ket{\psi_1}\otimes\ket{\varphi_1} \\
+&+ ad\,\ket{\psi_1}\otimes\ket{\varphi_2} \\
+&+ bc\,\ket{\psi_2}\otimes\ket{\varphi_1} \\
+&+ bd\,\ket{\psi_2}\otimes\ket{\varphi_2},
+\end{align*}
+para quaisquer escalares $a,b,c,d$. Se $\{\ket{i}\}_{i=0}^{m-1}$ é uma base ortonormal de $\mathcal{H}_V$ e $\{\ket{j}\}_{j=0}^{n-1}$ é uma base ortonormal de $\mathcal{H}_W$, então
+$$
+\{\ket{i} \otimes \ket{j}\}_{i,j=0}^{i=m-1, j=n-1}
+$$
+é uma base ortonormal de $\mathcal{H}_V \otimes \mathcal{H}_W$. Em particular,
+\begin{equation}\label{eq:tensordim}
+\dim(\mathcal{H}_V \otimes \mathcal{H}_W) = m \cdot n.	
+\end{equation}
+Se $A:\mathcal{H}_V \to \mathcal{H}_V$ e $B: \mathcal{H}_W \to \mathcal{H}_W$, então podemos definir o operador
+$$
+A \otimes B: \mathcal{H}_V\otimes \mathcal{H}_W \to \mathcal{H}_V \otimes \mathcal{H}_W
+$$
+por sua ação em vetores decomponíveis ou tensores puros:
+$$
+(A \otimes B)(\ket{\psi} \otimes \ket{\varphi})
+=
+A\ket{\psi} \otimes B\ket{\varphi},
+$$
+estendendo-se linearmente a todo o espaço. A propriedade universal do produto tensorial implica que tal operador é sempre bem definido. Por exemplo, Seja $\mathcal{H}_V=\C^3$, $\mathcal{H}_W=\C^2$, $B_{\mathcal{H}_V}=\{\ket{0}, \ket{1}, \ket{2}\}$ base de $\mathcal{H}_V$ e $B_{\mathcal{H}_W}=\{\ket{0}, \ket{1}\}$ base de $\mathcal{H}_W$, então
+\begin{equation}\label{eq:kronecker}
+(X \otimes I)(\ket{0}\otimes\ket{1})
+=
+X\ket{0} \otimes I\ket{1}
+=
+\ket{1}\otimes\ket{1}.
+\end{equation}
+Dados $\ket{x} = \sum_{k=1}^n \ket{v_k}\otimes \ket{w_k}, \ket{y}=\sum_{l=1}^m\ket{v'_l}\otimes\ket{w'_l}\in \mathcal{H}_V \otimes \mathcal{H}_W$. Calculamos o produto interno em $\mathcal{H}_V \otimes \mathcal{H}_W$ com base no produto interno de $\mathcal{H}_V$ e $\mathcal{H}_W$ da seguinte forma
+\begin{equation}
+	\braket{x|y} = \sum_{k=1}^n\sum_{l=1}^{m}\braket{v_k|v_l'}\braket{w_k|w'_l}.
+\end{equation}
+Dado o espaço de Hilbert $\mathcal{H}$ podemos construir o espaço $\mathcal{H}^{\otimes^n} = \bigotimes_{i=1}^n\mathcal{H}$. Sendo $A: \mathcal{H}\to \mathcal{H}$ um operador, denotamos por $A^{\otimes^n}: \mathcal{H}^{\otimes^n}\to \mathcal{H}^{\otimes^n}$ o operador
+\begin{equation}
+	A^{\otimes^n}\ket{\psi} = A\ket{\psi_1}\otimes A\ket{\psi_2}\dotso \otimes A\ket{\psi_n}, \quad \text{para todo } \ket{\psi} = \bigotimes_{i=1}^n\ket{\psi_i} \in \mathcal{H}^{\otimes^n}.
+\end{equation}
+
+Uma forma concreta de representar os elementos e os operadores do produto tensorial é através do produto de Kronecker de matrizes. Seja $A=(a_{ij})_{mn}$ e $B=(b_{ij})_{pq}$, definimos o produto de Kronecker de $A\otimes B$ como a matriz $mp$ por $nq$ dada por
+$$
+A \otimes B = 
+\begin{bmatrix}
+	a_{11} B & a_{12} B & \cdots & a_{1n} B 	\\
+	a_{21} B & a_{22} B & \cdots & a_{2n} B 	\\
+	\vdots   & \vdots   & \ddots & \vdots     	\\
+	a_{m1} B & a_{m2} B & \cdots & a_{mn} B
+\end{bmatrix}.
+$$
+
+\begin{example}
+	O produto de Kronecker aplicado na equação \eqref{eq:kronecker} é dado por
+	\begin{equation}
+		(X \otimes I)(\ket{0}\otimes\ket{1})
+		=
+		X\ket{0} \otimes I\ket{1}
+		=
+		\ket{1}\otimes\ket{1} = \begin{bmatrix}
+			0 \\
+			1
+		\end{bmatrix} \otimes \begin{bmatrix}
+			0 \\
+			1
+		\end{bmatrix}.
+	\end{equation}
+Usando o produto de Kronecker, o espaço $\C^2\otimes\C^2$ pode ser identificado por $\C^4$ e o vetor $[0, 1]^T\otimes [0, 1]^T$ pode ser identificado como o vetor $[0, 0, 0, 1]^T$.
+\end{example}

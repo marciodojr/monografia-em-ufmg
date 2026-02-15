@@ -1,0 +1,740 @@
+% !TEX root = Monografia.tex
+
+\chapter[Circuitos Quânticos]{Circuitos Quânticos}
+\label{chap:circuitos}
+
+\section{Introdução}
+
+Este capítulo é baseado nos capítulos 3 e 4 de \cite{nielsen2010quantum} e na documentação oficial do Qiskit \cite{ibm_quantum_guides}; o objetivo é adaptar os conceitos clássicos de portas lógicas e circuitos para sistemas quânticos, além disso, é feita uma introdução ao Qiskit.
+
+\section{Circuitos}
+
+Vamos abordar primeiramente circuitos na computação clássica. Um circuito pode envolver várias entradas e saídas, vários fios e portas lógicas. Uma porta lógica é uma função $f: \{0,1\}^k \to \{0,1\}^l$ para algum número fixo $k$ de bits de entrada e algum número fixo $l$ de bits de saída. Por exemplo, a porta lógica \textsf{NOT} (figura \ref{fig:notg}) possui um bit de entrada e um bit de saída, esta porta lógica inverte o bit de entrada.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.25\textwidth]{../../img/not.png}
+    \caption{Porta lógica \textsf{NOT}.}
+    \label{fig:notg}
+\end{figure}
+
+Existem várias outras portas lógicas elementares que são muito úteis para computação. A figura \ref{fig:gates} apresenta algumas delas. A porta lógica \textsf{AND} tem saída igual a 1 se, e somente se, ambas as entradas são 1, a porta lógica \textsf{OR} tem saída 1 se, e somente se pelo menos uma das entradas é 1. \textsf{XOR} tem saída 1 se e somente se apenas uma das entradas tem valor 1. \textsf{NAND} e \text{NOR} são portas construídas de \textsf{AND} seguido de \textsf{NOT} e \textsf{OR} seguido de \textsf{NOT}, respectivamente.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.6\textwidth]{../../img/gates.png}
+    \caption{Portas lógicas elementares.}
+    \label{fig:gates}
+\end{figure}
+
+Algumas outras operações bastante comuns em circuitos são a cópia de bits (\textsf{FANOUT}) e troca de valores entre dois bits \textsf{CROSSOVER}. Uma terceira operação bastante importante é a preparação de bits \textit{ancilla} (bits auxiliares), para permitir espaço de trabalho extra durante a computação. Na figura \ref{fig:gates} são dados alguns exemplos de circuitos bastante conhecidos que podem ser construídos com as portas lógicas elementares. O primeiro circuito é o meio somador (\textit{half adder}), figura \ref{fig:msum}, que possui dois bits de entrada e produz como resultado a soma dos dois bits módulo 2 em conjunto com o \textit{carry} (o bit ``vai um'').
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.6\textwidth]{../../img/msum.png}
+    \caption{Circuito Meio Somador.}
+    \label{fig:msum}
+\end{figure}
+
+Podemos construir um circuito somador completo (\textit{full adder}) utilizando dois meio somadores, denotados por \textsf{HA}, em cascata (figura \ref{fig:fsum}). O somador completo recebe três bits, $x$, $y$, e $c$. Os bits $x$ e $y$ são os valores que serão somados e $c$ o bit carry da computação anterior. Este circuito tem como saída dois bits, o primeiro bit é a soma modulo dois de $x,y,c$ dos três bits de entrada. O segundo bit, $c'$, é o bit \textit{carry}, que é definido como 1 se dois ou mais entradas são 1, caso contrário, seu valor é 0.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.6\textwidth]{../../img/fsum.png}
+    \caption{Circuito Somador Completo.}
+    \label{fig:fsum}
+\end{figure}
+
+Ao encadearmos vários circuitos somadores completos, obtemos um circuito para adição de inteiros com $n$-bits. Denotando o circuito somador completo por \textsf{FA}, a figura \ref{fig:3bitsum} exibe o circuito para adição de inteiros com três bits.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.5\textwidth]{../../img/3bitsum.png}
+    \caption{Circuito Somador para inteiros de três bits.}
+    \label{fig:3bitsum}
+\end{figure}
+
+\section{Qubit}
+
+Vamos agora comparar os conceitos da computação clássica com a computação quântica. Na computação clássica o bit é a menor unidade de informação que pode ser armazenada, podendo assumir os valores 0 ou 1 e somente um valor por vez. Analogamente, na computação quântica temos o qubit, diferentemente do bit, o qubit pode armazenar estados além de $\ket{0}$ e $\ket{1}$, tais estados são chamados de superposições:
+%
+\begin{align}
+    \ket{\psi} &= \alpha \ket{0} + \beta\ket{1}, && \text{ com } |\alpha|^2+|\beta|^2 = 1 \text{ e } \alpha, \beta\in \C.
+\end{align}
+
+Diferentemente dos bits, não podemos examinar o qubit e determinar seu estado quântico (veja seção~\ref{sec:p3}), ou seja, os valores de $\alpha$ e $\beta$. Ao invés disso, realizarmos a medição obtemos, por exemplo, o resultado $0$, com probabilidade $|\alpha|^2$ ou $1$ com probabilidade $|\beta|^2$.
+
+\section{Múltiplos qubits}
+
+Se tivermos dois bits teremos quatro possíveis valores armazenados (ou estados): 00, 01, 10 e 11. Analogamente, para um sistema com dois qubits podemos ter também os estados $\ket{00}, \ket{01}, \ket{10}$ e $\ket{11}$, no entanto, podemos ter também superposições desses estados:
+%
+\begin{equation}
+    \ket{\psi} = \alpha_{00}\ket{00} + \alpha_{01}\ket{01} + \alpha_{10}\ket{10} + \alpha_{11}\ket{11}.
+\end{equation}
+%
+Além disso, o resultado da medida de, por exemplo, $x=00$ tem probabilidade $|\alpha_{00}|^2$.
+
+\begin{definition}[Base de Bell, Estados de Bell ou Pares EPR]\label{def:epr}
+    Considere um sistema com 2 qubits associado ao espaço $C^2\otimes C^2$ e defina os seguintes estados
+    %
+    \begin{equation}
+        \begin{split}
+            \ket{\beta_{00}} = \frac{1}{\sqrt{2}}(\ket{00} + \ket{11}), \quad \ket{\beta_{10}} = \frac{1}{\sqrt{2}}(\ket{00} - \ket{11}), \\
+            \ket{\beta_{01}} = \frac{1}{\sqrt{2}}(\ket{01} + \ket{10}), \quad \ket{\beta_{11}} = \frac{1}{\sqrt{2}}(\ket{01} - \ket{10}).
+        \end{split}
+    \end{equation}
+Estes quatro estados formam uma base para $C^2\otimes C^2$ chamada de Base de Bell, estes quatro estados também são conhecidos como Estados de Bell ou Pares EPR.
+\end{definition}
+
+\subsection{Portas lógicas}
+\label{subsec:pl}
+
+Assim como um computador clássico construído por um circuito elétrico formado por fios e portas lógicas, podemos construir um computador quântico a partir de circuitos quânticos formados por fios e portas lógicas quânticas.
+A porta lógica \textsf{NOT} é definida por:
+
+{\centering
+\begin{tabular}{c|c}
+\hline
+\textit{in} & \textit{out} \\
+\hline
+1 & 0 \\
+0 & 1 \\
+\hline
+\end{tabular}
+\par}
+
+\noindent
+Em sistemas quânticos, podemos representar o operador \textsf{NOT} pela matriz
+%
+\begin{equation}
+    X = \begin{bmatrix}
+        0 & 1 \\
+        1 & 0 \\
+    \end{bmatrix}.
+\end{equation}
+Sendo $\ket{\psi} = \alpha \ket{0} + \beta\ket{1}$ temos:
+
+\begin{equation}
+    X\ket{\psi} = \begin{bmatrix}
+        0 & 1 \\
+        1 & 0
+    \end{bmatrix} \begin{bmatrix}
+        \alpha \\
+        \beta
+    \end{bmatrix} = \begin{bmatrix}
+        \beta \\
+        \alpha
+    \end{bmatrix}.
+\end{equation}
+\noindent
+Outras portas lógicas quânticas importantes são o $Z$:
+%
+\begin{equation}
+    Z = \begin{bmatrix}
+        1 &  0 \\
+        0 & -1 \\
+    \end{bmatrix},
+\end{equation}
+que quando aplicado a $\ket{0}$ mantém inalterado, e inverte o sinal de $\ket{1}$ para $-\ket{1}$, e o operador de Hadamard
+%
+\begin{equation}
+    H = \frac{1}{\sqrt{2}}\begin{bmatrix}
+        1 &  1 \\
+        1 & -1 \\
+    \end{bmatrix};
+\end{equation}
+%
+este operador transforma $\ket{0}$ em $(\ket{0}+ \ket{1})/\sqrt{2}$ e transforma $\ket{1}$ em $(\ket{0}-\ket{1})/\sqrt{2}$. A figura \ref{fig:lgate} ilustra a aplicação dos operadores $X, Z$ e $H$.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../../img/qgates.png}
+    \caption{Portas lógicas quânticas}
+    \label{fig:lgate}
+\end{figure}
+
+De modo geral, portas lógicas quânticas podem ser descritas por matrizes unitárias (matrizes $2\times 2$ no caso de um único qubit) e esta é a única restrição necessária para portas lógicas quânticas. Como matrizes unitárias são invertíveis temos que toda operação realizada por uma porta lógica quântica é reversível.
+
+Podemos generalizar as portas lógicas quânticas para múltiplos qubits. No lado esquerdo da figura \ref{fig:egate}, são apresentadas algumas portas lógicas comuns da computação clássica. Um resultado bastante conhecido é de que a porta lógica \textsf{NAND} é universal \cite[seção~3.6]{mano2013digital-sec36}, ou seja, qualquer função booleana pode ser construída somente com combinações de portas lógicas \textsf{NAND}. No lado direito da mesma figura, vemos um protótipo de uma porta lógica quântica para múltiplos qubits chamado \textsf{controlled-NOT} ou \textsf{CNOT}. Esta porta lógica quântica possui dois qubits de entrada, conhecidos como qubits de controle e alvo. Em geral, portas lógicas de sistemas quânticos com múltiplos qubits podem ser construídas usando operações de produto tensiorial para operadores (seção~\ref{sec:tensor}), bastando que o operador seja unitário.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../../img/egate.png}
+    \caption{Exemplos de portas lógicas clássicas e porta lógica quântica. No lado direito, $\ket{A}$ é o qubit de controle e $\ket{B}$ é o qubit alvo.}
+    \label{fig:egate}
+\end{figure}
+
+\noindent
+A atuação do \textsf{CNOT}, da figura \ref{fig:egate}, pode ser descrita como:
+
+\begin{itemize}
+    \item Se o qubit de controle $\ket{A}$ é definido como $0$, então o qubit alvo $\ket{B}$ é deixado com seu valor original.
+    %
+    \begin{align*}
+        \ket{00} \to \ket{00} \\
+        \ket{01} \to \ket{01} \\
+    \end{align*}
+    %
+    \item Se o qubit de controle é definido como $1$, então o qubit alvo é invertido.
+    %
+    \begin{align*}
+        \ket{10} \to \ket{11} \\
+        \ket{11} \to \ket{10} \\
+    \end{align*}
+    %
+\end{itemize}
+
+Outras portas lógicas quânticas bastante utilizadas na computação quântica são listadas a seguir:
+
+\begin{itemize}
+    \item Porta $S$ (\textit{phase gate})
+        \begin{equation}\label{eq:ps}
+        S = \begin{pmatrix}
+            1 & 0 \\
+            0 & i
+        \end{pmatrix}.
+        \end{equation}
+    \item Porta $T$ (\textit{$\pi/8$ gate})
+        \begin{equation}\label{eq:pt}
+        T = \begin{pmatrix}
+            1 & 0 \\
+            0 & e^{i\pi/4}
+        \end{pmatrix}.
+        \end{equation}
+    \item Porta $R_x$ (rotação no eixo $x$ na esfera de Bloch)
+        \begin{equation}\label{eq:rx}
+        R_x(\theta) = e^{-i\frac{\theta}{2}X}=\begin{pmatrix}
+        \cos\!\left(\frac{\theta}{2}\right)
+        &
+        -i\sen\!\left(\frac{\theta}{2}\right)
+        \\[6pt]
+        -i\sen\!\left(\frac{\theta}{2}\right)
+        &
+        \cos\!\left(\frac{\theta}{2}\right)
+        \end{pmatrix}.
+        \end{equation}
+    \item Porta $R_y$ (rotação no eixo $y$ na esfera de Bloch)
+        \begin{equation}
+        R_y(\theta) = e^{-i\frac{\theta}{2}Y}
+        =
+        \begin{pmatrix}
+        \cos\!\left(\frac{\theta}{2}\right)
+        &
+        -\sen\!\left(\frac{\theta}{2}\right)
+        \\[6pt]
+        \sen\!\left(\frac{\theta}{2}\right)
+        &
+        \cos\!\left(\frac{\theta}{2}\right)
+        \end{pmatrix}.
+        \end{equation}
+    \item Porta $R_z$ (rotação no eixo $z$ na esfera de Bloch)
+        \begin{equation}
+        R_z(\theta) = e^{-i\frac{\theta}{2}Z}
+        =
+        \begin{pmatrix}
+        e^{-i\theta/2} & 0 \\
+        0 & e^{i\theta/2}
+        \end{pmatrix}.
+        \end{equation}
+    \item Porta Tofoli ou \textsf{CCNOT}, que similar ao \textsf{CNOT} atua em múltiplos qubits sendo os dois primeiros qubits de controle e o terceiro o qubit-alvo. Da porta Tofoli podemos generalizar o conceito para um $\text{C}^n\text{NOT}$ ou \textsf{CNOT} com $n$ qubits de controle e um qubit-alvo.
+\end{itemize}
+
+Assim, como na computação clássica, podemos nos perguntar sobre a existência de um conjunto finito, preferencialmente pequeno, de portas lógicas quânticas, que combinadas, permitam realizar qualquer computação. Para computação quântica, dizemos que um conjunto de portas lógicas é universal se qualquer operação unitária puder ser arbitrariamente aproximada por um circuito quântico contendo somente tais portas. Dessa forma, segundo \cite[seção 4.5]{nielsen2010quantum} o conjunto $\{H, T, CNOT\}$ é universal.
+
+\subsection{Medidas em bases arbitrárias}
+
+A base $\{\ket{0}, \ket{1}\}$ é chamada de base computacional. Quando apresentamos o qubit mencionamos que o qubit
+%
+\begin{equation}
+    \ket{\psi} = \alpha\ket{0} + \beta\ket{1},
+\end{equation}
+%
+pode estar em qualquer combinação linear unitária destes estados e, ao realizar a medida, temos como resultado $0$ com probabilidade $|\alpha|^2$ e $1$ com probabilidade $|\beta|^2$. No entanto, podemos tomar qualquer outra base que nos seja conveniente. Por exemplo, podemos tomar $\{\ket{+}, \ket{-}\}$ com $\ket{+}=(\ket{0}+\ket{1})/\sqrt{2}$ e $\ket{-}=(\ket{0}-\ket{1})/\sqrt{2}$, assim
+%
+\begin{equation}
+    \ket{\psi} = \alpha\ket{0} + \beta\ket{1} = \frac{\alpha+\beta}{\sqrt{2}}\ket{+} + \frac{\alpha - \beta}{\sqrt{2}}\ket{-}.
+\end{equation}
+%
+Deste modo, ao realizar a medida, relativa à base $\{\ket{+}, \ket{-}\}$, obteremos o resultado ``$+$'' com probabilidade $|\alpha+\beta|^2/2$ e o resultado ``$-$'' com probabilidade $|\alpha-\beta|^2/2$. De modo geral, dada qualquer base $\{\ket{a}$ e $\ket{b}\}$ ortonormal e um qubit arbitrário $\ket{\psi} = \alpha \ket{a} + \beta\ket{b}$ podemos realizar a medida e obter os resultados $a$ e $b$ com probabilidades $|\alpha|^2$ e $|\beta|^2$ respectivamente.
+
+\section{Circuitos quânticos}\label{sec:cq}
+
+Vimos nas seções anteriores alguns circuitos quânticos simples (formados por uma única porta lógica quântica). A figura \ref{fig:swapgate} mostra um circuito com três portas lógicas quânticas, cada linha do circuito representa um fio no circuito quântico (que não necessariamente corresponde a um fio físico, podendo ser, por exemplo, a passagem de tempo ou movimentação de uma partícula no espaço). Tomando $\ket{ab} = \ket{a,b}$ (a adição da vírgula é apenas por questões de legibilidade), na base computacional, e sendo $\oplus$ a operação de adição módulo 2, o circuito tem o seguinte comportamento
+%
+\begin{align*}
+    \ket{a,b} &\to \ket{a,a\oplus b} \\
+              &\to \ket{a\oplus(a\oplus b) ,a\oplus b} = \ket{b, a \oplus b}, && \text{ pois } a\oplus a \oplus b = 0 + b = b \\
+              &\to \ket{b, (a \oplus b)\oplus b} = \ket{b,a}, && \text{pois } a\oplus b \oplus b = a \oplus 0 = a.
+\end{align*}
+%
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../../img/swapgate.png}
+    \caption{Circuito quântico de troca de qubits. No lado esquerdo, é apresentado um circuito com três \textsf{CNOT}s ao lado direito é apresentada a notação para tal circuito.}
+    \label{fig:swapgate}
+\end{figure}
+
+Uma diferença fundamental entre circuitos clássicos e circuitos quânticos está relacionada às restrições impostas pela  reversibilidade das operações permitidas. Enquanto circuitos clássicos admitem estruturas como laços e cópia arbitrária de bits, tais recursos não são compatíveis com a mecânica quântica. Essas limitações explicitamente discutidas por Nielsen e Chuang:
+\begin{flushright}
+\begin{minipage}{0.85\textwidth}
+\small
+\noindent
+There are a few features allowed in classical circuits that are not usually present in quantum circuits. First of all, we don't allow `loops', that is, feedback from one part of the quantum circuit to another; we say the circuit is acyclic. Second, classical circuits allow wires to be `joined' together, an operation known as \textsf{FANIN}, with the resulting single wire containing the bitwise \textsf{OR} of the inputs. Obviously this operation is not reversible and therefore not unitary, so we don't allow \textsf{FANIN} in our quantum circuits. Third, the inverse operation, \textsf{FANOUT}, whereby several copies of a bit are produced is also not allowed in quantum circuits. In fact, it turns out that quantum mechanics forbids the copying of a qubit, making the fanout operation impossible!
+\cite[p.~23]{nielsen2010quantum}
+\end{minipage}
+\end{flushright}
+Em especial, para o caso de laços em computação quântica, há tentativas de formalizar sua construção como em \cite{aaronson2006limits} e \cite{BanerjeePathak2009}.
+
+Uma alternativa ao uso de laços em circuitos quânticos, é a construção prévia do circuito concatenando partes que se repetem, previamente à execução do circuito. Nesses casos, um conceito bastante importante para analisar o desempenho do algoritmo é a \emph{profundidade do circuito}. A profundidade de um circuito quântico é o comprimento do maior caminho entre o início e o fim do circuito, onde cada porta lógica quantica conta como uma unidade. Casos de portas aplicadas em qubits disjuntos (portas que podem ser aplicadas em paralelo) também são consideradas como uma unidade.
+
+Uma notação bastante conveniente para circuitos é a dada a seguir. Suponha $U$ uma matriz unitária qualquer que atua sobre um número $n$ de qubits; como vimos, $U$ é uma porta lógica quântica para esses qubits. Podemos então definir a porta lógica \textsf{controlled-U}, tal porta lógica tem um único qubit de controle e $n$ qubits alvo. Se o qubit de controle é definido em 0, então nada acontece aos qubits alvo, se é definido como 1, então $U$ é aplicado aos qubits alvo. A figura \ref{fig:ctrlu} apresenta um diagrama para a porta lógica \textsf{controlled-U}.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.5\textwidth]{../../img/ctrlu.png}
+    \caption{Porta lógica \textsf{controlled-U}. A linha vertical representa o qubit de controle e as linhas horizontais os qubits-alvo.}
+    \label{fig:ctrlu}
+\end{figure}
+
+\FloatBarrier
+
+Alguns exemplos bastante comuns de portas controladas são:
+
+Porta \textsf{CNOT} ou \text{CX}
+\begin{equation}\label{eq:cx}
+    \mathrm{CX} = \begin{pmatrix}
+    1 & 0 & 0 & 0 \\
+    0 & 1 & 0 & 0 \\
+    0 & 0 & 0 & 1 \\
+    0 & 0 & 1 & 0
+    \end{pmatrix}.
+\end{equation}
+
+Porta \textsf{CZ}
+\begin{equation}\label{eq:cz}
+\mathrm{CZ}
+=
+\begin{pmatrix}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & -1
+\end{pmatrix}.
+\end{equation}
+
+Uma outra operação muito importante é a medida, ao qual é representada por um símbolo de medidor analógico como mostrado na figura \ref{fig:mm}. Como mencionado anteriormente este operador converte um único qubit $\ket{\psi} = \alpha\ket{0} + \beta\ket{1}$ em um bit clássico $M$, com probabilidades $|\alpha|^2$ ou $|\beta|^2$ se o resultado é $0$ ou $1$ respectivamente.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.5\textwidth]{../../img/mm.png}
+    \caption{Símbolo de medida para circuitos .}
+    \label{fig:mm}
+\end{figure}
+
+Mencionamos que a cópia de qubits não é possível, vamos ver um exemplo que ilustra melhor esta situação.
+
+\section{Cópia de Qubits}
+
+Considere a tarefa de copiar um bit clássico. Podemos realizar essa tarefa utilizando uma porta lógica \textsf{CNOT} conforme figura \ref{fig:bitcopy}. Essa porta lógica recebe o bit $x$ que queremos copiar e um bit $y=0$; as saídas são dois bits, um simplesmente conectado na entrada e outro com o operador \textsf{CNOT} aplicado na entrada em $y=0$.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.4\textwidth]{../../img/bitcopy.png}
+    \caption{Circuito para cópia do bit $x$.}
+    \label{fig:bitcopy}
+\end{figure}
+
+Suponha agora que tentemos copiar o qubit $\ket{\psi} = a\ket{0} + a\ket{1}$ da mesma forma que fizemos no caso do bit clássico. Escrevemos a entrada como
+%
+\begin{equation}
+    \big(a\ket{0} + b\ket{1}\big)\ket{0} = a\ket{00} + b\ket{10},
+\end{equation}
+%
+a função do \textsf{CNOT} é inverter o segundo qubit caso o primeiro qubit seja igual a $1$ (figura \ref{fig:qubitcopy}), assim, a saída do \textsf{CNOT} será $a\ket{00}+b\ket{11}$ que, assumindo que a clonagem é possível, deve ser igual a $\ket{\psi}\ket{\psi}$. No entanto,
+\begin{equation}
+    a\ket{00}+b\ket{11} \neq a^2\ket{00} + ab\ket{01} + ab\ket{10} + b^2\ket{11} = \ket{\psi}\ket{\psi}.
+\end{equation}
+para complexos $a,b$ quaisquer. No entanto, note que se $\ket{\psi} = \ket{0}$ ou $\ket{\psi} = \ket{1}$ o resultado vale.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.6\textwidth]{../../img/qubitcopy.png}
+    \caption{Tentativa de cópia do qubit $\ket{\psi}$.}
+    \label{fig:qubitcopy}
+\end{figure}
+
+Este resultado nos dá uma indicação de que a cópia de qubits pode ser feita da mesma forma como se faz com bits classícos. No entanto, como apresentando no próximo resultado não é possível realizar cópia de qubits desconhecidos.
+
+\begin{theorem}[Teorema da não clonagem para um qubit]\label{th:clone}
+    Não existem $\ket{s}\in \C^2$ e $U:\C^4\to \C^4$, um operador unitário, tais que $U(\ket{\psi}\otimes \ket{s}) = \ket{\psi}\otimes\ket{\psi}$ para todo $\ket{\psi}\in \C^2$. Em outras palavras, não é possível construir um circuito quântico que realize a cópia de um qubit arbitrário $\ket{\psi}$.
+    
+    \begin{proof}
+        Dado um sistema quântico de dois qubits, nomeados $A$ e $B$, $A$ é a entrada, que inicialmente assume o estado $\ket{\psi}$ e $B$ a saída para a cópia, inicialmente no estado $\ket{s}$. O estado inicial do sistema é dado por
+        %
+        \begin{equation}
+            \ket{\psi}\otimes \ket{s}
+        \end{equation}
+        %
+        Suponha que seja possível realizar a cópia, então existe um operador unitário $U$ tal que
+        %
+        \begin{equation}
+            \ket{\psi}\otimes\ket{s} \xrightarrow{U} U(\ket{\psi}\otimes\ket{s}) = \ket{\psi}\otimes\ket{\psi}.
+        \end{equation}
+        %
+        Se a cópia funciona para os estados $\ket{\psi}$ e $\ket{\varphi}$, temos
+        %
+            \begin{align}
+                U(\ket{\psi}\otimes\ket{s}) = \ket{\psi}\otimes\ket{\psi} \\
+                U(\ket{\varphi}\otimes\ket{s}) = \ket{\varphi}\otimes\ket{\varphi}.
+            \end{align}
+        %
+        Ao tomar o produto interno das equações acima temos
+        %
+        \begin{align}
+            \braket{U(\ket{\psi}\otimes\ket{s}) | U(\ket{\varphi}\otimes\ket{s})}  &= \braket{(\ket{\psi}\otimes\ket{s})|(\ket{\varphi}\otimes\ket{s})} \\
+                        &=\braket{\psi|\varphi}\braket{s|s} \\
+                        &=\braket{\psi|\varphi} \\
+                        &= \braket{(\ket{\psi}\otimes\ket{\varphi})|(\ket{\psi}\otimes\ket{\varphi})} \\
+                        &= \braket{\psi|\varphi}^2,
+        \end{align}
+        %
+        portanto,
+        %
+        \begin{equation}
+            \braket{\psi|\varphi} =\braket{\psi|\varphi}^2 \implies \braket{\psi|\varphi}=0 \text{ ou } \braket{\psi|\varphi}=1,
+        \end{equation}
+        que só é possível se $\ket{\varphi}=\ket{\psi}$ ou se $\ket{\varphi}$ e $\ket{\psi}$ são ortogonais. Logo, a cópia de estados quaisquer não é possível.
+    \end{proof}
+\end{theorem}
+
+\begin{example}
+Considere o circuito da figura \ref{fig:cbell} que transforma os quatro estados da base computacional $\ket{00}, \ket{01}, \ket{10}, \ket{11}$ nos Estados de Bell ou Pares EPR conforme definição \ref{def:epr}. Primeiramente, aplica-se o operador de Hadamard e, em seguida, a porta lógica \textsf{CNOT} com o qubit $1$ sendo o qubit de controle e o qubit $2$ o qubit-alvo. Por exemplo, para $\ket{00}$ temos
+%
+\begin{align}
+    \ket{00} &\xrightarrow{H\otimes I} \frac{\ket{0} + \ket{1}}{\sqrt{2}} \otimes \ket{0} \\
+             &\xrightarrow{CNOT_{1,2}} \frac{\ket{00} + \ket{11}}{\sqrt{2}} = \ket{\beta_{00}}
+\end{align}
+%
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../../img/cbell.png}
+    \caption{Circuito para geração de estados de Bell.}
+    \label{fig:cbell}
+\end{figure}    
+\end{example}
+
+\section{Teleporte Quântico}
+\label{sec:qt}
+
+De posse do conhecimento de circuitos quânticos podemos compreender o Teleporte Quântico. O teleporte quântico é uma técnica que permite \emph{teleportar} estados mesmo na ausência de um canal de comunicação quântica ligando o remetente ao destinatário. O cenário é dado a seguir:
+
+Alice e Bob se encontraram há muito tempo mas agora vivem longe um do outro. Enquanto viviam juntos eles geraram um par EPR (assumimos que seja $\beta_{00}$, conforme definição \ref{def:epr}), cada um ficando com um qubit quando se separaram. Anos depois, Bob está escondido e a missão de Alice é entregar um qubit $\ket{\psi}$ para Bob. Ela não sabe o estado do qubit e, além disso, pode enviar somente informação clássica para Bob.
+
+Como Alice não sabe qual é o estado $\ket{\psi}$ e as leis da mecânica quântica impedem que ela determine o estado se ela possuir somente uma cópia de $\ket{\psi}$, Alice não pode realizar a cópia do estado (teorema \ref{th:clone}), muito menos, definir com precisão o estado somente com uma medição. Após a medição, Alice saberá o resultado com determinada probabilidade e, nesse processo, o estado $\ket{\psi}$ é alterado, conforme equação \eqref{eq:med}. Mesmo no cenário onde Alice conhece o estado, ela necessitaria de uma eternidade para descrever o estado para Bob, desde que $\ket{\psi}$ assume valores em um espaço contínuo.
+
+Felizmente, Alice compartilha um par EPR com Bob e pode utilizá-lo para enviar o estado $\ket{\psi}$ para Bob. Alice une o qubit $\ket{\psi}$ com sua metade do par EPR, e então aplica uma medida aos dois qubits, obtendo um de quatro possíveis valores clássicos $00$, $01$, $10$ e, $11$. Ela então envia o resultado para Bob e, dependendo do resultado recebido, Bob executa uma de quatro operações possíveis na sua metade do par EPR. O circuito quântico da figura \ref{fig:qtel} ilustra o funcionamento do teleporte quântico. A descrição detalhada do procedimento é dada a seguir.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../../img/qtel.png}
+    \caption{Circuito quântico para teleporte de um qubit. As duas linhas superiores indicam o sistema de Alice, enquanto a linha de baixo indica o sistema de Bob.}
+    \label{fig:qtel}
+\end{figure}
+
+O estado a ser teleportado é $\ket{\psi} = a\ket{0} + b\ket{1}$, com $a,b$ coeficientes desconhecidos. Usando o par EPR $\ket{\beta_{00}}$, o estado de entrada no circuito é
+%
+\begin{align}
+    \ket{\psi_0}    &= \ket{\psi}\otimes\ket{\beta_{00}} \\
+                    &= \frac{1}{\sqrt{2}}\big( a\ket{0}\otimes(\ket{00} + \ket{11}) + b\ket{1}\otimes(\ket{00} + \ket{11}) \big);
+\end{align}
+%
+convencionamos que os primeiros dois qubits (a partir da esquerda) pertencem à Alice e o terceiro ao Bob. Alice então aplica o operador \textsf{CNOT} em seus qubits com $\ket{\psi}$ o qubit de controle e sua metade do par EPR como qubit alvo, obtendo
+%
+\begin{equation}
+    \ket{\psi_1} = \frac{1}{\sqrt{2}}\bigg( a\ket{0}\otimes(\ket{00} + \ket{11}) + b\ket{1}\otimes(\ket{10} + \ket{01})\bigg),
+\end{equation}
+%
+em seguida, aplica o operador de Hadamard no primeiro qubit, obtendo
+%
+\begin{equation}\label{eq:altel}
+    \begin{split}
+        \ket{\psi_2} &= \frac{1}{2}\bigg( a(\ket{0}+\ket{1})\otimes(\ket{00} + \ket{11}) + b(\ket{0}-\ket{1})\otimes(\ket{10} + \ket{01}) \bigg)\\
+                    &= \frac{1}{2} \bigg( \ket{00}\otimes(a\ket{0} + b\ket{1}) + \ket{01}\otimes(a\ket{1} + b\ket{0}) \\
+                    &+ \ket{10}\otimes(a\ket{0}-b\ket{1}) + \ket{11}\otimes(a\ket{1}-b\ket{0})\bigg).
+    \end{split}
+\end{equation}
+%
+A equação \eqref{eq:altel} está organizada em quatro termos. O primeiro termo tem os qubits de Alice no estado $\ket{00}$ e o qubit de Bob no estado $a\ket{0}+b\ket{1}=\ket{\psi}$. Se Alice executa a medida, relativa aos primeiros dois estados, e obtém o resultado 00 então o sistema de Bob estará no estado $\ket{\psi}$. Analogamente, podemos ler o estado pós-medida de Bob, dado o resultado da medida de Alice
+%%
+\begin{align}
+    00 \mapsto \ket{\psi_3(00)} = a\ket{0} + b\ket{1} \\
+    01 \mapsto \ket{\psi_3(01)} = a\ket{1} + b\ket{0} \\
+    10 \mapsto \ket{\psi_3(10)} = a\ket{0} - b\ket{1} \\
+    11 \mapsto \ket{\psi_3(11)} = a\ket{1} - b\ket{0}
+\end{align}
+%%
+Dependendo do resultado da medida de Alice, o qubit de Bob estará em um de quatro possíveis estados. No entanto, para saber qual estado é necessário que Bob seja informado do resultado da medida de Alice. Este fato é justamente o que impede que o teleporte quântico seja utilizado para transmitir informação mais rápido que a velocidade da luz.
+
+Uma vez que Bob tem ciência do resultado de Alice, ele pode:
+
+\begin{enumerate}
+    \item $00$: não precisa fazer nada pois seu estado já é $\ket{\psi}$.
+    \item $01$: aplica o operador $X$.
+    \item $10$: aplica o operador $Z$.
+    \item $11$: aplica o operador $X$ e, em seguida, o operador $Z$.
+\end{enumerate}
+Após aplicar estes operadores, Bob tem em suas mãos o qubit $\ket{\psi}$ que estava em posse de Alice.
+
+\section{Introdução ao Qiskit}
+
+\subsection{Introdução}
+
+O \emph{Qiskit} é um framework de código aberto desenvolvido pela IBM para programação, simulação e execução de algoritmos quânticos \cite{QiskitCommunity2017}. Ele permite que a criação de circuitos quânticos abstratos, exibição gráfica, otimização e execução em hardware tanto em simuladores clássicos quanto em dispositivos quânticos reais disponibilizados pela IBM.
+
+\subsection{Modelo computacional}
+
+O Qiskit adota o modelo de computação baseado em circuitos. Nesse modelo,
+\begin{itemize}
+    \item estados quânticos são representados por qubits,
+    \item portas quânticas representadas por operadores unitários,
+    \item medições descritas por operadores de projeção.
+\end{itemize}
+
+Matematicamente, um circuito quântico atua sobre um espaço de Hilbert complexo $\mathcal{H} = (\mathbb{C}^2)^{\otimes n}$, onde $n$ é o número de qubits do sistema.
+
+\subsection{Recursos do Qiskit}
+
+Segundo a documentação do Qiskit \cite{ibm_quantum_tools_intro} alguns dos recursos mais úteis são:
+
+\begin{itemize}
+    \item \textbf{Ferramentas de construção de circuitos} (\texttt{qiskit.circuit}): 
+    utilizadas para inicializar e manipular registradores, circuitos, instruções, portas, parâmetros e objetos de fluxo de controle.
+
+    \item \textbf{Biblioteca de circuitos} (\texttt{qiskit.circuit.library}):
+    uma vasta gama de circuitos, instruções e portas, que constituem os principais blocos de construção para computações quânticas baseadas em circuitos.
+
+    \item \textbf{Biblioteca de informações quânticas} (\texttt{qiskit.quantum\_info}): 
+    um conjunto de ferramentas para trabalhar com estados quânticos, operadores e canais, utilizando cálculos exatos (sem ruído de amostragem). 
+    Esse módulo pode ser utilizado para especificar observáveis de entrada e analisar a fidelidade dos resultados obtidos a partir das consultas de primitivas.
+
+    \item \textbf{Transpilador} (\texttt{qiskit.transpiler}):
+    responsável por transformar e adaptar circuitos quânticos para atender à topologia específica do dispositivo e otimizar a execução em unidades de processamento quântico (QPUs) reais.
+
+    \item \textbf{Primitivas} (\texttt{qiskit.primitives}):
+    módulo que contém as definições básicas e implementações de referência das primitivas \texttt{Sampler} e \texttt{Estimator}, 
+    a partir das quais diferentes fornecedores de hardware quântico podem derivar suas próprias implementações.
+\end{itemize}
+
+\subsection{Circuitos Quânticos}
+
+No Qiskit, um circuito quântico é representado pela classe \texttt{QuantumCircuit}. Um circuito consiste em registradores quânticos e clássicos, bem como uma sequência ordenada de operações.
+
+Formalmente, um circuito quântico implementa uma transformação unitária
+$$
+U = U_k \cdots U_2 U_1,
+$$
+onde cada $U_i$ corresponde a uma porta lógica quântica aplicada em um ou mais qubits. Para acelerar a construção de circuitos o Qiskit fornece implementações das principais portas quânticas, como:
+\begin{itemize}
+    \item Portas de um qubit: Operadores de Pauli $X$, $Y$ e $Z$ (equação \eqref{eq:pauli}), $H$ (exemplo \ref{ex:h}), $S$ (equação \eqref{eq:ps}), $T$ (equação \eqref{eq:pt}) entre outras.
+    \item Portas controladas: $\mathrm{CX}$ (equação \eqref{eq:cx}), $\mathrm{CZ}$ (equação \eqref{eq:cz}) entre outras.
+    \item Outras portas lógicas \cite{ibm_quantum_circuit_library_2025} e a possibilidade de construir operadores quaisquer \cite{ibm_quantum_operators_overview_2025}.
+\end{itemize}
+Cada porta é representada por um operador unitário que atua sobre o espaço de estados do sistema.
+
+\subsection{Medição}
+
+No Qiskit, a medição padrão de qubits é implementada como uma medição projetiva na base computacional, por exemplo, para o caso de um qubit 
+$$
+\{ \ket{0}, \ket{1} \},
+$$
+os operadores de medida associados a essa medição são as projeções
+\[
+P_0 = \ket{0}\bra{0}, 
+\qquad
+P_1 = \ket{1}\bra{1},
+\]
+que satisfazem
+\[
+P_0^\dagger P_0 + P_1^\dagger P_1 = I.
+\]
+Veja exemplo \ref{ex:proj}.
+
+Assim, ao medir um qubit no Qiskit, o estado $\ket{\psi} = \alpha \ket{0} + \beta \ket{1}$ colapsa para $\ket{0}$ com probabilidade $|\alpha|^2$ ou para $\ket{1}$ com probabilidade $|\beta|^2$, exatamente como apresentado no capítulo 2. O resultado da medição é armazenado em registradores clássicos. Essa separação explícita entre registradores quânticos e clássicos fornece uma implementação direta do postulado de medição.
+
+\subsection{Simulação e Execução}
+
+O Qiskit permite a execução de circuitos em:
+\begin{itemize}
+    \item \textbf{Simuladores clássicos}: úteis para depuração e estudo teórico. Permite a execução de algoritmos quânticos em processadores clássicos, seja em CPUs ou GPUs.
+    \item \textbf{Computadores quânticos reais}: sujeitos a ruído e erros experimentais, úteis para circuitos com maior número de qubits. De acordo com \cite{articlequ} processadores quânticos com 100 qubits ou mais são suficientes para exploração científica, tornando a computação quântica útil (\emph{quantum utility}) de um ponto de vista prático. Tal utilidade está longe de ser uma vantagem quântica (\emph{quantum advantage}), isto é, o caso onde um computador quântico é capaz de resolver um problema específico mais rápido e com maior precisão do que o melhor computador clássico possível. No entanto, os QPUs abrem caminho para o uso da computação quântica em outras áreas do conhecimento tais como química e biologia.
+\end{itemize}
+
+\subsection{Instalação e Utilização}
+
+O Qiskit é disponibilizado como um pacote Python, para instruções oficiais de instalação consulte a documentação da IBM \cite{ibm2025installqiskit}. Para que seja possível realizar execuções em hardware real é necessário ter um IBMid e utilizar a chave de API disponibilizada na plataforma. Para realizar experimentos iniciais a IBM permite uso de 10 minutos por mês sem custo, consulte as informações sobre planos na documentação oficial da IBM \cite{ibm2025quantumpricing}.
+
+\subsection{Exemplos de Circuitos}
+
+A seguir são apresentados alguns exemplos de circuitos construídos utilizando o Qiskit. Podemos criar um circuito informando a quantidade de qubits e bits utilizando a classe \texttt{QuantumCircuit}. Todos os qubits são inicializados no estado $\ket{0}$, além disso, o Qiskit utiliza o sistema \textit{little-endian}, em que os qubits são numerados da direita para a esquerda, $\ket{0_{n-1}\dotso 0_0}$, esta convenção é muito comum em implementações computacionais mas pode gerar um pouco de confusão pois, em geral, na matemática é comum indexar de $1$ a $n$ e da esquerda para a direita. A figura \ref{fig:circuito1} apresenta a criação de um circuito com dois qubits e três bits clássicos.
+
+\begin{figure}[!ht]
+\centering
+\begin{minipage}{1\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+from qiskit import QuantumCircuit
+
+qc = QuantumCircuit(2, 3)
+\end{lstlisting}
+\end{minipage}
+\caption{Exemplo de criação de circuitos em Qiskit.}
+\label{fig:circuito1}
+\end{figure}
+
+Um exemplo de aplicação de porta lógica e realização de medida pode ser visto na figura \ref{fig:circuito2}. Como esperado, ao aplicar o operador de Hadamard no qubit $0$ com o valor $\ket{0}$ obtemos uma superposição, cujas probabilidades de obtermos $0$ ou $1$ são ambas $1/2$. A figura \ref{fig:circuito2draw} mostra o efeito da instrução \texttt{qc.draw} ao final da figura \ref{fig:circuito2}.
+
+\begin{figure}[!ht]
+\centering
+\begin{minipage}{1\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+from qiskit import QuantumCircuit
+
+qc = QuantumCircuit(2, 3)
+qc.h(0)
+qc.draw(output="mpl")
+\end{lstlisting}
+\end{minipage}
+\caption{Exemplo de aplicação de operador no Qiskit.}
+\label{fig:circuito2}
+\end{figure}
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics{../../img/hgate.png}
+    \caption{Ilustração de instrução \texttt{draw}.}
+    \label{fig:circuito2draw}
+\end{figure}
+
+Um exemplo mais completo é a implementação do teleporte quântico visto na seção~\ref{sec:qt}. A figura \ref{fig:tq1} apresenta o código de geração do par EPR de Alice e Bob. As linhas de 1 até 9 criam o circuito com o qubit que será teleportado \texttt{secret}, os qubits de Alice e Bob bem como e três registradores clássicos para obtenção dos valores de medida. As linhas 11 e 12 criam o par EPR com os qubits de Alice e Bob. A linha 14 tem a instrução \texttt{qc.barrier} que serve apenas para separação visual ao desenhar o circuito. 
+
+\begin{figure}[!ht]
+\centering
+\begin{minipage}{1\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+from qiskit import ClassicalRegister, QuantumCircuit, QuantumRegister
+import numpy as np
+ 
+secret = QuantumRegister(1, "Q")
+Alice = QuantumRegister(1, "A")
+Bob = QuantumRegister(1, "B")
+ 
+cr = ClassicalRegister(3, "c")
+qc = QuantumCircuit(secret, Alice, Bob, cr)
+
+qc.h(Alice)
+qc.cx(Alice, Bob)
+ 
+qc.barrier()
+\end{lstlisting}
+\end{minipage}
+\caption{Criação do par EPR de Alice e Bob.}
+\label{fig:tq1}
+\end{figure}
+
+A figura \ref{fig:tq2} apresenta a geração do estado segredo e a aplicação de operações e medições de Alice. A linha 16 até a linha 19 o estado a ser teleportado que inicialmente possui valor $\ket{0}$ recebe um valor aleatório, a instrução \texttt{qc.u} permite rotacionar o qubit na esfera de Bloch tanto no eixo $z$ quanto no plano $xy$. As linhas 28 e 29 representam as medições de Alice.
+
+\begin{figure}[!ht]
+\centering
+\begin{minipage}{1\textwidth}
+\begin{lstlisting}[style=pythonstyle, firstnumber=16]
+np.random.seed(100)
+theta = np.random.uniform(0.0, 1.0) * np.pi  # [0, pi]
+varphi = np.random.uniform(0.0, 2.0) * np.pi  # [0 2*pi]
+qc.u(theta, varphi, 0.0, secret)
+
+qc.barrier()
+ 
+qc.cx(secret, Alice)
+qc.h(secret)
+
+qc.barrier()
+
+qc.measure(Alice, cr[1])
+qc.measure(secret, cr[0])
+
+with qc.if_test((cr[1], 1)):
+    qc.x(Bob)
+with qc.if_test((cr[0], 1)):
+    qc.z(Bob)
+
+qc.barrier()
+ 
+qc.u(theta, varphi, 0.0, Bob).inverse()
+qc.measure(Bob, cr[2])
+ 
+qc.draw(output="mpl")
+\end{lstlisting}
+\end{minipage}
+\caption{Geração do estado segredo e manipulação de estados por Alice.}
+\label{fig:tq2}
+\end{figure}
+
+\FloatBarrier
+
+A figura \ref{fig:tq3} apresenta as manipulações que Bob deve fazer dependendo dos valores obtidos nos registradores $c[0]$ e $c[1]$. Bob deverá aplicar os operadores $X$, $Z$ ou $X$ e $Z$ em seguida, ou não aplicar nenhum operador (linhas 31 até 34). A partir deste ponto, o qubit de Bob contém o estado segredo; no entanto, como não é possível verificar o valor de um qubit diretamente, fazemos uma manipulação de estado. A linha 38 aplica a inversa da operação \texttt{qc.u} que foi definida na linha 19 e foi usada para criar o estado segredo. Esta operação adicional vai ``resetar'' o estado de Bob para o estado original no qubit \texttt{secret}, nomeadamente $\ket{0}$. A figura \ref{fig:tqdraw} apresenta o diagrama completo do circuito.
+
+\begin{figure}[!ht]
+\centering
+\begin{minipage}{1\textwidth}
+\begin{lstlisting}[style=pythonstyle, firstnumber=31]
+with qc.if_test((cr[1], 1)):
+    qc.x(Bob)
+with qc.if_test((cr[0], 1)):
+    qc.z(Bob)
+
+qc.barrier()
+ 
+qc.u(theta, varphi, 0.0, Bob).inverse()
+qc.measure(Bob, cr[2])
+ 
+qc.draw(output="mpl")
+\end{lstlisting}
+\end{minipage}
+\caption{Manipulações de Bob.}
+\label{fig:tq3}
+\end{figure}
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=1\textwidth]{../../img/tqdraw.png}
+    \caption{Diagrama do circuito para o teleporte quântico.}
+    \label{fig:tqdraw}
+\end{figure}
+
+Para finalizar o exemplo, podemos nos perguntar se o registrador que amazena o valor da medição no qubit de Bob realmente possui o valor $0$. A figura \ref{fig:tqsim} apresenta o código de simulação e a figura \ref{fig:tqsimdraw} mostra o histograma obtido, ao simular $10000$ vezes; veja que os bits das posições $0$ e $1$ possuem igual chance de assumir os valores $1$ ou $0$. No entanto, o bit $2$ que armazena o resultado da medição do qubit de Bob (após assumir o valor do qubit de segredo) apresenta sempre o valor $0$ indicando que, de fato, antes de Bob aplicar a operação inversa à operação que produziu o estado segredo, Bob tinha o estado armazenado em seu qubit.
+
+\begin{figure}[!ht]
+\centering
+\begin{minipage}{1\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+from qiskit import QuantumCircuit, transpile
+from qiskit_aer import AerSimulator
+from qiskit.visualization import plot_histogram
+
+simulator = AerSimulator()
+qc = transpile(qc, simulator)
+
+result = simulator.run(qc, shots=10000).result()
+counts = result.get_counts(qc)
+plot_histogram(counts, title='Resultados de Medida')
+\end{lstlisting}
+\end{minipage}
+\caption{Circuito para simulação do teleporte quântico.}
+\label{fig:tqsim}
+\end{figure}
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=1\textwidth]{../../img/tqsimdraw.png}
+    \caption{Histograma para simulação de medições no circuito do teleporte quântico.}
+    \label{fig:tqsimdraw}
+\end{figure}

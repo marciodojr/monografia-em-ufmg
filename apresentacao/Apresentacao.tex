@@ -1,0 +1,1518 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+
+% --- Idioma e fonte ---
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[brazil]{babel}
+
+% --- Matemática e símbolos ---
+\usepackage{amsmath, amsfonts, amssymb}
+
+% --- Figuras e layout ---
+\usepackage{graphicx}
+\usepackage{booktabs}
+
+% --- Código ---
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue!70!black},
+  commentstyle=\color{green!40!black},
+  stringstyle=\color{orange!70!black},
+  showstringspaces=false,
+  breaklines=true,
+  frame=single,
+  tabsize=2
+}
+
+% --- Macros simples (evita dependências externas) ---
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\ket}[1]{\lvert #1 \rangle}
+\newcommand{\bra}[1]{\langle #1 \rvert}
+\newcommand{\braket}[2]{\langle #1 | #2 \rangle}
+\newcommand{\proj}[1]{\ket{#1}\!\bra{#1}}
+
+\DeclareMathOperator{\sen}{sen}
+
+% --- Tema ---
+\usetheme{Madrid}
+\usecolortheme{dolphin}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{caption}[numbered]
+
+% --- Metadados (ajuste se quiser) ---
+\title[Computação Quântica]{Um Estudo sobre Computação Quântica}
+\author[Márcio Dias de Oliveira Junior]{Márcio Dias de Oliveira Junior}
+\institute[UFMG -- ICEx]{
+  Universidade Federal de Minas Gerais (UFMG)\\
+  Instituto de Ciências Exatas (ICEx)\\
+  Especialização em Matemática\\[2mm]
+  Orientador: Prof. Dr. Csaba Schneider
+}
+\date[Belo Horizonte -- MG, 2026]{Belo Horizonte -- MG\\2026}
+
+\begin{document}
+
+% ------------------------------------------------------------
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% ------------------------------------------------------------
+\begin{frame}{Roteiro}
+  \tableofcontents
+\end{frame}
+
+% ============================================================
+\section{Contexto e objetivos}
+
+\begin{frame}{Contexto e objetivos}
+\begin{itemize}
+  \item Apresentar a base matemática para descrever sistemas quânticos:
+  \begin{itemize}
+    \item Espaços de Hilbert
+    \item Operadores lineares
+    \item Produto tensorial
+  \end{itemize}
+  \item Introduzir o modelo de computação quântica a partir dos postulados
+  \item Implementar e discutir os algoritmos:
+  \begin{itemize}
+    \item \textbf{Algoritmo de Grover} (busca não-estruturada);
+    \item \textbf{QAOA} aplicado ao \textbf{MaxCut}.
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+% ============================================================
+
+\section{Base matemática}
+
+\begin{frame}{Notação Bra-Ket}
+
+A notação $\ket{\psi}$ (ket) foi introduzida por Paul Dirac.
+
+\medskip
+\textbf{Interpretação:}
+\begin{itemize}
+    \item $\ket{\psi}$ representa um vetor em um espaço de Hilbert $\mathcal{H}$.
+    \item $\bra{\psi}$ representa o funcional linear associado (vetor dual) relativo ao produto interno.
+\end{itemize}
+
+\medskip
+Produto interno:
+$$
+\braket{\phi}{\psi}
+$$
+
+\medskip
+Assumindo um base ortonormal de $\mathcal{H}$ e com produto interno canônico podemos identificar:
+$$
+  \ket{\psi}=\begin{bmatrix}
+    \psi_0 \\
+    \psi_1 \\
+    \vdots
+  \end{bmatrix} \quad \text{e} \quad \bra{\psi} = [\psi_0^*, \psi_1^*, \dots].
+$$
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{A base computacional}
+
+No caso de um qubit:
+
+$$
+\mathcal{H} = \mathbb{C}^2.
+$$
+
+A base computacional é definida por:
+
+$$
+\ket{0} =
+\begin{bmatrix}
+1 \\
+0
+\end{bmatrix},
+\qquad
+\ket{1} =
+\begin{bmatrix}
+0 \\
+1
+\end{bmatrix}.
+$$
+
+\medskip
+Propriedades:
+
+$$
+\braket{0}{0} = \braket{1}{1} = 1,
+\quad
+\braket{0}{1} = \braket{1}{0} = 0.
+$$
+
+\medskip
+Ou seja, $\{\ket{0},\ket{1}\}$ é uma base ortonormal.
+\end{frame}
+
+\begin{frame}{Espaços de Hilbert}
+Um \textbf{espaço de Hilbert} $\mathcal{H}$ é um espaço vetorial com produto interno $\braket{\cdot}{\cdot}$ e que é completo na norma induzida:
+$$
+\|\ket{\psi}\|=\sqrt{\braket{\psi}{\psi}}.
+$$
+
+\medskip
+\textbf{Exemplo (qubit):}\quad $\mathcal{H}=\mathbb{C}^2$ com base $\{\ket{0},\ket{1}\}$ e produto interno canônico.
+
+$$
+\ket{\psi} = a\ket{0} + b\ket{1}, \qquad |a|^2+|b^2|=1.
+$$
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Operadores lineares}
+Um \textbf{operador linear} $A:\mathcal{H}\to\mathcal{H}$ satisfaz
+$$
+A(\alpha\ket{\psi}+\beta\ket{\phi})=\alpha A\ket{\psi}+\beta A\ket{\phi}.
+$$
+
+\medskip
+\textbf{Adjunto:}\quad Dada a representação matricial de $A$ temos
+$$
+A^\dagger = (A^T)^* = (A^*)^T
+$$
+
+\medskip
+\textbf{Classes importantes:}
+\begin{itemize}
+    \item \textbf{Hermitiano:} $A=A^\dagger$.
+    \item \textbf{Unitário:} $U^\dagger U=I$.
+    \item \textbf{Projeção:} $P^2=P$ e $P^\dagger=P$.
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Operadores em base ortonormal (matriz)}
+Fixe bases ortonormais $\{\ket{i}\}_{i=1}^{n}$ e $\{\ket{j}\}_{j=1}^{n}$.
+
+\medskip
+\textbf{Componentes (elementos de matriz):}
+$$
+A_{ij}=\braket{i}{A|j}.
+$$
+
+\medskip
+\textbf{Expansão do operador (forma \textit{ket por bra}):}
+$$
+A=\sum_{i,j}^n \braket{i}{A |j}\ \ket{i}\bra{j} = \sum_{i,j}^n A_{ij} \ket{i}\bra{j}.
+$$
+
+\medskip
+\textbf{Relação de completude:}
+$$
+\sum_{i=0}^{n}\ket{i}\bra{i}=I
+$$
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Produto tensorial}
+Dados dois espaços de Hilbert $\mathcal{H}_A$ e $\mathcal{H}_B$ podemos construir o espaço tensorial (que também é um espaço de Hilbert):
+$$
+\mathcal{H}_{AB}=\mathcal{H}_A\otimes\mathcal{H}_B.
+$$
+
+\medskip
+Se $\{\ket{i}\}_{i=1}^n$ é base de $\mathcal{H}_A$ e $\{\ket{j}\}_{j=1}^m$ é base de $\mathcal{H}_B$, então
+$\{\ket{i}\otimes\ket{j}\}$ é base de $\mathcal{H}_A\otimes\mathcal{H}_B$.
+
+\medskip
+\textbf{Dimensão:}
+$$
+\dim(\mathcal{H}_A\otimes\mathcal{H}_B)=\dim(\mathcal{H}_A)\cdot\dim(\mathcal{H}_B) = n \cdot m.
+$$
+
+\medskip
+\textbf{Exemplo (2 qubits):}\quad $\mathbb{C}^2\otimes\mathbb{C}^2\simeq\mathbb{C}^4$ com base
+$\{\ket{00},\ket{01},\ket{10},\ket{11}\}$, onde $\ket{00} = \ket{0}\otimes \ket{0}$, $\ket{01} = \ket{0}\otimes \ket{1} \dotso$
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Operadores em espaços tensoriais}
+Se $A$ atua em $\mathcal{H}_A$ e $B$ atua em $\mathcal{H}_B$, define-se $A\otimes B$ por:
+$$
+(A\otimes B)(\ket{\psi}\otimes\ket{\phi})=A\ket{\psi}\otimes B\ket{\phi}.
+$$
+
+\medskip
+\textbf{Aplicação típica:} portas que atuam em um qubit de um registrador:
+$$
+U_k = I\otimes\cdots\otimes I\otimes U \otimes I\otimes\cdots\otimes I.
+$$
+
+\end{frame}
+
+\begin{frame}{Produto de Kronecker}
+
+O \textbf{produto de Kronecker} é a representação matricial do produto tensorial.
+
+\medskip
+Se $A \in \mathbb{C}^{m\times n}$ e $B \in \mathbb{C}^{p\times q}$, define-se
+
+$$
+A \otimes B =
+\begin{pmatrix}
+a_{11}B & a_{12}B & \cdots & a_{1n}B \\
+a_{21}B & a_{22}B & \cdots & a_{2n}B \\
+\vdots  & \vdots  & \ddots & \vdots \\
+a_{m1}B & a_{m2}B & \cdots & a_{mn}B
+\end{pmatrix}
+\in \mathbb{C}^{mp \times nq}.
+$$
+
+\medskip
+\textbf{Exemplo (2 qubits):}
+
+$$
+X \otimes I =
+\begin{pmatrix}
+0 & 1 \\
+1 & 0
+\end{pmatrix}
+\otimes
+\begin{pmatrix}
+1 & 0 \\
+0 & 1
+\end{pmatrix}
+=
+\begin{pmatrix}
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & 1 \\
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0
+\end{pmatrix}.
+$$
+
+\medskip
+\small
+Interpretação física: aplicar $X$ no primeiro qubit e identidade no segundo.
+\end{frame}
+
+% ============================================================
+
+
+\section{Postulados da mecânica quântica}
+
+% ============================================================
+\subsection{Postulado 1 - Espaço de estados}
+
+\begin{frame}{Postulado 1 - Espaço de estados}
+\textbf{Postulado 1.} A um sistema físico isolado associa-se um \textbf{espaço de Hilbert complexo}
+$\mathcal{H}$, chamado \emph{espaço de estados} do sistema. O estado do sistema é completamente descrito por um \textbf{vetor unitário} $\ket{\psi}\in\mathcal{H}$.
+
+\medskip
+\textbf{Equivalência (a menos de uma fase global).}
+Estados que diferem por uma fase global representam o mesmo estado:
+$$
+\ket{\psi}\sim e^{i\alpha}\ket{\psi}.
+$$
+
+\end{frame}
+
+\begin{frame}{Postulado 1 - Qubit e parametrização (Esfera de Bloch)}
+Para um qubit, $\mathcal{H}=\mathbb{C}^2$, na base computacional $\{\ket{0},\ket{1}\}$:
+$$
+\ket{\psi}=a\ket{0}+b\ket{1},\qquad |a|^2+|b|^2=1.
+$$
+
+Removendo a fase global, pode-se escrever (a menos da equivalência):
+$$
+\ket{\psi}=
+\cos\!\left(\frac{\theta}{2}\right)\ket{0}
++e^{i\varphi}\sin\!\left(\frac{\theta}{2}\right)\ket{1},
+\quad 0\le\theta\le\pi,\ 0\le\varphi<2\pi.
+$$
+
+\medskip
+\textbf{Leitura geométrica:} o par $(\theta,\varphi)$ identifica um ponto na Esfera de Bloch,
+com vetor
+$$
+\vec r=(\sin\theta\cos\varphi,\ \sin\theta\sin\varphi,\ \cos\theta).
+$$
+\end{frame}
+
+\begin{frame}{Postulado 1 - Qubit e parametrização (Esfera de Bloch)}
+  \begin{figure}[ht!]
+      \centering
+      \includegraphics[width=0.4\textwidth]{../img/blochsphere.png}
+      \caption{Estado $\ket{\psi}$ representado na Esfera de Bloch.}
+      \label{fig:qubiteb}
+  \end{figure}
+\end{frame}
+
+% ============================================================
+\subsection{Postulado 2 - Evolução}
+
+\begin{frame}{Postulado 2 - Evolução}
+\textbf{Postulado 2.} A evolução temporal de um sistema quântico \textbf{fechado} é descrita por
+uma \textbf{transformação unitária}. Se o estado no instante $t_1$ é $\ket{\psi}$, então no instante
+$t_2$:
+$$
+\ket{\psi'} = U\ket{\psi},
+$$
+onde $U$ depende apenas do sistema e dos instantes $t_1,t_2$, e satisfazendo
+$$
+U^\dagger U = U U^\dagger= I.
+$$
+
+\medskip
+\textbf{Consequências:}
+\begin{itemize}
+  \item Preservação de norma: $\|\ket{\psi'}\|=\|\ket{\psi}\|$.
+  \item Reversibilidade: $U^{-1}=U^\dagger$.
+  \item Portas quânticas em circuitos são operadores unitários.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Postulado 2 - Exemplos e evolução contínua}
+\textbf{Exemplos (Pauli).}
+$$
+X=\begin{pmatrix}0&1\\1&0\end{pmatrix},\quad
+Z=\begin{pmatrix}1&0\\0&-1\end{pmatrix}
+\quad\Rightarrow\quad
+X\ket{0}=\ket{1},\ X\ket{1}=\ket{0},\ Z\ket{1}=-\ket{1}.
+$$
+
+\medskip
+\textbf{Exemplo (Hadamard).}
+$$
+H=\frac{1}{\sqrt2}\begin{pmatrix}1&1\\1&-1\end{pmatrix},
+\qquad
+H\ket{0}=\frac{1}{\sqrt2}(\ket{0}+\ket{1})=\ket{+}.
+$$
+\end{frame}
+
+\begin{frame}{Postulado 2 - Evolução Contínua}
+
+A dinâmica contínua é governada pela \textbf{equação de Schrödinger dependente do tempo}:
+
+$$
+i\hbar \frac{d}{dt}\ket{\psi(t)} = H(t)\ket{\psi(t)},
+$$
+
+onde: $H(t)$ é o \textbf{Hamiltoniano} (operador hermitiano) e $\hbar$ é a constante de Planck.
+
+\medskip
+\textbf{Caso independente do tempo:}
+
+$$
+U(t_2,t_1) =
+\exp\!\left(
+-\frac{i}{\hbar} H (t_2 - t_1)
+\right).
+$$
+
+\medskip
+\textbf{Caso dependente do tempo:}
+
+$$
+U(t_2,t_1)
+=
+\mathcal{T}
+\exp\!\left(
+-\frac{i}{\hbar}
+\int_{t_1}^{t_2} H(s)\,ds
+\right),
+$$
+
+onde $\mathcal{T}$ é o operador de ordenação temporal.
+\end{frame}
+
+% ============================================================
+\subsection{Postulado 3 - Medição quântica}
+
+\begin{frame}{Postulado 3 - Medição}
+\textbf{Postulado 3.} Medições quânticas são descritas por um conjunto de operadores
+$\{M_i\}_{i=1}^m$ (operadores de medição) que satisfazem a \textbf{relação de completude}:
+$$
+\sum_{i=1}^m M_i^\dagger M_i = I.
+$$
+
+Se o sistema está no estado $\ket{\psi}$:
+\begin{itemize}
+  \item \textbf{Probabilidade} do resultado $i$:
+  $$
+  p(i)=\bra{\psi}M_i^\dagger M_i\ket{\psi}.
+  $$
+  \item \textbf{Estado pós-medida} (condicionado ao resultado $i$):
+  $$
+  \ket{\psi'}=\frac{M_i\ket{\psi}}{\sqrt{p(i)}}.
+  $$
+\end{itemize}
+
+\medskip
+\textbf{Intuição:} A medição, em geral, introduz aleatoriedade.
+\end{frame}
+
+\begin{frame}{Postulado 3 - Medição projetiva}
+\textbf{Medição projetiva.}
+Um caso importante ocorre quando $M_i=P_i$ são projetores ortogonais:
+$$
+P_i^2=P_i,\quad P_i^\dagger=P_i,\quad P_iP_j=0\ (i\neq j),\quad \sum_i P_i=I.
+$$
+
+\medskip
+\textbf{Exemplo: medição na base computacional.}
+$$
+M_0=\ket{0}\bra{0},\qquad M_1=\ket{1}\bra{1},\qquad I=M_0+M_1.
+$$
+Se
+$$
+\ket{\psi}=a\ket{0}+b\ket{1},
+$$
+então:
+$$
+p(0)=|a|^2,\quad p(1)=|b|^2,
+\qquad
+\ket{\psi_0}=\ket{0},\ \ket{\psi_1}=\ket{1}.
+$$
+
+\medskip
+\textbf{Em outras palavras:} Ao medir ``colapsamos'' o estado para um autovetor compatível com o resultado obtido.
+\end{frame}
+
+% ============================================================
+\subsection{Postulado 4 - Sistemas compostos}
+
+\begin{frame}{Postulado 4 - Sistemas compostos}
+\textbf{Postulado 4.} O espaço de estados de um sistema composto por dois subsistemas $A$ e $B$
+é o \textbf{produto tensorial} dos espaços individuais:
+$$
+\mathcal{H}_{AB}=\mathcal{H}_A\otimes\mathcal{H}_B.
+$$
+
+Se $\{\ket{j}\}_{j=1}^n$ é base de $\mathcal{H}_A$ e $\{\ket{k}\}_{k=1}^m$ é base de $\mathcal{H}_B$, então
+$\{\ket{i}\otimes\ket{j}\}$ é base de $\mathcal{H}_{AB}$.
+
+\medskip
+\textbf{Dimensão:}
+$$
+\dim(\mathcal{H}_A\otimes\mathcal{H}_B)=\dim(\mathcal{H}_A)\cdot \dim(\mathcal{H}_B).
+$$
+
+\medskip
+\textbf{Operadores em sistemas compostos:}
+$$
+(A\otimes B)(\ket{\psi}\otimes\ket{\phi})=A\ket{\psi}\otimes B\ket{\phi}.
+$$
+\end{frame}
+
+\begin{frame}{Postulado 4 - Estados separáveis e emaranhamento}
+\textbf{Estados produto (separáveis).}
+Um estado é separável se pode ser escrito como
+$$
+\ket{\psi_{AB}}=\ket{\psi_A}\otimes\ket{\psi_B}.
+$$
+
+\medskip
+\textbf{Emaranhamento.}
+Existem estados do sistema composto que \emph{não} podem ser escritos como produto tensorial.
+Exemplo (estado de Bell):
+$$
+\ket{\beta_{00}}=\frac{1}{\sqrt{2}}\big(\ket{00}+\ket{11}\big)\in \mathbb{C}^2\otimes\mathbb{C}^2.
+$$
+
+\medskip
+\textbf{Ideia da prova (esboço):}
+assumindo $\ket{\beta_{00}}=(a\ket{0}+b\ket{1})\otimes(c\ket{0}+d\ket{1})$,
+os coeficientes exigiriam simultaneamente $ac=\frac{1}{\sqrt2}$, $bd=\frac{1}{\sqrt2}$,
+e $ad=bc=0$, o que é impossível.
+\end{frame}
+
+% ==================================================================
+
+% ============================================================
+
+\section{Circuitos quânticos}
+
+% ============================================================
+\begin{frame}{Circuitos quânticos}
+
+A computação quântica no modelo de circuitos é descrita por:
+
+$$
+\textbf{Estado inicial} \quad \longrightarrow \quad
+\textbf{Portas unitárias} \quad \longrightarrow \quad
+\textbf{Medição}
+$$
+
+\medskip
+Formalmente:
+
+$$
+\ket{\psi_{\text{out}}}
+=
+U_k \cdots U_2 U_1 \ket{\psi_{\text{in}}}
+$$
+
+onde cada $U_i$ é unitário.
+
+\medskip
+\textbf{Componentes fundamentais:}
+\begin{itemize}
+    \item Registradores de qubits
+    \item Portas unitárias
+    \item Medição na base computacional
+\end{itemize}
+\end{frame}
+
+% ============================================================
+\begin{frame}{Registradores e estados iniciais}
+
+Um circuito com $n$ qubits atua sobre:
+
+$$
+\mathcal{H} = (\mathbb{C}^2)^{\otimes n}
+$$
+
+\medskip
+Estado inicial padrão:
+
+$$
+\ket{0}^{\otimes n}
+=
+\ket{00\cdots0}
+$$
+
+\medskip
+Estado geral:
+
+$$
+\ket{\psi}
+=
+\sum_{x\in\{0,1\}^n}
+\alpha_x \ket{x}
+\quad
+\text{com}
+\quad
+\sum_x |\alpha_x|^2 = 1.
+$$
+
+\medskip
+Dimensão do espaço:
+$$
+\dim(\mathcal{H}) = 2^n.
+$$
+\end{frame}
+
+% ============================================================
+\begin{frame}{Portas de 1 qubit}
+
+Uma porta de 1 qubit é um operador unitário $U:\C^2\to \C^2$.
+
+\medskip
+Exemplos:
+
+$$
+X=
+\begin{pmatrix}
+0 & 1 \\
+1 & 0
+\end{pmatrix},
+\quad
+Z=
+\begin{pmatrix}
+1 & 0 \\
+0 & -1
+\end{pmatrix},
+$$
+
+$$
+H=\frac{1}{\sqrt{2}}
+\begin{pmatrix}
+1 & 1 \\
+1 & -1
+\end{pmatrix}.
+$$
+
+\medskip
+Aplicação em $n$ qubits:
+
+$$
+H_k =
+I \otimes \cdots \otimes H \otimes \cdots \otimes I.
+$$
+\end{frame}
+
+% ============================================================
+\begin{frame}{Portas de múltiplos qubits}
+
+Portas que atuam simultaneamente em dois ou mais qubits
+introduzem correlações.
+
+\medskip
+Exemplo: \textbf{CNOT}
+
+$$
+\text{CNOT}\ket{x,y}
+=
+\ket{x, y \oplus x}.
+$$
+
+Matriz:
+
+$$
+\begin{pmatrix}
+1&0&0&0\\
+0&1&0&0\\
+0&0&0&1\\
+0&0&1&0
+\end{pmatrix}.
+$$
+
+\end{frame}
+
+\begin{frame}{Emaranhamento: Estados de Bell}
+
+\medskip
+\textbf{Construção a partir de $\ket{00}$:}
+
+Aplicando $H$ no primeiro qubit e depois $\text{CNOT}_{1,2}$:
+
+\begin{align*}
+  \ket{00} &\xrightarrow{H \otimes I} \frac{1}{\sqrt{2}}(\ket{00}+\ket{10})\\
+           &\xrightarrow{\text{CNOT}} \frac{1}{\sqrt{2}}(\ket{00}+\ket{11}) \\
+           &=\ket{\beta_{00}}.
+\end{align*}
+
+\medskip
+\textbf{Os quatro estados de Bell:}
+
+\begin{align*}
+\ket{\beta_{00}}=\frac{1}{\sqrt{2}}(\ket{00}+\ket{11}), \quad \ket{\beta_{01}}=\frac{1}{\sqrt{2}}(\ket{01}+\ket{10}), \\
+\ket{\beta_{10}}=\frac{1}{\sqrt{2}}(\ket{00}-\ket{11}), \quad \ket{\beta_{11}}=\frac{1}{\sqrt{2}}(\ket{01}-\ket{10}).  
+\end{align*}
+
+\end{frame}
+
+% ============================================================
+\begin{frame}{Profundidade do circuito}
+
+\medskip
+\textbf{Profundidade:}
+número máximo de camadas de portas que devem ser aplicadas sequencialmente.
+
+O circuito a baixo tem profundidade 2.
+
+  \begin{figure}[ht!]
+      \centering
+      \includegraphics[width=0.4\textwidth]{../img/b00.png}
+      \caption{Circuito para geração do estado $\ket{\beta_{00}}$.}
+      \label{fig:b00}
+  \end{figure}
+
+
+\end{frame}
+
+% ============================================================
+\begin{frame}{Universalidade}
+
+Um conjunto de portas é \textbf{universal} se pode aproximar
+qualquer operador unitário com precisão arbitrária.
+
+\medskip
+Exemplo de conjunto universal:
+
+$$
+\{H, T, \text{CNOT}\}
+$$
+
+onde
+
+$$
+T=
+\begin{pmatrix}
+1 & 0 \\
+0 & e^{i\pi/4}
+\end{pmatrix}.
+$$
+
+\end{frame}
+
+% ============================================================
+\begin{frame}{Medição no modelo de circuitos}
+
+Ao final do circuito, mede-se na base computacional:
+
+$$
+\{\ket{x}\bra{x}\}_{x\in\{0,1\}^n}.
+$$
+
+\medskip
+Probabilidade de obter $x$:
+
+$$
+P(x) = |\alpha_x|^2.
+$$
+
+\medskip
+Resultado clássico produzido pelo circuito:
+
+$$
+x \in \{0,1\}^n.
+$$
+
+\medskip
+Assim, um circuito quântico implementa uma
+\textbf{distribuição de probabilidade} sobre sequências binárias.
+\end{frame}
+
+\begin{frame}{Teorema da Não clonagem}
+  \begin{theorem}[Teorema da não clonagem para um qubit]\label{th:clone}
+    Não existem $\ket{s}\in \C^2$ e $U:\C^4\to \C^4$, um operador unitário, tais que $U(\ket{\psi}\otimes \ket{s}) = \ket{\psi}\otimes\ket{\psi}$ para todo $\ket{\psi}\in \C^2$. Em outras palavras, não é possível construir um circuito quântico que realize a cópia de um qubit arbitrário $\ket{\psi}$.
+  \end{theorem}
+\end{frame}
+
+\begin{frame}{Teorema da Não clonagem}
+    Se a cópia funciona para os estados $\ket{\psi}$ e $\ket{\varphi}$, temos
+        %
+            \begin{align*}
+                U(\ket{\psi}\otimes\ket{s}) = \ket{\psi}\otimes\ket{\psi} \\
+                U(\ket{\varphi}\otimes\ket{s}) = \ket{\varphi}\otimes\ket{\varphi}.
+            \end{align*}
+        %
+        Ao tomar o produto interno das equações acima temos
+        %
+        \begin{align*}
+            \braket{U(\ket{\psi}\otimes\ket{s})}{U(\ket{\varphi}\otimes\ket{s})}  &= \braket{(\ket{\psi}\otimes\ket{s})}{(\ket{\varphi}\otimes\ket{s})} \\
+                        &=\braket{\psi}{\varphi} \\
+                        &= \braket{(\ket{\psi}\otimes\ket{\varphi})}{(\ket{\psi}\otimes\ket{\varphi})} \\
+                        &= \braket{\psi}{\varphi}^2,
+        \end{align*}
+        %
+        portanto,
+        %
+        \begin{equation*}
+            \braket{\psi}{\varphi}= \braket{\psi}{\varphi}^2 \implies \braket{\psi}{\varphi}=0 \text{ ou } \braket{\psi}{\varphi}=1,
+        \end{equation*}
+        que só é possível se $\ket{\varphi}=\ket{\psi}$ ou se $\ket{\varphi}$ e $\ket{\psi}$ são ortogonais.
+\end{frame}
+
+\begin{frame}{Teleporte Quântico: cenário e objetivo}
+\textbf{Objetivo:} transferir um qubit desconhecido
+$$
+\ket{\psi}=a\ket{0}+b\ket{1}
+$$
+de Alice para Bob sem um canal de comunicação quântica entre eles.
+
+\medskip
+\textbf{Cenário:}
+\begin{itemize}
+    \item Alice e Bob compartilham previamente um par EPR (assuma $\ket{\beta_{00}}$).
+    \item Anos depois, Alice precisa entregar o estado $\ket{\psi}$ a Bob.
+    \item Alice pode enviar apenas \textbf{informação clássica} para Bob.
+\end{itemize}
+
+\medskip
+\textbf{Ideia:} usar emaranhamento + 2 bits clássicos + operações locais em Bob.
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Pontos importantes}
+\textbf{Dificuldades fundamentais:}
+\begin{itemize}
+    \item Alice possui \emph{apenas uma cópia} de $\ket{\psi}$.
+    \item Pelo \textbf{teorema da não-clonagem}, ela não pode copiar $\ket{\psi}$.
+    \item Uma medição direta altera o estado, pois o estado pós-medida depende do resultado.
+\end{itemize}
+
+\medskip
+Mesmo que Alice conhecesse $\ket{\psi}$, descrevê-lo exatamente exigiria especificar parâmetros em um conjunto contínuo.
+
+\medskip
+\textbf{Solução:} explorar o par EPR compartilhado para reconstruir $\ket{\psi}$ em Bob.
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Circuito do teleporte}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.7\textwidth]{../img/qtel.png}
+    \caption{Circuito quântico para teleporte de um qubit.}
+    \label{fig:qtel_beamer}
+\end{figure}
+
+\medskip
+\textbf{Resumo operacional:}
+\begin{itemize}
+    \item Alice aplica CNOT e Hadamard em seus qubits, mede e obtém dois bits.
+    \item Alice envia os 2 bits a Bob (canal clássico).
+    \item Bob aplica uma correção $I, X, Z$ ou $XZ$.
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Estado de entrada e aplicação do CNOT}
+Assuma $\ket{\psi}=a\ket{0}+b\ket{1}$ e o par EPR $\ket{\beta_{00}}=\frac{1}{\sqrt2}(\ket{00}+\ket{11})$.
+
+\medskip
+\textbf{Estado de entrada:}
+\begin{align*}
+\ket{\psi_0}
+&=\ket{\psi}\otimes\ket{\beta_{00}}\\
+&=\frac{1}{\sqrt2}\Big(a\ket{0}\otimes(\ket{00}+\ket{11})+b\ket{1}\otimes(\ket{00}+\ket{11})\Big).
+\end{align*}
+
+\medskip
+Convenção: os dois primeiros qubits são de Alice e o terceiro é de Bob.
+
+\medskip
+\textbf{Após CNOT (controle = qubit $\ket{\psi}$; alvo = metade do EPR de Alice):}
+$$
+\ket{\psi_1}=\frac{1}{\sqrt2}\Big(a\ket{0}\otimes(\ket{00}+\ket{11})+b\ket{1}\otimes(\ket{10}+\ket{01})\Big).
+$$
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Aplicação do Hadamard e decomposição em 4 casos}
+Após aplicar Hadamard no primeiro qubit de Alice:
+\begin{equation*}
+\begin{split}
+\ket{\psi_2}
+&=\frac{1}{2}\Big(a(\ket{0}+\ket{1})\otimes(\ket{00}+\ket{11})
++b(\ket{0}-\ket{1})\otimes(\ket{10}+\ket{01})\Big)\\
+&=\frac{1}{2}\Big( \\
+&\qquad +\ket{00}(a\ket{0}+b\ket{1})  \\
+&\qquad +\ket{01}(a\ket{1}+b\ket{0}) \\
+&\qquad +\ket{10}(a\ket{0}-b\ket{1}) \\
+&\qquad +\ket{11}(a\ket{1}-b\ket{0}) \\
+&\quad\Big).
+\end{split}
+\end{equation*}
+
+\medskip
+Os qubits de Alice determinam um dentre quatro termos (resultados clássicos $00,01,10,11$).
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Medição de Alice, comunicação clássica e correções de Bob}
+\textbf{Estado de Bob condicionado ao resultado de Alice:}
+\begin{align*}
+00 &\mapsto \ket{\psi_3(00)} = a\ket{0}+b\ket{1} \\
+01 &\mapsto \ket{\psi_3(01)} = a\ket{1}+b\ket{0} \\
+10 &\mapsto \ket{\psi_3(10)} = a\ket{0}-b\ket{1} \\
+11 &\mapsto \ket{\psi_3(11)} = a\ket{1}-b\ket{0}
+\end{align*}
+
+\medskip
+\textbf{Correção em Bob:}
+\begin{itemize}
+    \item $00$: $I$ (não faz nada)
+    \item $01$: aplica $X$
+    \item $10$: aplica $Z$
+    \item $11$: aplica $X$ e depois $Z$
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}{Teleporte quântico (Qiskit)}
+  Implementação em Qiskit (\texttt{quantum-teleportation.ipynb}).
+
+  \begin{figure}[ht!]
+      \centering
+      \includegraphics[width=0.95\textwidth]{../img/tqdraw.png}
+      \caption{Diagrama do circuito para o teleporte quântico.}
+      \label{fig:tqdraw}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Teleporte quântico (Qiskit)}
+  Qubit teleportado sempre aparece com resultado $\ket{0}$.
+
+    \begin{figure}[ht!]
+      \centering
+      \includegraphics[width=0.5\textwidth]{../img/tqsimdraw.png}
+      \caption{Histograma para simulação de medições no circuito do teleporte quântico.}
+      \label{fig:tqsimdraw}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Comparativo}
+\begin{columns}[T]
+  \column{0.48\textwidth}
+  \textbf{Computação Clássica}
+  \begin{itemize}
+      \item Unidade básica: bit (0 ou 1)
+      \item Estados discretos em $\{0,1\}^n$
+      \item Funções booleanas
+      \item Operações podem ser irreversíveis
+      \item Cópia de bits
+      \item Medição não altera o estado
+  \end{itemize}
+
+  \column{0.48\textwidth}
+  \textbf{Computação Quântica}
+  \begin{itemize}
+      \item Unidade básica: qubit ($\ket{0}, \ket{1}$)
+      \item Espaço de Hilbert de dimensão $2^n$
+      \item Operadores unitários
+      \item Todas as operações são reversíveis
+      \item Não clonagem de qubits
+      \item Medição colapsa o estado
+  \end{itemize}
+\end{columns}
+\end{frame}
+
+\section{Exemplos de algoritmos quânticos}
+
+\subsection{Algoritmo de Grover}
+
+\begin{frame}{Problema de Busca Não-Estruturada}
+
+Seja $N=2^n$ e o conjunto de estados computacionais
+$$
+\{x \mid x \in \{0,1\}^n\}.
+$$
+
+Desejamos encontrar $x^\star$ tal que
+
+$$
+f(x^\star)=\begin{cases}
+    1, \quad \text{ se } x = x^\star \\
+    0 , \quad \text{ caso contrário}.
+  \end{cases}
+$$
+
+\textbf{Oráculo quântico:}
+$$
+U_f\ket{x} = (-1)^{f(x)}\ket{x}.
+$$
+
+\begin{itemize}
+  \item $U_f$ aplica fase $-1$ apenas no estado marcado.
+  \item Não há estrutura conhecida em $f$.
+  \item Busca clássica: $O(N)$.
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Estado inicial}
+
+Aplicamos Hadamard em todos os qubits:
+
+$$
+\ket{s} = H^{\otimes n}\ket{0}^{\otimes n}
+= \frac{1}{\sqrt{N}}\sum_{x\in \{0,1\}^n}\ket{x}.
+$$
+
+Definimos o estado ortogonal ao estado marcado:
+
+$$
+\ket{x^\star_\perp} = \frac{1}{\sqrt{N-1}}\sum_{x\neq x^\star}\ket{x}.
+$$
+
+O estado $\ket{s}$ pertence ao subespaço $V$ gerado por $\{\ket{x^\star}, \ket{x^\star_\perp}\}$:
+
+$$
+\ket{s} = \sen(\theta)\ket{x^\star} + \cos(\theta)\ket{x^\star_\perp}, \qquad \sen(\theta)=\frac{1}{\sqrt{N}}, \quad \cos(\theta)=\sqrt{\frac{N-1}{N}}.
+$$
+
+\end{frame}
+
+% %------------------------------------------------
+\begin{frame}{Ação do Oráculo no subespaço}
+
+No subespaço $V$:
+
+$$
+U_f =
+\begin{pmatrix}
+-1 & 0 \\
+0 & 1
+\end{pmatrix}, \qquad \ket{s} = \begin{bmatrix}
+  \sen \theta \\
+  \cos \theta
+\end{bmatrix}
+$$
+
+\begin{itemize}
+\item Inverte o sinal do estado marcado.
+\item Mantém os demais estados invariantes.
+\item A dinâmica ocorre apenas em um espaço de dimensão 2.
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Operador difusor}
+
+Definimos no subespaço $V$
+
+$$
+D = 2\ket{s}\!\bra{s} - I. = \begin{pmatrix}
+  -\cos(2\theta) & \sen(2\theta) \\
+  \sen(2\theta) & \cos(2\theta)
+\end{pmatrix}.
+$$
+
+Como $\ket{s}\bra{s}=\big(H^{\otimes^n}\ket{0}\big)\big(\bra{0}H^{\otimes^n}\big)$, podemos implementar $D$ como:
+
+$$
+D =
+H^{\otimes n}
+(2\ket{0}\!\bra{0}-I)
+H^{\otimes n}.
+$$
+
+\textbf{Interpretação:} reflexão em torno de $\ket{s}$.
+
+\end{frame}
+
+% %------------------------------------------------
+\begin{frame}{Iteração de Grover}
+
+Definimos:
+
+$$
+G = D U_f.
+$$
+
+
+No subespaço $V$:
+
+$$
+G =
+\begin{pmatrix}
+\cos(2\theta) & \sen(2\theta) \\
+-\sen(2\theta) & \cos(2\theta)
+\end{pmatrix}.
+$$
+
+\begin{itemize}
+\item $G$ é uma rotação no plano $V$.
+\item A cada iteração, a amplitude do estado marcado aumenta.
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Evolução Após $r$ iterações}
+
+$$
+G^r\ket{s}
+=
+\sen((2r+1)\theta)\ket{x^\star}
++
+\cos((2r+1)\theta)\ket{x^\star_\perp}.
+$$
+
+Probabilidade de medir o estado marcado:
+
+$$
+P(r)=\sen^2((2r+1)\theta).
+$$
+
+\textbf{Objetivo:} maximizar $P(r)$.
+
+\end{frame}
+
+% %------------------------------------------------
+\begin{frame}{Número ótimo de iterações}
+
+Queremos:
+
+$$
+(2r+1)\theta \approx \frac{\pi}{2}.
+$$
+
+Logo,
+
+$$
+r \approx \frac{\pi}{4\theta}-\frac{1}{2}.
+$$
+
+Como $\theta \approx \frac{1}{\sqrt{N}}$:
+
+$$
+r \approx
+\left\lfloor
+\frac{\pi}{4}\sqrt{N}
+\right\rfloor.
+$$
+
+O algoritmo encontra $x^\star$ com alta probabilidade usando $O(\sqrt{N})$ invocações do oráculo.
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Caso com $M$ Soluções}
+
+Definimos
+
+$$
+\ket{x^\star} = \frac{1}{\sqrt{M}}\sum_{f(x)=1}\ket{x}, \qquad \ket{x^\star_\perp} = \frac{1}{\sqrt{N-M}}\sum_{f(x)=0}\ket{x}.
+$$
+
+Assim,
+
+$$
+\ket{s} = \frac{1}{\sqrt{N}} \sum_{x\in \{0, 1\}^n} \ket{x} = \frac{M}{N}\ket{x^\star} + \frac{N-M}{N}\ket{x^\star_\perp}.
+$$
+
+Tomando $\sen\theta = \sqrt{M/N}$ obtemos de forma análoga
+
+$$
+r \approx
+\left\lfloor
+\frac{\pi}{4}\sqrt{\frac{N}{M}}
+\right\rfloor.
+$$
+
+\end{frame}
+
+\begin{frame}{Algoritmo de Grover (Qiskit)}
+  Implementação em Qiskit (\texttt{grovers-algorithm.ipynb}).
+
+  \begin{figure}[ht!]
+      \centering
+      \includegraphics[width=0.65\textwidth]{../img/alggrover.png}
+      \caption{Diagrama do circuito quântico para o algoritmo de Grover para quatro qubits.}
+      \label{fig:grovercirc}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Algoritmo de Grover (Qiskit)}
+  Estados marcados aparecem com maior frequência.
+
+  \begin{figure}[ht!]
+      \centering
+      \includegraphics[width=0.5\textwidth]{../img/groveralghist.png}
+      \caption{Histograma de medição para o algoritmo de Grover.}
+      \label{fig:groveralghist}
+  \end{figure}
+\end{frame}
+
+\subsection{QAOA}
+
+%------------------------------------------------
+\begin{frame}{Problemas de Otimização Combinatória}
+Seja $X=\{0,1\}^n$ o conjunto de soluções (strings binárias)
+$$
+z=z_1z_2\cdots z_n \in \{0,1\}^n.
+$$
+
+Um problema de otimização combinatória é dado por funções locais
+$$
+C_\alpha: X\to \{0,1\},\qquad \alpha=1,\dots,m,
+$$
+e pela função objetivo
+$$
+C(z)=\sum_{\alpha=1}^m C_\alpha(z).
+$$
+
+\begin{itemize}
+  \item Objetivo: encontrar $z$ que maximize $C(z)$ (solução ótima).
+  \item Otimização aproximada: buscar $z$ com $C(z)$ próximo do máximo.
+  \item Hipótese de \emph{localidade}: cada $C_\alpha$ é implementável com $O(1)$ portas.
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Mapeamento para um espaço de Hilbert}
+Considere o espaço de Hilbert gerado pelas sequências binárias de comprimento $n$
+$$
+\mathcal{H} = \{\ket{z}: z\in X\},\qquad \dim(\mathcal{H})=2^n,
+$$
+com decomposição
+$$
+\mathcal{H}=\mathcal{H}_1\otimes\cdots\otimes \mathcal{H}_n,
+$$
+onde cada $H_i$ tem dimensão $2$ (um qubit).
+
+A função objetivo define um operador diagonal (hermitiano) na base computacional:
+$$
+C=\sum_{z\in X} C(z)\ket{z}\bra{z}.
+$$
+
+Logo, $\ket{z}$ são autovetores de $C$:
+$$
+C\ket{z}=C(z)\ket{z}.
+$$
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Operador de custo}
+Como $C$ é hermitiano, definimos o operador unitário de custo:
+$$
+U(C,\gamma)=\prod_{\alpha=1}^m e^{-i\gamma C_\alpha}=e^{-i\gamma C},
+\qquad \gamma\in[0,2\pi).
+$$
+
+\begin{itemize}
+\item Em geral, produtos de exponenciais podem não comutar.
+\item Aqui, cada $C_\alpha$ é diagonal na base computacional $\Rightarrow$ comutam entre si.
+\item Implementação em circuito: profundidade máxima $O(m)$ (uma camada por termo local).
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Operador de mistura}
+Defina, para cada qubit $j$,
+$$
+X_j = I\otimes\cdots\otimes I \otimes X \otimes I\otimes\cdots\otimes I,
+$$
+e
+$$
+B=\sum_{j=1}^n X_j.
+$$
+
+O operador unitário de mistura é
+$$
+U(B,\beta)=\prod_{j=1}^n e^{-i\beta X_j}=e^{-i\beta B},
+\qquad \beta\in[0,\pi).
+$$
+
+Além disso, podemos implementar $U(B, \beta)$ com $O(1)$ portas
+$$
+U(B,\beta)=\bigotimes_{j=1}^n R_x(2\beta).
+$$
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Inicialização: estado uniforme}
+Inicializamos em
+$$
+\ket{\psi}=\ket{0}^{\otimes n},
+$$
+e aplicamos $H^{\otimes n}$:
+$$
+\ket{s}=H^{\otimes n}\ket{0}^{\otimes n}
+=\frac{1}{\sqrt{2^n}}\sum_{z\in X}\ket{z}.
+$$
+
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Estado variacional do QAOA (profundidade $p$)}
+Para $p\ge 1$, dados ângulos
+$$
+\gamma_1,\dots,\gamma_p,\qquad \beta_1,\dots,\beta_p,
+$$
+definimos o estado
+$$
+\ket{\gamma,\beta}
+=
+U(B,\beta_p)U(C,\gamma_p)\cdots U(B,\beta_1)U(C,\gamma_1)\ket{s}.
+$$
+
+Forma compacta:
+$$
+\ket{\gamma,\beta}=\prod_{l=p}^1 e^{-i\beta_l B}e^{-i\gamma_l C}\,\ket{s}.
+$$
+
+\begin{itemize}
+\item Cada camada aplica (custo) $\rightarrow$ (mistura).
+\item Profundidade máxima: $O(mp)$ (custo: $O(m)$; mistura: $O(1)$).
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Função objetivo do QAOA}
+A qualidade do estado é medida pela expectativa ou média:
+$$
+F_p(\gamma,\beta)=\braket{\gamma,\beta}{C|\gamma,\beta}.
+$$
+
+Definimos o melhor valor atingível com profundidade $p$:
+$$
+M_p=\max_{\gamma,\beta} F_p(\gamma,\beta).
+$$
+
+Monotonicidade:
+$$
+M_p\ge M_{p-1},
+$$
+pois é sempre possível escolher $\gamma_p=\beta_p=0$ e “simular” a profundidade menor.
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Limite superior via princípio variacional}
+Se $C$ tem decomposição espectral
+$$
+C=\sum_{i=1}^m c_i\ket{e_i}\bra{e_i},\qquad c_1\ge c_2\ge\cdots\ge c_m\ge 0,
+$$
+então para qualquer estado normalizado $\ket{\psi}$:
+$$
+\bra{\psi}C\ket{\psi}\le c_1,
+\quad \text{e}\quad
+\max_{\|\psi\|=1}\bra{\psi}C\ket{\psi}=c_1.
+$$
+
+\begin{itemize}
+\item O ótimo “global” é atingido no autoespaço do maior autovalor.
+\item No QAOA, os estados permitidos são restritos à família $\ket{\gamma,\beta}$.
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Ideia central: aproximar o ótimo aumentando $p$}
+Em geral, pode não existir $(\gamma,\beta)$ tal que
+$$
+\ket{\gamma,\beta}=\ket{e_1}.
+$$
+
+No entanto, aumentando $p$, a família de estados variacionais enriquece e (sob hipóteses do artigo) obtém-se:
+$$
+\lim_{p\to\infty} M_p=\max_{z\in X} C(z).
+$$
+
+\begin{itemize}
+\item Interpretação: maior expressividade do circuito com mais camadas.
+\item A seguir: conexão informal com evolução adiabática + discretização.
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Fórmula de Lie--Trotter (ponte para discretização)}
+Para operadores hermitianos $B$ e $C$,
+$$
+e^{\, i(B+C)\Delta t}=e^{\, iB\Delta t}\,e^{\, iC\Delta t}\;+\;O(\Delta t^2),
+$$
+onde o erro é entendido na norma de operadores:
+$$
+\|e^{i(B+C)\Delta t}-e^{iB\Delta t}e^{iC\Delta t}\|\le c\,\Delta t^2.
+$$
+
+\begin{itemize}
+\item Aproxima a exponencial do hamiltoniano somado por produto de exponenciais.
+\item Permite implementar evolução composta usando blocos simples (custo/mistura).
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Evolução adiabática: visão contínua (QAA)}
+Com $\hbar=1$, a evolução temporal com hamiltoniano $H(t)$ é
+$$
+U(t_1,t_2)=\mathcal{T}\exp\!\left(-i\int_{t_1}^{t_2} H(t)\,dt\right),
+\qquad
+\ket{\psi(T)}=U(T)\ket{\psi(0)}.
+$$
+
+No QAA, usa-se interpolação linear:
+$$
+H(t)=\left(1-\frac{t}{T}\right)B+\frac{t}{T}C,
+\quad t\in[0,T],
+$$
+com $H(0)=B$ e $H(T)=C$.
+
+Teorema adiabático (ideia): para $T$ grande e boa lacuna espectral,
+$$
+\ket{\psi(T)} \approx \text{autovetor de maior autovalor de } C.
+$$
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Discretização do QAA}
+Divida $[0,T]$ em $p$ subintervalos de tamanho $\Delta t=T/p$ e pontos $t_l=l\Delta t$.
+
+$$
+U(T)=\prod_{l=p-1}^{0} U(t_l,t_{l+1}).
+$$
+
+Aproximando o hamiltoniano por seu valor em $t_l$:
+$$
+U(t_l,t_{l+1}) \approx e^{-i\Delta t\big((1-s_l)B+s_lC\big)},
+\qquad s_l=\frac{l}{p}.
+$$
+
+Aplicando Lie--Trotter:
+$$
+e^{-i\Delta t\big((1-s_l)B+s_lC\big)}
+\approx e^{-i\beta_l B}\,e^{-i\gamma_l C},
+$$
+com
+$$
+\beta_l=\Delta t(1-s_l),\qquad \gamma_l=\Delta t\,s_l.
+$$
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Discretização do QAA}
+Assim,
+$$
+  U(T)\ket{s}
+  \approx
+  \left(\prod_{l=p-1}^{0} e^{-i\beta_l B}e^{-i\gamma_l C}\right)\ket{s}
+  =\ket{\gamma,\beta}.
+$$
+
+  \begin{itemize}
+  \item QAOA $\approx$ discretização de uma evolução adiabática contínua.
+  \item Parâmetros $(\gamma_l,\beta_l)$ codificam “passos” da interpolação.
+  \item Para $p$ grande (passos pequenos), aproxima-se a evolução contínua.
+  \end{itemize}
+\end{frame}
+
+%------------------------------------------------
+\begin{frame}{Considerações}
+  \begin{itemize}
+  \item QAOA constrói estados variacionais com camadas alternadas:
+  $$
+  U(C,\gamma_l) \ \text{(custo)}\quad\text{e}\quad U(B,\beta_l)\ \text{(mistura)}.
+  $$
+  \item Otimizando os $2p$ ângulos maximizamos
+  $$
+  F_p(\gamma,\beta)=\braket{\gamma,\beta|C|\gamma,\beta}.
+  $$
+  \item Aumentar $p$ aumenta expressividade e conecta-se ao limite adiabático:
+  $$
+  \lim_{p\to\infty} M_p=\max_{z\in X} C(z).
+  $$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{QAOA (Qiskit)}
+  Grafo para busca do corte máximo
+
+    \begin{figure}[ht!]
+        \centering
+        \includegraphics[width=0.5\textwidth]{../img/gqaoa.png}
+        \caption{Grafo para uso no QAOA.}
+        \label{fig:gqaoa}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{QAOA (Qiskit)}
+  Implementação em Qiskit (\texttt{qaoa.ipynb}).
+
+    \begin{figure}[ht!]
+        \centering
+        \includegraphics[width=0.9\textwidth]{../img/qaoaex.png}
+        \caption{Circuito do QAOA.}
+        \label{fig:qaoaexd}
+    \end{figure}
+\end{frame}
+
+\begin{frame}{QAOA (Qiskit)}
+  Corte máximo aparece com maior frequência.
+
+  \begin{figure}[ht!]
+      \centering
+      \includegraphics[width=0.5\textwidth]{../img/qaoafim.png}
+      \caption{Histograma de medida com o resultado correto para o corte máximo.}
+      \label{fig:qaoafim}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Agradecimentos}
+
+\begin{center}
+\small Muito obrigado!
+\end{center}
+
+\end{frame}
+
+\end{document}

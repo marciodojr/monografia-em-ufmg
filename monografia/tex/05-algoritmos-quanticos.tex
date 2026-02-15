@@ -1,0 +1,740 @@
+% !TEX root = Monografia.tex
+
+\chapter[Exemplos de algoritmos quânticos]{Exemplos de algoritmos quânticos}
+\label{chap:algoq}
+
+\section{Introdução}
+
+Neste capítulo será feito o estudo de dois algoritmos quânticos, o algoritmo de Grover e o Algoritmo Quântico de Otimização Aproximada (QAOA). O algoritmo de Grover é um algoritmo para busca não estruturada em um conjunto de dados que utiliza uma função oráculo para avaliar o valor (ou valores) procurados, publicado em 1996 \cite{groveralgo}. A vantagem deste algoritmo é que é exigido somente $O(\sqrt{N})$ avaliações do oráculo para encontrar os valores, onde $N$ é a cardinalidade do domínio da busca. A busca não estruturada clássica possui complexidade $O(N)$, o algorítmo de Grover oferece um ganho bastante expressivo em relação aos algoritmos clássicos. O segundo algoritmo, QAOA, publicado em \cite{farhi2014quantumapproximateoptimizationalgorithm}, é um algoritmo quântico utilizado para otimização combinatória, com o objetivo de encontrar soluções aproximadas, podendo a precisão ser aumentada com um aumento linear no tamanho do circuito quântico. O QAOA é de grande interesse pois oferece uma alternativa quântica aos algoritmos clássicos para busca de soluções aproximadas em problemas combinatórios. Alguns exemplos de problemas que podem ser mapeados como problemas de otimização combinatória e pertencem à classe \textsf{NP-HARD} são o Problema do Caixeiro Viajante, Problema da Mochila, Coloração de Grafos, Córte Máximo em grafos entre outros. Neste capítulo, o QAOA será aplicado para buscar de corte máximo aproximado em grafos.
+
+\section{Algoritmo de Grover (busca não-estruturada)}
+
+\subsection{Problema de busca}
+
+Seja $N=2^n$ e considere o conjunto de estados computacionais $\{x: x\in\{0,1\}^n\}$.
+Queremos encontrar um elemento marcado $x^\star$ por uma função booleana
+$$
+f:\{0,1\}^n \to \{0,1\}
+$$
+que satisfaça $f(x^\star)=1$ e $f(x)=0$ para $x \neq x^\star$ (caso de uma única solução). A suposição é que nós não temos nenhuma informação sobre a função $f$, mas é permitido calcular $f(x)$ para todo elemento $x$. O problema é encontrar um único $x^\star$ tal que $f(x^\star)=1$. A Computação de $f(x)$ pode ser realizada pelo operador unitário
+\begin{equation}
+U_f \ket{x} = (-1)^{f(x)}\ket{x}.
+\end{equation}
+O operador $U_f$ é um operador do espaço de Hilbert gerado pela base ortonormal $\ket{x}$ onde $x \in \{0,1\}^n$. Note que, $U_f$  aplica uma fase $-1$ exatamente no estado marcado.
+
+\subsection{O algoritmo de Grover}
+Iniciamos a computação por aplicar o operador de Hadamard (ver exemplo \ref{ex:h}) em todos os qubits e calculamos
+\begin{equation}\label{eq:s}
+\ket{s} \;=\; H^{\otimes n}\ket{0}^{\otimes n}
+\;=\; \frac{1}{\sqrt{N}}\sum_{x\in\{0,1\}^n}\ket{x}.
+\end{equation}
+Calculamos o estado ortogonal ao estado marcado
+\begin{equation}
+\ket{x^\star_\perp}
+\;=\;
+\frac{1}{\sqrt{N-1}}\sum_{x\neq x^\star}\ket{x}.
+\end{equation}
+Então, o estado inicial $\ket{s}$ pertence ao subespaço $V$ gerado por $\{\ket{x^\star},\ket{x^{\star}_\perp}\}$ e se decompõe como
+\begin{equation}
+    \ket{s} = \sen(\theta)\ket{x^\star} + \cos(\theta)\ket{x^\star_\perp} \implies \ket{s} = \begin{bmatrix}
+            \sen \theta \\
+            \cos \theta
+        \end{bmatrix},
+\end{equation}
+onde $\sen(\theta)=\frac{1}{\sqrt{N}}$ e $\cos(\theta)=\sqrt{\frac{N-1}{N}}$.
+
+O subespaço $V$ é $U_f$-invariante e a matriz da restrição de $U_f$ na base $\{\ket{x^\star},\ket{x^{\star}_\perp}\}$ é dada por
+\begin{equation}
+    U_f = \begin{pmatrix}
+        -1 & 0 \\
+         0 & 1
+    \end{pmatrix}.
+\end{equation}
+A computação acontece apenas no espaço $V$ de dimensão 2.
+
+Usando o produto externo definido na seção \ref{sec:ops}, definimos o operador difusor que age no espaço $V$ como
+\begin{equation}
+D \;=\; 2\ket{s}\!\bra{s} - I = \begin{pmatrix}
+    2\sen^2\theta - 1 & 2\sen\theta\cos\theta \\
+    2\sen\theta\cos\theta & 2\cos^2\theta - 1
+\end{pmatrix} = \begin{pmatrix}
+    -\cos(2\theta) & \sen(2\theta) \\
+    \sen(2\theta) & \cos(2\theta)
+\end{pmatrix},
+\end{equation}
+onde $\ket{s}$ é o estado definido na equação $\eqref{eq:s}$. É fácil verificar que este operador pode ser implementado (a menos de uma fase global) por
+\begin{equation}
+D \;=\; H^{\otimes n}\,\bigl(2\ket{0}\!\bra{0}-I\bigr)\,H^{\otimes n},
+\end{equation}
+onde $(2\ket{0}\!\bra{0}-I)$ é uma reflexão que deixa $\ket{0}^{\otimes n}$ invariante e muda o sinal
+de todos os demais estados computacionais.
+
+\subsection{Iteração}\label{subsec:go}
+A \emph{iteração de Grover} é o operador $G=DU_f$ que age em $V$ como
+\begin{equation}
+G = DU_f = \begin{pmatrix}
+    -\cos(2\theta) & \sen(2\theta) \\
+    \sen(2\theta) & \cos(2\theta)
+\end{pmatrix} \begin{pmatrix}
+    -1 & 0 \\
+     0 & 1
+\end{pmatrix} = \begin{pmatrix}
+    \cos(2\theta) & \sen(2\theta) \\
+    -\sen(2\theta) & \cos(2\theta)
+\end{pmatrix}.
+\end{equation}
+O operador de Grover atua em $V^\perp$ como a identidade, além disso, $G$ atua como uma rotação no plano $V$ gerado por $\{\ket{x^\star},\ket{x^{\star}_\perp}\}$, aumentando a amplitude no estado marcado. De fato, partindo de $\ket{s}$, após $r$ iterações temos
+\begin{align}
+    G^r\ket{s} &= \begin{pmatrix}
+        \cos(2r\theta) & \sen(2r\theta) \\
+        -\sen(2r\theta) & \cos(2r\theta)
+    \end{pmatrix} \begin{pmatrix}
+        \sen \theta \\
+        \cos \theta
+    \end{pmatrix} \\
+            &= \begin{pmatrix}
+                \cos(2r\theta)\sen\theta + \sen(2r\theta)\cos\theta \\
+                -\sen(2r\theta)\sen\theta + \cos(2r\theta)\cos\theta
+            \end{pmatrix} \\
+            &=\begin{pmatrix}
+                \sen((2r+1)\theta) \\
+                \cos((2r+1)\theta) \\
+            \end{pmatrix} \\
+            &= \sen((2r+1)\theta)\ket{x^\star} + \cos((2r+1)\theta)\ket{x^\star_\perp}
+\end{align}
+Logo, a probabilidade de medir o item marcado após $r$ iterações é
+\begin{equation}
+P_{x^\star}(r) \;=\; \sen^2\bigl((2r+1)\theta\bigr).
+\end{equation}
+
+\subsection{Número de iterações e complexidade}
+Para maximizar $P_{x^\star}(r)$ escolhe-se $(2r+1)\theta \approx \frac{\pi}{2}$, isto é,
+\begin{equation}\label{eq:goittheta}
+r \;\approx\; \frac{\pi}{4\theta} - \frac{1}{2}.
+\end{equation}
+Como $\sen(\theta)=1/\sqrt{N}$, para $N$ grande temos $\theta \approx 1/\sqrt{N}$ e portanto
+\begin{equation}
+r \;=\; \left\lfloor \frac{\pi}{4}\sqrt{N}\right\rfloor.
+\end{equation}
+Assim, o algoritmo encontra $x^\star$ com alta probabilidade usando $O(\sqrt{N})$ chamadas ao oráculo.
+
+\subsection{Busca por multiplas soluções}
+
+Descrevemos brevemente a variação do algoritmo para vários estados marcados. Maiores detalhes podem ser encontrados no livro \cite[seção 6.1]{nielsen2010quantum}. Para o caso de $M$ estados marcados, tomamos
+\begin{equation}
+    \ket{x^\star} = \frac{1}{\sqrt{M}} \sum_{x:f(x)=1}\ket{x} \qquad \ket{x^\star_\perp} = \frac{1}{\sqrt{N-M}} \sum_{x:f(x)=0}\ket{x},
+\end{equation}
+assim,
+\begin{equation}
+    \ket{s} = \frac{1}{\sqrt{N}}\sum_{x\in \{0,1\}^n}\ket{x} \implies \ket{s} = \frac{M}{N}\ket{x^\star} + \frac{N-M}{N}\ket{x^\star_\perp}.
+\end{equation}
+
+Tomando $\sen(\theta)=\sqrt{M/N}$, obtemos, com o mesmo raciocínio,
+\begin{equation}\label{eq:groverit}
+r \approx \left\lfloor \frac{\pi}{4}\sqrt{\frac{N}{M}} \right\rfloor,    
+\end{equation}
+ainda com rotação no subespaço de dimensão $2$ gerado pelo vetor uniforme nos estados marcados e pelo vetor
+uniforme nos estados não-marcados.
+
+\subsection{Implementação em Qiskit}
+
+A implementação dada a seguir é uma adaptação da implementação fornecida pela IBM em \cite{ibm_grover_tutorial}. A figura \ref{fig:qoracle} define a função oráculo que realiza a inversão de fase. A função assume que todos os estados marcados tem a mesma quantidade de qubits do primeiro estado da lista informada (linha 9). As linhas de 12 a 25 são responsáveis por pegar o estado marcado em formato de cadeia de caracteres, mudar a ordem dos caracteres para \textit{little-endian} e, em seguida, aplicar o operador $X$ em todos os qubits cujo índice da cadeia de caracteres revertida tem valor zero (que produz o efeito de inverter $\ket{0}$ para $\ket{1}$). A linha 21 aplica o operador $Z$ controlado (\textsf{MCZ}) pelo número de qubits menos um (o qubit-alvo é alterado se todos os qubits de controle possuirem valor $\ket{1}$), sendo o qubit-alvo, o último qubit. Como o operador $Z$ altera fase ($\ket{1}$ para $-\ket{1}$), a inversão inicial de todos os qubits com valor $\ket{0}$ para $\ket{1}$ e a aplicação de \textsf{MCZ} (via instrução \texttt{qc.compose(MCMTGate(ZGate(), ...}) permite a mudança de fase desejada, a aplicação do operador $X$ novamente ao final permite que o estado final seja o mesmo informado, caso o estado do circuito não seja um estado marcado, ou o estado original com fase invertida.
+
+\begin{figure}[!ht]
+\centering
+\begin{minipage}{1\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+import math
+ 
+from qiskit import QuantumCircuit, transpile
+from qiskit.circuit.library import grover_operator, MCMTGate, ZGate
+from qiskit_aer import AerSimulator
+from qiskit.visualization import plot_distribution
+ 
+def grover_oracle(marked_states: list[str]) -> QuantumCircuit: 
+    num_qubits = len(marked_states[0])
+ 
+    qc = QuantumCircuit(num_qubits)
+    for target in marked_states:
+        rev_target = target[::-1]
+        zero_inds = [
+            ind
+            for ind in range(num_qubits)
+            if rev_target.startswith("0", ind)
+        ]
+        if zero_inds:
+            qc.x(zero_inds)
+        qc.compose(MCMTGate(ZGate(), num_qubits - 1, 1), inplace=True)
+        if zero_inds:
+            qc.x(zero_inds)
+
+        qc.barrier()
+    return qc
+\end{lstlisting}
+\end{minipage}
+\caption{Função de criação do oráculo a partir dos estados marcados.}
+\label{fig:qoracle}
+\end{figure}
+
+\FloatBarrier
+
+A figura \ref{fig:qoracle2} mostra o uso da função para o caso de dois estados marcados e quatro qubits. A figura \ref{fig:qoracle3} apresenta o circuito produzido pela função oráculo.
+
+\begin{figure}[!ht]
+\centering
+\begin{minipage}{1\textwidth}
+\begin{lstlisting}[style=pythonstyle,firstnumber=28]
+marked_states = ["0110", "1001"]
+oracle = grover_oracle(marked_states)
+oracle.draw(output="mpl", style="iqp")
+
+\end{lstlisting}
+\end{minipage}
+\caption{Criação do oráculo para os estados $\ket{0110}$ e $\ket{1001}$.}
+\label{fig:qoracle2}
+\end{figure}
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../../img/oraculo.png}
+    \caption{Circuito quântico do oráculo para os estados marcados \textsf{0110} e \textsf{1001}.}
+    \label{fig:qoracle3}
+\end{figure}
+
+Em seguida, a figura \ref{fig:go} apresenta a utilização do operador de Grover, cuja implementação já existe no Qiskit \cite{qiskit-groveroperator-docs}, de modo análogo a seção~\ref{subsec:go}, o operador de Grover é construído a partir do operador de difusão (implementação interna) em conjunto com o oráculo.
+
+\begin{figure}[!ht]
+\centering
+\begin{minipage}{1\textwidth}
+\begin{lstlisting}[style=pythonstyle, firstnumber=32]
+grover_op = grover_operator(oracle)
+grover_op.decompose().draw(output="mpl", style="iqp")
+
+\end{lstlisting}
+\end{minipage}
+\caption{Criação do operador de Grover.}
+\label{fig:go}
+\end{figure}
+
+Determinamos o número de iterações de acordo com a equação \eqref{eq:goittheta}. Podemos nos questionar sobre o fato de, por um lado, precisarmos de iterações e, por outro, como mencionado na seção~\ref{sec:cq}, os circuitos precisarem ser acíclicos. As iterações em circuitos quânticos no Qiskit são implementadas previamente à execução via concateção. Em nossa implementação, como temos quatro qubits precisamos de duas iterações, concatenamos então o circuito do operador de Grover duas vezes. Diferente de muitos algoritmos, onde o aumento no número de iterações produz um aumento de precisão, no algoritmo de Grover, o aumento não garante melhora. A figura \ref{fig:goit} apresenta a cálculo de iterações e a construção do circuito completo. Após determinar o número ótimo de iterações geramos a superposição (linha 42), concatenamos o operador de Grover (linha 44) e então realizamos a medição de todos os qubits (linha 45). A figura \ref{fig:grovercirc} apresenta o diagrama do circuito.
+
+\begin{figure}[!ht]
+\centering
+\begin{minipage}{1\textwidth}
+\begin{lstlisting}[style=pythonstyle, firstnumber=35]
+N = 2**grover_op.num_qubits
+M = len(marked_states)
+optimal_num_iterations = math.floor(math.pi / (4 * math.asin(math.sqrt(M/N))))
+
+print("iterations:", optimal_num_iterations) # iterations: 2
+
+qc = QuantumCircuit(grover_op.num_qubits)
+qc.h(range(grover_op.num_qubits))
+
+qc.compose(grover_op.power(optimal_num_iterations), inplace=True)
+qc.measure_all()
+
+qc.draw(output="mpl", style="iqp")
+\end{lstlisting}
+\end{minipage}
+\caption{Definição do número ótimo de iterações e criação do circuito final.}
+\label{fig:goit}
+\end{figure}
+
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../../img/alggrover.png}
+    \caption{Diagrama do circuito quântico para o algoritmo de Grover para quatro qubits.}
+    \label{fig:grovercirc}
+\end{figure}
+
+Por fim, podemos realizar a simulação do circuito criado. A figura \ref{fig:gosim} apresenta o código utilizado para executar a simulação e a figura \ref{fig:groveralghist} apresenta o histograma gerado, mostrando que os estados marcados são medidos com maior probabilidade do que os demais.
+
+\begin{figure}[!ht]
+\centering
+\begin{minipage}{1\textwidth}
+\begin{lstlisting}[style=pythonstyle, firstnumber=49]
+sim_statevector = AerSimulator(method='statevector')
+grover = transpile(qc, sim_statevector)
+
+job_statevector = sim_statevector.run(grover, shots=10000)
+dist = job_statevector.result().get_counts()
+
+plot_distribution(dist)
+
+\end{lstlisting}
+\end{minipage}
+\caption{Execução do algoritmo de Grover em simulador.}
+\label{fig:gosim}
+\end{figure}
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../../img/groveralghist.png}
+    \caption{Histograma de medição para o algoritmo de Grover.}
+    \label{fig:groveralghist}
+\end{figure}
+
+\FloatBarrier
+
+\section{QAOA (Algoritmo Quântico de Otimização Aproximada)}
+
+\subsection{Considerações iniciais}
+
+O conteúdo desta seção é baseado na descrição do QAOA fornecida pelo artigo \cite{farhi2014quantumapproximateoptimizationalgorithm}. Pretendemos dar uma descrição de problema de otimzação combinatória e justificativa informal do funcionamento do QAOA, ao final propomos uma implementação em Qiskit.
+
+\subsection{Problemas de Otimização Combinatória}\label{sec:poc}
+
+Um problema de otimização combinatória pode ser especificado por uma família de $m$ funções $C_\alpha: X=\{0,1\}^n\to \{0,1\}$, onde o objetivo é achar um $z$
+\begin{equation}
+z = z_1 z_2 \cdots z_n \in \{0,1\}^n,   
+\end{equation}
+uma sequência binária, que representa uma possível solução do problema, tal que a função objetivo
+\begin{equation}\label{eq:comb}
+C(z) = \sum_{\alpha=1}^{m} C_\alpha(z),
+\end{equation}
+tem valor maximal ($z$ é dita solução ótima do problema). Geralmente, supomos que cada $C_\alpha$ pode ser construído por $O(1)$ portas, o que confere à função objetivo uma estrutura local. No contexto de otimização aproximada, o objetivo não é necessariamente encontrar a solução ótima, mas sim uma sequência $z$ para a qual o valor de $C(z)$ seja próximo do valor maximal. O QAOA é um algoritmo quântico desenvolvido para esse cenário de otimização aproximada, explorando a estrutura local da função objetivo para construir circuitos quânticos de profundidade controlada (ver seção~\ref{sec:cq}).
+
+Podemos mapear a equação \eqref{eq:comb} em um espaço de Hilbert $\mathcal{H}$ das combinações lineares de elementos de $X=\{0,1\}^n$ com produto interno, no qual $X$ é base ortonormal. Temos $\dim \mathcal{H}= 2^n$ (equação \eqref{eq:tensordim}) com vetores $\ket{z}$ da base computacional $X$ e vemos $\mathcal{H}$ como
+\begin{equation}\label{eq:hdec}
+    \mathcal{H} = H_1\otimes \cdots \otimes H_n,
+\end{equation}
+onde cada $H_i$ é um espaço de Hilbert de dimensão 2, ou seja, um qubit. Assim, $C$ pode ser visto como um operador diagonal (e também hermitiano) na base computacional
+\begin{equation}
+    C = \sum_{z\in X} C(z)\ket{z}\bra{z}
+\end{equation}
+e, portanto, os $\ket{z}$ são autovetores de $C$ cujos autovalores associados são $C(z)$:
+\begin{equation}\label{eq:qaoaav}
+    C\ket{z} = C(z)\ket{z} \quad \text{para todo } \ket{z}\in X.
+\end{equation}
+
+\subsection{Operadores de custo e de mistura}
+
+Seja $C: \mathcal{H}\to \mathcal{H}$ o operador hermitiano da seção~\ref{sec:poc}. Chamamos de \emph{operador de custo}, o operador unitário (dado que $C$ é hermitiano)
+\begin{equation}\label{eq:uc}
+    U(C, \gamma) = \prod_{\alpha=1}^m e^{-i\gamma C_\alpha } = e^{-i\gamma C},
+\end{equation}
+onde $\gamma \in [0, 2\pi)$. Em geral, o produto de operadores não comuta, no entanto, como cada $C_\alpha$ é diagonal e na base computacional, temos que cada termo do produtório comuta. Este operador é unitário e pode ser implementado por um circuito quântico de profundidade máxima $O(m)$ (uma camada para cada termo do produtório).
+
+Considere $\mathcal{H}$ como definido na equação \eqref{eq:hdec} e seja $X_j = I\otimes I\otimes \dotso \otimes I\otimes X \otimes I\otimes\dotso \otimes I$, ou seja, $X_j$ é a aplicação do operador $X$ de Pauli no qubit $j$, mantendo todos os demais qubits inalterados. Definimos
+\begin{equation}
+    B=\sum_{j=1}^n X_j
+\end{equation}
+e chamamos de \emph{operador de mistura}, o operador unitário (pois cada $X_j$ é hermitiano que comutam entre si)
+\begin{equation}\label{eq:ub}
+    U(B, \beta) = \prod_{j=1}^n e^{-i\beta X_j} = e^{-i\beta B},
+\end{equation}
+onde $\beta \in [0, \pi)$. Além disso, podemos ver que $U(B, \beta) = \bigotimes_{j=1}^n R_x(2\beta)$, conforme equação \eqref{eq:rx}.
+
+\subsection{Inicialização}
+
+Dado $C:\mathcal{H}\to \mathcal{H}$, como na seção~\ref{sec:poc}, queremos encontrar um autovetor cujo autovalor é autovalor maximal de $C$. Iniciamos o algoritmo no estado $\ket{\psi} = \bigotimes_{i=1}^n\ket{0}$, e aplicamos o operador de Hadamard ($H$) para obter a superposição
+
+\begin{align}\label{eq:qaoas}
+    \ket{s}
+    &= H^{\otimes n}\bigg(\bigotimes_{i=1}^n \ket{0}\bigg)
+    & H &= \frac{1}{\sqrt{2}}
+    \begin{pmatrix}
+    1 & 1 \\
+    1 & -1
+    \end{pmatrix} \\[0.5em]
+    &= \ket{+}_1 \otimes \ket{+}_2 \otimes \dotso \otimes \ket{+}_n
+    & \ket{+} &= \frac{1}{\sqrt{2}}(\ket{0} + \ket{1}) \\[0.5em]
+    &= \frac{1}{\sqrt{2^n}} \sum_{z \in X} \ket{z}.
+\end{align}
+Os valores de $\gamma$ e $\beta$ nas equação \eqref{eq:uc} e \eqref{eq:ub} podem ser vistos como ângulos. Assim, dado um inteiro $p\geq 1$ podemos, a partir de $2p$ ângulos $\gamma_1, \gamma_2, \dotso, \gamma_p$ e $\beta_1, \beta_2,\dotso, \beta_p$, definir o estado quântico
+\begin{equation}\label{eq:gammabeta}
+\ket{\gamma, \beta} = U(B, \beta_p)U(C, \gamma_p) \dotso U(B, \beta_1)U(C, \gamma_1)\ket{s} = \prod_{l=p}^1 e^{-i\beta_lB}e^{-i\gamma_lC}\ket{s}.
+\end{equation}
+Note que a inversão de índice no produtório é intencional, indicando a ordem em que os operadores são aplicados, iniciando em $U(B, \beta_1)U(C, \gamma_1)$ até $U(B, \beta_p)U(C, \gamma_p)$. Para implementar $U(C, \gamma_i)$ precisamos de profundidade máxima $O(m)$ e para implementar $U(B, \beta_i)$ precisamos de $O(1)$ portas, portanto, temos que $\ket{\gamma, \beta}$ é produzido por um circuito com profundidade máxima $O(mp)$ (cada fator do produtório necessita de $O(m)$ portas).
+
+\subsection{Iterações}
+
+De acordo com a equação \eqref{eq:expec}, a expectativa do operador $C$ no estado $\ket{\gamma, \beta}$ é dada por
+\begin{equation}
+    F_p(\gamma, \beta) = \braket{\gamma, \beta|C|\gamma, \beta},
+\end{equation}
+denotamos o máximo de $F_p$ para os $2p$ ângulos por
+\begin{equation}\label{eq:mp}
+    M_p = \max_{\gamma,\beta} F_p(\gamma, \beta),
+\end{equation}
+onde $\ket{\gamma, \beta}$ é unitário. Observe que
+\begin{equation}
+    M_p\geq M_{p-1},
+\end{equation}
+pois, para duas sequências de $p-1$ ângulos $\gamma=\gamma_1, \dotso \gamma_{p-1}$, $\beta=\beta_1, \dotso, \beta_{p-1}$, denote por $\gamma'$ e por $\beta'$ as sequências de comprimento $p$ que obtemos por adicionar ângulos $\gamma_p=\beta_p=0$ na $p$-ésima posição. Temos que
+\begin{equation}
+    F_p(\gamma', \beta') = F_{p-1}(\gamma, \beta),
+\end{equation}
+deste modo, $M_p=M_{p-1}$. Por outro lado, note que o valor máximo absoluto de $M_p$ é dado pelo lema \ref{lm:pvoc}.
+
+\begin{lemma}[Princípio variacional para o operador custo]\label{lm:pvoc}
+    Seja $C$ um operador hermitiano atuando em um espaço de Hilbert $\mathcal{H}$ de dimensão finita,
+    com decomposição espectral
+    $$
+    C = \sum_{i=1}^m c_i \ket{e_i}\bra{e_i},
+    \qquad
+    c_1 \ge c_2 \ge \cdots \ge c_m \ge 0.
+    $$
+    Então, para todo estado normalizado $\ket{\psi} \in \mathcal{H}$, vale
+    $$
+    \bra{\psi} C \ket{\psi} \le c_1.
+    $$
+    Além disso,
+    $$
+    \max_{\|\psi\|=1} \bra{\psi} C \ket{\psi} = c_1,
+    $$
+    e o máximo é atingido se, e somente se, $\ket{\psi}$ pertence ao subespaço próprio associado
+    ao maior autovalor $c_1$.
+
+    \begin{proof}
+        Seja $\ket{\psi} \in \mathcal{H}$ um estado normalizado, que pode ser escrito como
+        $$
+        \ket{\psi} = \sum_{i=1}^m \psi_i \ket{e_i},
+        \qquad
+        \sum_{i=1}^m |\psi_i|^2 = 1.
+        $$
+        Então,
+        $$
+        \bra{\psi} C \ket{\psi}
+        = \sum_{i=1}^m |\psi_i|^2 c_i.
+        $$
+        Como $c_i \le c_1$ para todo $i=1, 2, \dotso, m$, segue que
+        $$
+        \bra{\psi} C \ket{\psi}
+        \le \sum_{i=1}^m |\psi_i|^2 c_1
+        = c_1.
+        $$
+        Tomando $\ket{\psi} = \ket{e_1}$, obtemos
+        $$
+        \bra{\psi} C \ket{\psi} = c_1,
+        $$
+        o que conclui a prova.
+    \end{proof}
+\end{lemma}
+
+No QAOA, os estados permitidos são restritos aos estados unitários na forma $\ket{\gamma, \beta}$ conforme equação \eqref{eq:gammabeta}, assim, não necessariamente temos
+\begin{equation}
+    \ket{\gamma, \beta} = \ket{e_1}, \quad \text{para algum $(\gamma, \beta)$}.
+\end{equation}
+No entanto, a medida que $p$ aumenta, a família de estados $\ket{\gamma, \beta}$, se aproxima arbitrariamente do autovetor de maior autovalor de $C$ (para maiores detalhes consulte \cite[seção~VI]{farhi2014quantumapproximateoptimizationalgorithm}). Matematicamente,
+\begin{equation}\label{eq:maxfp}
+    \lim_{p\to\infty} M_p = \max_{z\in X} C(z).
+\end{equation}
+Vamos justificar, informalmente, a equação \eqref{eq:maxfp}. Inicialmente, vejamos um resultado preliminar \cite[seção~4.7.2]{nielsen2010quantum}.
+
+\begin{theorem}[Fórmula de Lie-Trotter]\label{tm:lt}
+    Sejam $C$ e $B$ dois operadores hermitianos, então para todo $\Delta t\in \R$,
+    \begin{equation}\label{eq:lt}
+        e^{\, i(B+C)\Delta t}=e^{\, iB\Delta t}\,e^{\, iC\Delta t}\;+\; O(\Delta t^{2}).
+    \end{equation}
+    O termo $O(\Delta t^2)$ deve ser entendido no sentido da norma de operadores \cite[seção~5.6]{horn_johnson_matrix_analysis}. Mais precisamente, existe um real $c > 0$, dependente apenas dos operadores $B$ e $C$, tal que
+    $$
+        ||e^{i(B+C)\Delta t} - e^{iB\Delta t}\, e^{iC\Delta t}|| \leq  c\, \Delta t^2.
+    $$
+\end{theorem}
+
+O QAOA pode ser visto como uma versão discreta de um outro algoritmo chamado QAA (algoritmo de evolução adiabática quântica), desenvolvido para encontrar soluções ótimas de problemas de otimização \cite{Farhi2002QuantumAdiabatic}. A descrição dada a seguir foi feita com base nas referências \cite{Olivares2021QuantumComputing}, \cite{MIT8_321F17_Lec8} e \cite{Kottmann2024TimeOrdered}.
+
+Trabalhando em unidades tais que $\hbar = 1$, a evolução temporal de um sistema quântico governado por um hamiltoniano dependente do tempo $H(t)$, onde $t\in [0, T]$, é descrita pelo operador unitário
+\begin{equation}
+U(t_1,t_2) = \mathcal{T}\exp\!\left(-i\int_{t_1}^{t_2} H(t)\,dt\right),
+\end{equation}
+onde $\mathcal{T}$ denota o operador de ordenação temporal e $\exp$ a exponencial de operador. Em particular,
+definimos
+\begin{equation}
+U(T) = U(0,T),
+\end{equation}
+de modo que o estado do sistema no instante final é dado por
+\begin{equation}
+\ket{\psi(T)} = U(T)\ket{\psi(0)}.
+\end{equation}
+
+No contexto do algoritmo de evolução adiabática quântica, consideramos o
+hamiltoniano de interpolação linear
+\begin{equation}
+H(t) = \left(1-\frac{t}{T}\right)B + \frac{t}{T}C,
+\end{equation}
+definido no intervalo $t\in[0,T]$, com $H(0)=B$ e $H(T)=C$. Assumindo que o estado
+inicial $\ket{\psi(0)}=\ket{s}$ é um autovetor associado ao maior autovalor de $B$,
+o teorema adiabático garante que, para $T$ suficientemente grande e sob condições
+adequadas de lacuna espectral, o estado final $\ket{\psi(T)}$ aproxima-se de um
+autovetor associado ao maior autovalor de $C$.
+
+Para estabelecer uma conexão explícita com o QAOA, dividimos o intervalo temporal
+$[0,T]$ em $p$ subintervalos de comprimento $\Delta t = T/p$, e definimos os pontos
+$t_l = l\Delta t$, com $l=0,\dots,p$. O operador de evolução total pode então ser
+escrito, usando a propriedade de composição, como
+\begin{equation}
+U(T) = \prod_{l=p-1}^{0} U(t_l,t_{l+1}),
+\end{equation}
+onde a ordem do produto é essencial, pois, em geral, o produto de operadores não comuta. Em cada subintervalo, aproximamos o hamiltoniano por seu valor em $t_l$, obtendo
+\begin{equation}
+U(t_l,t_{l+1}) \approx e^{-i\Delta t \big((1-s_l)B+s_l C\big)},
+\qquad s_l = \frac{l}{p}.
+\end{equation}
+Aplicando a fórmula de Lie--Trotter, cada fator pode ser ainda
+aproximado por
+\begin{equation}
+    e^{-i\Delta t\big((1-s_l)B+s_l C\big)} \;\approx\; e^{-i\beta_l B}e^{-i\gamma_l C},
+\end{equation}
+onde
+\begin{equation}
+\beta_l = \Delta t(1-s_l), \qquad \gamma_l = \Delta t s_l.
+\end{equation}
+
+Dessa forma, a evolução total pode ser escrita como
+\begin{equation}
+U(T)\ket{s} \;\approx\;
+\left(\prod_{l=p-1}^{0} e^{-i\beta_l B}e^{-i\gamma_l C}\right)\ket{s}
+\;=\; \ket{\gamma,\beta},
+\end{equation}
+o que evidencia que o QAOA pode ser interpretado como uma discretização da evolução adiabática contínua, com os parâmetros $\{\gamma_l,\beta_l\}$ codificando os passos temporais da interpolação. Deste modo, sempre é possível encontrar uma quantidade $p$ de passos e ângulos $\gamma$ e $\beta$ pequenos que tornam $F_p(\gamma, \beta)$ tão próximo de $M_p$ quanto se queira, em conjunto com a monotonicidade de $M_p$, validamos a equação \eqref{eq:maxfp}. Para o argumento original consulte \cite[seção~VI]{farhi2014quantumapproximateoptimizationalgorithm}.
+
+\section{Implementação do QAOA em Qiskit}
+
+\subsection{Definição do problema do corte máximo}\label{sec:cm}
+
+Vamos implementar o QAOA para resolver o problema do Corte Máximo (MaxCut) em um grafo. É possível encontrar um tutorial específico para a implementação em Qiskit em \cite{ibm_qaoa_tutorial}, no entanto, a implementação a seguir difere um pouco do tutorial.
+
+Seja $G=(V,E)$ um grafo não direcionado, com um conjunto $V$ de vértices e $E$ de arestas. Um corte de $G$ é uma partição do conjunto de vértices em dois subconjuntos disjuntos. Por exemplo, podemos escolher $A\subseteq V$ e tomando $\bar{A}=V\setminus A$, um corte de $G$ pode ser visto como a escolha de um subconjunto $A$ de $V$. O valor do corte é o número de arestas que tem uma extremidade em $A$ e outra fora de $A$,
+\begin{equation}
+    \text{Cut}(A) = |\{\{i,j\}\in E: i\in A, j\in \bar{A}\}|.
+\end{equation}
+O problema do corte máximo consiste em encontrar conjunto $A\subseteq V$ cujo valor do corte é máximo, ou seja,
+\begin{equation}
+    \text{MaxCut}(G) = \max_{A\subseteq V} \text{Cut}(A).
+\end{equation}
+
+\subsection{Modelagem}
+
+
+Seja $A \subseteq V$ um corte de um grafo como visto na seção~\ref{sec:cm}. Associamos a cada vértice $i\in V$ uma variável binária
+\begin{equation}
+    z_i\in \{0, 1\}, \qquad z_i = 1 \iff i \in A.
+\end{equation}
+Assim, uma aresta $\{i,j\}$ contribui para o corte se e somente se $z_i\neq z_j$. Sendo $\oplus$ a operação de adição modulo 2, para $1\leq i,j \leq n$, definimos a função $C_{ij}: X\to \{0,1\}$ como
+\begin{equation}
+    C_{ij}(z) = z_i\oplus z_j.
+\end{equation}
+Note que se ${i,j}$ é uma aresta do grafo, então $C_{ij}(z)=1$ se, e somente se, a aresta contribui à quantidade $\text{Cut}(A)$ e temos que $C_{ij}(z)=0$ caso contrário. Definimos a função objetivo do MaxCut como
+\begin{equation}
+    C(z) = \sum_{\{i,j\}\in E} z_i \oplus z_j = \sum_{\{i,j\} \in E} C_{ij}(z).
+\end{equation}
+Se estendermos $C_{ij}$ para o espaço de Hilbert $\mathcal{H}$ de dimensão $2^n$ (como na seção~\ref{sec:poc}), então, sendo $Z$ o operador de Pauli, $C_{ij}$ pode ser escrito como
+\begin{equation}
+    C = \sum_{\{i,j\}\in E} \frac{1}{2}(I-Z_iZ_j), \quad Z_iZ_j = I\otimes\dotso\otimes Z\otimes\dotso\otimes Z\otimes\dotso\otimes I,
+\end{equation}
+que é um operador diagonal na base computacional. A figura \ref{fig:qaoacostop} apresenta código para criação dos operadores de custo, mistura e a construção do circuito do QAOA em Qiskit.
+
+\begin{figure}[!ht]
+\centering
+\begin{minipage}{1\textwidth}
+\begin{lstlisting}[style=pythonstyle]
+from qiskit import QuantumCircuit, transpile
+import numpy as np
+from qiskit_aer import AerSimulator
+from qiskit.visualization import plot_histogram
+from scipy.optimize import differential_evolution
+
+def cost_layer(qc: QuantumCircuit, gamma: float, edges: list):
+    for i, j in edges:
+        qc.cx(i, j)
+        qc.rz(2*gamma, j)
+        qc.cx(i, j)
+
+def mixer_layer(qc: QuantumCircuit, beta: float):
+    for q in range(qc.num_qubits):
+        qc.rx(2*beta, q)
+
+def qaoa_block(n_qubits: int, edges: list, gamas: list, betas: list):
+    p = len(gamas)
+    qc = QuantumCircuit(n_qubits)
+
+    qc.h(range(n_qubits))
+    qc.barrier()
+
+    for l in range(p):
+        gamma_l = gamas[l]
+        beta_l = betas[l]
+        cost_layer(qc, gamma_l, edges)
+        qc.barrier()
+        mixer_layer(qc, beta_l)
+        qc.barrier()
+
+    qc.measure_all()
+
+    return qc
+\end{lstlisting}
+\end{minipage}
+\caption{Criação dos operadores de custo, mistura e circuito do QAOA.}
+\label{fig:qaoacostop}
+\end{figure}
+
+\FloatBarrier
+
+Para o grafo da figura \ref{fig:gqaoa}, a figura \ref{fig:qaoaex} apresenta o uso das funções construídas. O diagrama do circuito pode ser visto na figura \ref{fig:qaoaexd}, note que como estamos tomando $p=1$ temos apenas um par $(U(C,\gamma), U(B, \beta))$ adicionado no circuito.
+
+\begin{figure}[!ht]
+\centering
+\begin{minipage}{1\textwidth}
+\begin{lstlisting}[style=pythonstyle, firstnumber=36]
+n = 3
+edges = [(0,1), (1,2)]
+gammas = [np.pi/5]
+betas = [np.pi/6]
+p = len(gammas)
+
+qc = qaoa_block(n, edges, gammas, betas)
+qc.draw(output="mpl", style="iqp")
+\end{lstlisting}
+\end{minipage}
+\caption{Exemplo de criação de circuito QAOA.}
+\label{fig:qaoaex}
+\end{figure}
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.5\textwidth]{../../img/gqaoa.png}
+    \caption{Grafo para uso no QAOA.}
+    \label{fig:gqaoa}
+\end{figure}
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../../img/qaoaex.png}
+    \caption{Circuito do QAOA.}
+    \label{fig:qaoaexd}
+\end{figure}
+
+O código para execução do algoritmo pode ser vista na figura \ref{fig:qaoasim}. A definição dos valores de $\gamma=\pi/5$ e $\beta=\pi/6$ na figura $\ref{fig:qaoaex}$ não pode ser arbitrária. A execução do algoritmo com tais valores, produz o resultado da figura \ref{fig:qaoawr}, que indentifica, incorretamente, que o melhor corte seria $A=V$ ou $A=\emptyset$.
+
+\begin{figure}[!ht]
+\centering
+\begin{minipage}{1\textwidth}
+\begin{lstlisting}[style=pythonstyle, firstnumber=45]
+sim = AerSimulator()
+tqc = transpile(qc, sim)
+result = sim.run(tqc, shots=1000).result()
+counts = result.get_counts()
+
+plot_histogram(counts, title='Resultados de Medida')
+\end{lstlisting}
+\end{minipage}
+\caption{Execução do QAOA sem otimização de parâmetros.}
+\label{fig:qaoasim}
+\end{figure}
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../../img/qaoawr.png}
+    \caption{Histograma de medida sem otimização de parâmetros.}
+    \label{fig:qaoawr}
+\end{figure}
+
+\FloatBarrier
+
+Segundo \cite{farhi2014quantumapproximateoptimizationalgorithm} a principal dificuldade prática do QAOA está na escolha adequada dos $2p$ parâmetros $\{\gamma_1,\dots,\gamma_p,\beta_1,\dots,\beta_p\}$ que maximizam $F_p(\gamma,\beta)$. Para $p$ fixo e independente do tamanho da instância, uma primeira estratégia consiste em realizar uma busca clássica sobre uma grade fina no conjunto compacto $[0,2\pi]^p\times[0,\pi]^p$, isso permite utilizar algoritmos clássicos de otimização contínua como o gradiente descendente. Além disso, quando o grau do grafo é limitado, $F_p$ pode ser decomposta como uma soma ponderada de contribuições locais associadas a subgrafos de tamanho finito, permitindo que os ângulos ótimos sejam determinados por um pré-processamento clássico A figura \ref{fig:qaoaparams}, apresenta o código para otimização de parâmetros e a figura \ref{fig:qaoaparams2} mostra a execução e os valores obtidos. A função \texttt{calc\_cut} retorna o valor negativo do corte, isso é necessário, pois a função de otimização \texttt{differential\_evolution} do pacote \texttt{scipy} realiza otimização minimizando o valor da função objetivo.
+
+\begin{figure}[!ht]
+\centering
+\begin{minipage}{1\textwidth}
+\begin{lstlisting}[style=pythonstyle, firstnumber=52]
+def cut_value(z: list, edges: list):
+    cut_value = 0
+    for (i, j) in edges:
+        if z[i] != z[j]:
+            cut_value += 1
+
+    return cut_value
+
+def expected_cut(counts, edges: list):
+    shots = sum(counts.values())
+
+    exp_cut = 0
+    for z, z_count in counts.items():
+        exp_cut += cut_value(z, edges) * z_count/shots
+
+    return exp_cut
+
+def calc_cut(n_qubits: int, edges: list, gammas: list, betas: list):
+    qc = qaoa_block(n_qubits, edges, gammas, betas)
+    tqc = transpile(qc, sim)
+    counts = sim.run(tqc, shots=1000).result().get_counts()
+
+    return -expected_cut(counts, edges)
+
+def qaoa_bounds(p: int):
+    bounds = []
+    for _ in range(p):
+        bounds.append((0, 2*np.pi))
+    for _ in range(p):
+        bounds.append((0, np.pi))
+    return bounds
+\end{lstlisting}
+\end{minipage}
+\caption{Otimização de parâmetros para execução do QAOA.}
+\label{fig:qaoaparams}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\begin{minipage}{1\textwidth}
+\begin{lstlisting}[style=pythonstyle, firstnumber=84]
+bounds = qaoa_bounds(p)
+
+result = differential_evolution(
+    func=lambda params: calc_cut(
+        n_qubits=qc.num_qubits,
+        edges=edges,
+        gammas=params[:p].tolist(),
+        betas=params[p:].tolist()
+    ),
+    bounds=bounds,
+    maxiter=50,
+    popsize=10,
+    tol=1e-2,
+    polish=True
+)
+
+best_params = {"val": -result.fun, "params": result.x}
+print(f"val: {best_params["val"]}, params:{best_params["params"]}")
+# val: 1.672, params:[0.57105229 2.814569  ]
+\end{lstlisting}
+\end{minipage}
+\caption{Calculo dos valores otimizados.}
+\label{fig:qaoaparams2}
+\end{figure}
+
+\FloatBarrier
+
+\subsection{Execução final}
+
+Com os parâmetros otimizados podemos executar o algoritmo. As figuras \ref{fig:qaoaparams3} e \ref{fig:qaoafim}, apresentam, respectivamente, o código de execução e o histograma gerado. Veja que os estados $\ket{010}$ e $\ket{101}$ são apresentados corretamente como solução para o corte máximo.
+
+\begin{figure}[!ht]
+\centering
+\begin{minipage}{1\textwidth}
+\begin{lstlisting}[style=pythonstyle, firstnumber=104]
+params = best_params["params"]
+qc = qaoa_block(n, edges, params[0:p], params[p:])
+
+sim = AerSimulator()
+tqc = transpile(qc, sim)
+result = sim.run(tqc, shots=1000).result()
+counts = result.get_counts()
+
+plot_histogram(counts, title='Resultados de Medida')
+\end{lstlisting}
+\end{minipage}
+\caption{Execução do QAOA com parâmetros otimizados.}
+\label{fig:qaoaparams3}
+\end{figure}
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{../../img/qaoafim.png}
+    \caption{Histograma de medida com o resultado correto para o corte máximo.}
+    \label{fig:qaoafim}
+\end{figure}

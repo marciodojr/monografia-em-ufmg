@@ -1,0 +1,312 @@
+% !TEX root = Monografia.tex
+
+\chapter[Os Postulados da Mecânica Quântica]{Os Postulados da Mecânica Quântica}
+\label{chap:postulados}
+
+\section{Introdução}
+
+Este capítulo é baseado no conteúdo de \cite[seção ~2.2]{nielsen2010quantum}. O objetivo é apresentar os postulados e permitir ao leitor associar os conceitos iniciais de álgebra linear apresentados no capítulo 1 com os conceitos de mecânica quântica.
+
+\section{Postulado 1 - Espaço de Estados}
+
+A um sistema físico isolado associa-se um espaço de Hilbert complexo $\mathcal{H}$, chamado
+\emph{espaço de estados} do sistema. O estado do sistema é completamente descrito por um vetor unitário
+$$
+\ket{\psi} \in \mathcal{H},
+\qquad \langle \psi | \psi \rangle = 1.
+$$
+Vetores que diferem apenas por uma fase global $e^{i\theta}$ representam o mesmo estado físico,
+isto é,
+\begin{equation}\label{eq:gf}
+\ket{\psi} \sim e^{i\theta}\ket{\psi}, \qquad \theta \in \mathbb{R}
+\end{equation}
+
+O sistema quântico mais simples é o \emph{qubit}. Um qubit possui um espaço de estados bidimensional. Seja $B=\{\ket{0}, \ket{1}\}$ base ortonormal de $\C^2$. Então, um vetor de estado arbitrário nesse espaço pode ser escrito como
+\begin{equation}
+\ket{\psi} = a \ket{0} + b \ket{1},
+\end{equation}
+onde $a$ e $b$ são números complexos tal que $|a|^2+|b|^2=1$. Os estados $\ket{0}$ e $\ket{1}$ podem ser vistos como os valores $1$ e $0$ que um bit pode assumir na computação clássica. No entanto, o qubit pode assumir superposições dos estados $\ket{0}$ e $\ket{1}$, ou seja, enquanto o bit pode assumir somente dois estados, um qubit pode assumir uma quantidade não enumerável de estados.
+
+Podemos representar visualmente o qubit usando a \emph{Esfera de Bloch}. Qualquer estado de um qubit pode ser representado, a menos de uma fase global,
+por um ponto na superfície da esfera. Por exemplo, Seja um estado arbitrário 
+\begin{equation}
+\ket{\psi} = a\ket{0} + b\ket{1},
+\qquad a,b \in \mathbb{C},
+\qquad |a|^2 + |b|^2 = 1.
+\end{equation}
+Escrevemos os coeficientes como
+\begin{equation}
+a = |a| e^{i\alpha}, \qquad b = |b| e^{i\beta},
+\end{equation}
+assim,
+\begin{equation}
+\ket{\psi}
+= e^{i\alpha}\left(|a|\ket{0} + e^{i(\beta-\alpha)}|b|\ket{1}\right).
+\end{equation}
+Descartando a fase global $e^{i\alpha}$, que pode ser feito pela equação \eqref{eq:gf}, e definindo
+$$
+\phi = \beta - \alpha,
+$$
+obtemos um estado equivalente
+\begin{equation}
+\ket{\psi}
+\sim |a|\ket{0} + e^{i\phi}|b|\ket{1}.
+\end{equation}
+Como $0 \le |a| \le 1$, existe um ângulo $\theta \in [0,\pi]$ tal que
+\begin{equation}
+|a| = \cos\!\left(\frac{\theta}{2}\right).
+\end{equation}
+Como $||\ket{\psi}||=1$, segue que
+\begin{equation}
+|b| = \sqrt{1-|a|^2} = \sen\!\left(\frac{\theta}{2}\right).
+\end{equation}
+Considerando que $e^{i\phi}=\cos \phi + i\sen \phi$, temos que
+\begin{align}
+\ket{\psi} &= \cos\!\left(\frac{\theta}{2}\right)\ket{0} + e^{i\phi}\sen\!\left(\frac{\theta}{2}\right)\ket{1} \\
+           &= \cos\!\left(\frac{\theta}{2}\right)\ket{0} + \cos \phi \sen\!\left(\frac{\theta}{2}\right)\ket{1} + \sen \phi \sen\!\left(\frac{\theta}{2}\right)i\ket{1}.
+\end{align}
+Como o $\R$-espaço $\C^2$ é gerado pela base $\{\ket{0}, i\ket{0}, \ket{1}, i\ket{1}\}$ e $\ket{\psi}$ encontra-se no subespaço $3$-dimensional $\R^3$ gerado por $\{\ket{0}, \ket{1}, i\ket{1}\}$, representamos $\ket{\psi}$, para $0 \le \theta \le \pi$ e $0 \le \phi < 2\pi$, como o vetor unitário
+$$
+\vec r = (\sen\theta\cos\phi,\; \sen\theta\sen\phi,\; \cos\theta), r\in \R^3.
+$$
+Observe que ao definir as coordenadas de $\vec r$ dobramos o ângulo $\theta$, os vetores $\ket{0}$ e $\ket{1}$ são perpendiculares, e ao desenhar a esfera de Bloch fazemos uma representação dobrando o ângulo.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=0.5\textwidth]{../../img/blochsphere.png}
+    \caption{Estado $\ket{\psi}$ representado na Esfera de Bloch.}
+    \label{fig:qubiteb}
+\end{figure}
+
+\FloatBarrier
+
+\section{Postulado 2 - Evolução}\label{sec:post2}
+
+A evolução temporal de um sistema quântico fechado é descrita por uma transformação unitária. Isto é, o estado do sistema no instante $t_1$, representado por
+$\ket{\psi}$, está relacionado ao estado $\ket{\psi'}$ no instante $t_2$ por
+\begin{equation}
+\ket{\psi'} = U \ket{\psi},
+\end{equation}
+onde $U$ é um operador unitário que depende apenas do sistema e dos instantes $t_1$ e $t_2$.
+
+\begin{example}[Operadores $X$ e $Z$]
+Considere os operadores de Pauli
+\begin{equation}
+X =
+\begin{pmatrix}
+0 & 1 \\
+1 & 0
+\end{pmatrix} \qquad e \qquad
+Z =
+\begin{pmatrix}
+1 & 0 \\
+0 & -1
+\end{pmatrix}.
+\end{equation}
+Estes operadores são unitários pois $XX^\dagger =X^\dagger X = I$ e $ZZ^\dagger = Z^\dagger Z$. O operador $X$, pode ser interpretado como \emph{operador NOT quântico}, invertendo os estados $\ket{0}$ e $\ket{1}$
+\begin{equation}
+X\ket{0} = \ket{1},
+\qquad
+X\ket{1} = \ket{0}.
+\end{equation}
+O operador $Z$ atua como um \emph{operador de mudança de fase}, deixando o estado $\ket{0}$ inalterado e introduzindo uma fase relativa ao ângulo $\pi$ no estado $\ket{1}$:
+\begin{equation}
+Z\ket{0} = \ket{0},
+\qquad
+Z\ket{1} = -\ket{1}.
+\end{equation}
+\end{example}
+
+\begin{example}[Operador de Hadamard]\label{ex:h}
+    O operador de Hadamard dado por
+\begin{equation}
+    H = \frac{1}{\sqrt{2}}\begin{pmatrix}
+            1 & 1 \\
+            1 & -1
+        \end{pmatrix}
+\end{equation}
+é um exemplo de operador unitário. Este operador em especial é bastante utilizado em algoritmos quânticos para preparação de estados. Considere o estado
+$$
+\ket{\psi} = \ket{0},
+$$
+Então,
+$$
+H\ket{\psi} = H\ket{0} = \frac{1}{\sqrt{2}}(\ket{0} + \ket{1}) = \ket{+},
+$$
+onde $\ket{+}$ é o vetor definido no exemplo \ref{defket0}.
+\end{example}
+
+O Postulado 2 afirma que a evolução temporal de um sistema quântico fechado é descrita por uma transformação unitária. Para evoluções contínuas no tempo, essa transformação unitária é gerada pelo hamiltoniano do sistema. O hamiltoniano $H$ independente do tempo de um sistema quântico é um operador hermitiano que representa a energia total do sistema, de forma que a evolução temporal entre os instantes $0$ e $t$ é dada por
+\begin{equation}
+U(t) = e^{-iHt/\hbar}.
+\end{equation}
+Na última igualdade, $\hbar$ é a constante de Planck que, em geral, pode ser incorporada em $H$ de modo que $\tilde{H}=H/\hbar$ e
+\begin{equation}
+U(t) = e^{-i\tilde{H}t}.
+\end{equation}
+A unitariedade de $U(t)$ decorre diretamente do fato de que $H$ é hermitiano, pois
+\begin{equation}
+U(t)^\dagger U(t)
+=
+e^{i\tilde{H}t} e^{-i\tilde{H}t}
+= I.
+\end{equation}
+
+\section{Postulado 3 - Medição Quântica}\label{sec:p3}
+
+A medição quântica é descrita por um conjunto de operadores de medição $\{M_i\}_{i=1}^m$ que atuam no espaço de estados do sistema, satisfazendo a relação de
+completude
+\begin{equation}
+\sum_{i=1}^m M_i^\dagger M_i = I.
+\end{equation}
+Observe que, não é necessário que o espaço de estados tenha dimensão igual ao número de operadores de medição (caso onde $\{M_i\}_{i=1}^m$ seriam projeções para autoespaços de dimensão igual a um), basta que a relação de completude seja satisfeita. Se o sistema está no estado $\ket{\psi}$ imediatamente antes da medição, então a probabilidade de se obter o resultado $i \in \{1, \dotso, m\}$ é dada por
+\begin{equation}
+p(i) = \braket{\psi | M_i^\dagger M_i | \psi}.
+\end{equation}
+Dado que o resultado $i$ é obtido, o estado do sistema após a medição passa a ser
+\begin{equation}\label{eq:med}
+\ket{\psi'} = \frac{M_i \ket{\psi}}{\sqrt{p(i)}}.
+\end{equation}
+
+\begin{example}[Medição do qubit na base computacional]
+    A medição de um qubit na \emph{base computacional}, trata-se de uma medição em um único qubit, com dois resultados possíveis, definida pelos operadores de medição
+\begin{equation}
+M_0 = \ket{0}\bra{0} \qquad e \qquad M_1 = \ket{1}\bra{1}.
+\end{equation}
+Observe que cada operador de medição é hermitiano e satisfaz
+\[
+M_0^2 = M_0 \qquad e \qquad M_1^2 = M_1.
+\]
+Assim, a relação de completude é satisfeita:
+\begin{equation}
+I = M_0^\dagger M_0 + M_1^\dagger M_1 = M_0 + M_1.
+\end{equation}
+Suponha que o estado a ser medido seja
+\begin{equation}
+\ket{\psi} = a\ket{0} + b\ket{1}.
+\end{equation}
+Então, a probabilidade de se obter o resultado de medição $0$ é
+\begin{equation}
+p(0) = \braket{\psi | M_0^\dagger M_0 | \psi }
+     = \braket{\psi | M_0 | \psi }
+     = |a|^2.
+\end{equation}
+De modo análogo, a probabilidade de se obter o resultado de medição $1$ é
+\begin{equation}
+p(1) = |b|^2.
+\end{equation}
+O estado do sistema após a medição, nos dois casos, é portanto dado por
+\begin{align}
+\frac{M_0\ket{\psi}}{\sqrt{p(0)}} &= \frac{a}{|a|}\ket{0}, \\
+\frac{M_1\ket{\psi}}{\sqrt{p(1)}} &= \frac{b}{|b|}\ket{1}.
+\end{align}
+Ou seja, o estado $\ket{\psi}$ ``colapsa'' para um estado equivalente a $\ket{0}$ ou $\ket{1}$ após a medição.
+
+\end{example}
+
+Um caso especial de operadores de medida são as projeções, vejamos o exemplo a seguir.
+
+\begin{example}\label{ex:proj}
+    Seja $M$ um operador hermitiano em um espaço de estados de um sistema sendo observado. Assuma que $M$ tem decomposição espectral
+\begin{equation}
+    M = \sum_{i=1}^n i P_i,
+\end{equation}
+de modo que $P_i$ é projeção sobre o autoespaço de $M$ associado ao autovalor $i$. Ao realizar a medição em $\ket{\psi}$, obtemos $i$ com probabilidade
+\begin{equation}
+    p(i) = \braket{\psi|P_i|\psi}.
+\end{equation}
+Dado que o resultado $i$ ocorre, o estado $\ket{\psi'}$ do sistema imediatamente após a medição é dado por
+\begin{equation}
+    \ket{\psi'} = \frac{P_i\ket{\psi}}{\sqrt{p(i)}}.
+\end{equation}
+\end{example}
+
+Medições projetivas são bastante úteis pois simplificam alguns cálculos, por exemplo, o valor esperado (ou média) de um operador pode ser facilmente calculado. Por definição, a média de uma medida é dada por
+\begin{equation}\label{eq:expec}
+    E(M) = \sum_{i=1}^n i p(i) = \sum_{i=1}^n i \braket{\psi|P_i|\psi} = \braket{\psi|\sum_{i=1}^n i P_i|\psi} = \braket{\psi|M|\psi}.
+\end{equation}
+O desvio padrão $\Delta(M)$ para o operador $M$ é dado por
+\begin{equation}
+(\Delta M)^2
+= \bra{\psi} M^2 \ket{\psi} - \braket{\psi | M |\psi}^2.
+\end{equation}
+
+\section{Postulado 4 - Sistemas Compostos}
+
+O espaço de estados de um sistema quântico composto é o produto tensorial dos
+espaços de estados dos sistemas componentes. Em particular, se dois sistemas
+físicos têm espaços de estados $\mathcal{H}_A$ e $\mathcal{H}_B$, então o espaço de
+estados do sistema composto é
+\begin{equation}
+\mathcal{H}_{AB} = \mathcal{H}_A \otimes \mathcal{H}_B.
+\end{equation}
+
+Além disso, se os sistemas $A$ e $B$ estão em estados $\ket{\psi_A}$ e $\ket{\psi_B}$,
+respectivamente, então o estado do sistema composto é
+\begin{equation}
+\ket{\psi_{AB}} = \ket{\psi_A} \otimes \ket{\psi_B}.
+\end{equation}
+
+É importante ressaltar que nem todo estado em $\mathcal{H}_A \otimes \mathcal{H}_B$ pode ser escrito como um
+produto tensorial de estados dos subsistemas. Estados que não admitem essa forma
+são chamados de \emph{estados emaranhados} (\emph{entangled states}).
+
+\begin{example}
+Considere o estado de dois qubits
+\begin{equation}
+\ket{\beta_{00}}=\frac{1}{\sqrt{2}}\bigl(\ket{00} + \ket{11}\bigr)
+\in \mathcal{H}_A \otimes \mathcal{H}_B.
+\end{equation}
+Suponha, por absurdo, que $\ket{\beta_{00}}$ pode ser escrito como um produto tensorial
+
+\begin{equation}
+    \ket{\beta_{00}} = \ket{\psi_A} \otimes \ket{\psi_B}, \qquad \ket{\psi_A} \in \mathcal{H}_A, \text{ } \ket{\psi_B} \in \mathcal{H}_B
+\end{equation}
+onde
+\begin{equation}
+    \ket{\psi_A} = a\ket{0} + b\ket{1} \qquad e \qquad \ket{\psi_B} = c\ket{0} + d\ket{1},
+\end{equation}
+com $a,b,c,d \in \C$. Assim,
+\begin{align}
+    \ket{\psi_A} \otimes \ket{\psi_B}
+    &= (ac)\ket{00} + (ad)\ket{01} + (bc)\ket{10} + (bd)\ket{11}.
+\end{align}
+Temos então
+\begin{equation}
+    ac = \frac{1}{\sqrt{2}}, \qquad bd = \frac{1}{\sqrt{2}}, \qquad ad = 0, \qquad bc = 0.    
+\end{equation}
+Ou seja,
+\begin{itemize}
+    \item ou $a=0$ ou $d=0$,
+    \item ou $b=0$ ou $c=0$.
+\end{itemize}
+O que contradiz $ac=bd=\frac{1}{\sqrt{2}}\neq 0$. Portanto, $\ket{\beta_{00}}$ não pode ser escrito como um produto tensorial de estados dos subsistemas $A$ e $B$.
+\end{example}
+
+O exemplo a seguir ilustra o uso de operadores em sistemas compostos.
+
+\begin{example}
+Considere um sistema composto por dois qubits, $A$ e $B$, cujos espaços de estados
+são $\mathcal{H}_A = \mathbb{C}^2$ e $\mathcal{H}_B = \mathbb{C}^2$. O espaço
+de estados do sistema composto é dado por
+\begin{equation}
+    \mathcal{H}_{AB} = \mathcal{H}_A \otimes \mathcal{H}_B = \C^2\otimes \C^2.
+\end{equation}
+Podemos tomar a base computacional deste sistema composto $B=\{\ket{00}, \ket{01}, \ket{10}, \ket{11}\}$ e considere o estado produto
+\begin{equation}
+\ket{\psi_{AB}} = \ket{0}_A \otimes \ket{1}_B = \ket{01}.
+\end{equation}
+Considere agora a aplicação do operador de Pauli $X$ sobre o qubit $A$, e o operador de Hadamard sobre o qubit $B$. O operador total que atua no sistema composto é
+\begin{equation}
+X \otimes H.
+\end{equation}
+Aplicando esse operador ao estado do sistema, obtemos
+\begin{align}
+(X \otimes H)\ket{01}
+&= (X\ket{0}) \otimes (H\ket{1}) \\
+&= \ket{1} \otimes \frac{1}{\sqrt{2}}(\ket{0} - \ket{1}) \\
+&= \frac{1}{\sqrt{2}}(\ket{10}-\ket{11}).
+\end{align}
+\end{example}
+
+Para sistemas compostos maiores é bastante comum indicar numericamente os sistemas componentes, assim, para um sistema composto de $n$ subsistemas a aplicação do operador $X$ na $i$-ésima componente é indicada por $X_i$.
