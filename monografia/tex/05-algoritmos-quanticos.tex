@@ -45,22 +45,22 @@ onde $\sen(\theta)=\frac{1}{\sqrt{N}}$ e $\cos(\theta)=\sqrt{\frac{N-1}{N}}$.
 
 O subespaço $V$ é $U_f$-invariante e a matriz da restrição de $U_f$ na base $\{\ket{x^\star},\ket{x^{\star}_\perp}\}$ é dada por
 \begin{equation}
-    U_f = \begin{pmatrix}
+    U_f = \begin{bmatrix}
         -1 & 0 \\
          0 & 1
-    \end{pmatrix}.
+    \end{bmatrix}.
 \end{equation}
 A computação acontece apenas no espaço $V$ de dimensão 2.
 
 Usando o produto externo definido na seção \ref{sec:ops}, definimos o operador difusor que age no espaço $V$ como
 \begin{equation}
-D \;=\; 2\ket{s}\!\bra{s} - I = \begin{pmatrix}
+D \;=\; 2\ket{s}\!\bra{s} - I = \begin{bmatrix}
     2\sen^2\theta - 1 & 2\sen\theta\cos\theta \\
     2\sen\theta\cos\theta & 2\cos^2\theta - 1
-\end{pmatrix} = \begin{pmatrix}
+\end{bmatrix} = \begin{bmatrix}
     -\cos(2\theta) & \sen(2\theta) \\
     \sen(2\theta) & \cos(2\theta)
-\end{pmatrix},
+\end{bmatrix},
 \end{equation}
 onde $\ket{s}$ é o estado definido na equação $\eqref{eq:s}$. É fácil verificar que este operador pode ser implementado (a menos de uma fase global) por
 \begin{equation}
@@ -72,34 +72,34 @@ de todos os demais estados computacionais.
 \subsection{Iteração}\label{subsec:go}
 A \emph{iteração de Grover} é o operador $G=DU_f$ que age em $V$ como
 \begin{equation}
-G = DU_f = \begin{pmatrix}
+G = DU_f = \begin{bmatrix}
     -\cos(2\theta) & \sen(2\theta) \\
     \sen(2\theta) & \cos(2\theta)
-\end{pmatrix} \begin{pmatrix}
+\end{bmatrix} \begin{bmatrix}
     -1 & 0 \\
      0 & 1
-\end{pmatrix} = \begin{pmatrix}
+\end{bmatrix} = \begin{bmatrix}
     \cos(2\theta) & \sen(2\theta) \\
     -\sen(2\theta) & \cos(2\theta)
-\end{pmatrix}.
+\end{bmatrix}.
 \end{equation}
 O operador de Grover atua em $V^\perp$ como a identidade, além disso, $G$ atua como uma rotação no plano $V$ gerado por $\{\ket{x^\star},\ket{x^{\star}_\perp}\}$, aumentando a amplitude no estado marcado. De fato, partindo de $\ket{s}$, após $r$ iterações temos
 \begin{align}
-    G^r\ket{s} &= \begin{pmatrix}
+    G^r\ket{s} &= \begin{bmatrix}
         \cos(2r\theta) & \sen(2r\theta) \\
         -\sen(2r\theta) & \cos(2r\theta)
-    \end{pmatrix} \begin{pmatrix}
+    \end{bmatrix} \begin{bmatrix}
         \sen \theta \\
         \cos \theta
-    \end{pmatrix} \\
-            &= \begin{pmatrix}
+    \end{bmatrix} \\
+            &= \begin{bmatrix}
                 \cos(2r\theta)\sen\theta + \sen(2r\theta)\cos\theta \\
                 -\sen(2r\theta)\sen\theta + \cos(2r\theta)\cos\theta
-            \end{pmatrix} \\
-            &=\begin{pmatrix}
+            \end{bmatrix} \\
+            &=\begin{bmatrix}
                 \sen((2r+1)\theta) \\
                 \cos((2r+1)\theta) \\
-            \end{pmatrix} \\
+            \end{bmatrix} \\
             &= \sen((2r+1)\theta)\ket{x^\star} + \cos((2r+1)\theta)\ket{x^\star_\perp}
 \end{align}
 Logo, a probabilidade de medir o item marcado após $r$ iterações é
@@ -335,10 +335,10 @@ Dado $C:\mathcal{H}\to \mathcal{H}$, como na seção~\ref{sec:poc}, queremos enc
     \ket{s}
     &= H^{\otimes n}\bigg(\bigotimes_{i=1}^n \ket{0}\bigg)
     & H &= \frac{1}{\sqrt{2}}
-    \begin{pmatrix}
+    \begin{bmatrix}
     1 & 1 \\
     1 & -1
-    \end{pmatrix} \\[0.5em]
+    \end{bmatrix} \\[0.5em]
     &= \ket{+}_1 \otimes \ket{+}_2 \otimes \dotso \otimes \ket{+}_n
     & \ket{+} &= \frac{1}{\sqrt{2}}(\ket{0} + \ket{1}) \\[0.5em]
     &= \frac{1}{\sqrt{2^n}} \sum_{z \in X} \ket{z}.

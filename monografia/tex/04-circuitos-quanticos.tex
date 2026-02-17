@@ -189,21 +189,21 @@ Outras portas lógicas quânticas bastante utilizadas na computação quântica 
 \begin{itemize}
     \item Porta $S$ (\textit{phase gate})
         \begin{equation}\label{eq:ps}
-        S = \begin{pmatrix}
+        S = \begin{bmatrix}
             1 & 0 \\
             0 & i
-        \end{pmatrix}.
+        \end{bmatrix}.
         \end{equation}
     \item Porta $T$ (\textit{$\pi/8$ gate})
         \begin{equation}\label{eq:pt}
-        T = \begin{pmatrix}
+        T = \begin{bmatrix}
             1 & 0 \\
             0 & e^{i\pi/4}
-        \end{pmatrix}.
+        \end{bmatrix}.
         \end{equation}
     \item Porta $R_x$ (rotação no eixo $x$ na esfera de Bloch)
         \begin{equation}\label{eq:rx}
-        R_x(\theta) = e^{-i\frac{\theta}{2}X}=\begin{pmatrix}
+        R_x(\theta) = e^{-i\frac{\theta}{2}X}=\begin{bmatrix}
         \cos\!\left(\frac{\theta}{2}\right)
         &
         -i\sen\!\left(\frac{\theta}{2}\right)
@@ -211,13 +211,13 @@ Outras portas lógicas quânticas bastante utilizadas na computação quântica 
         -i\sen\!\left(\frac{\theta}{2}\right)
         &
         \cos\!\left(\frac{\theta}{2}\right)
-        \end{pmatrix}.
+        \end{bmatrix}.
         \end{equation}
     \item Porta $R_y$ (rotação no eixo $y$ na esfera de Bloch)
         \begin{equation}
         R_y(\theta) = e^{-i\frac{\theta}{2}Y}
         =
-        \begin{pmatrix}
+        \begin{bmatrix}
         \cos\!\left(\frac{\theta}{2}\right)
         &
         -\sen\!\left(\frac{\theta}{2}\right)
@@ -225,16 +225,16 @@ Outras portas lógicas quânticas bastante utilizadas na computação quântica 
         \sen\!\left(\frac{\theta}{2}\right)
         &
         \cos\!\left(\frac{\theta}{2}\right)
-        \end{pmatrix}.
+        \end{bmatrix}.
         \end{equation}
     \item Porta $R_z$ (rotação no eixo $z$ na esfera de Bloch)
         \begin{equation}
         R_z(\theta) = e^{-i\frac{\theta}{2}Z}
         =
-        \begin{pmatrix}
+        \begin{bmatrix}
         e^{-i\theta/2} & 0 \\
         0 & e^{i\theta/2}
-        \end{pmatrix}.
+        \end{bmatrix}.
         \end{equation}
     \item Porta Tofoli ou \textsf{CCNOT}, que similar ao \textsf{CNOT} atua em múltiplos qubits sendo os dois primeiros qubits de controle e o terceiro o qubit-alvo. Da porta Tofoli podemos generalizar o conceito para um $\text{C}^n\text{NOT}$ ou \textsf{CNOT} com $n$ qubits de controle e um qubit-alvo.
 \end{itemize}
@@ -302,24 +302,24 @@ Alguns exemplos bastante comuns de portas controladas são:
 
 Porta \textsf{CNOT} ou \text{CX}
 \begin{equation}\label{eq:cx}
-    \mathrm{CX} = \begin{pmatrix}
+    \mathrm{CX} = \begin{bmatrix}
     1 & 0 & 0 & 0 \\
     0 & 1 & 0 & 0 \\
     0 & 0 & 0 & 1 \\
     0 & 0 & 1 & 0
-    \end{pmatrix}.
+    \end{bmatrix}.
 \end{equation}
 
 Porta \textsf{CZ}
 \begin{equation}\label{eq:cz}
 \mathrm{CZ}
 =
-\begin{pmatrix}
+\begin{bmatrix}
 1 & 0 & 0 & 0 \\
 0 & 1 & 0 & 0 \\
 0 & 0 & 1 & 0 \\
 0 & 0 & 0 & -1
-\end{pmatrix}.
+\end{bmatrix}.
 \end{equation}
 
 Uma outra operação muito importante é a medida, ao qual é representada por um símbolo de medidor analógico como mostrado na figura \ref{fig:mm}. Como mencionado anteriormente este operador converte um único qubit $\ket{\psi} = \alpha\ket{0} + \beta\ket{1}$ em um bit clássico $M$, com probabilidades $|\alpha|^2$ ou $|\beta|^2$ se o resultado é $0$ ou $1$ respectivamente.
