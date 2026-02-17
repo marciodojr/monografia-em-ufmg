@@ -92,7 +92,7 @@ A notação $\ket{\psi}$ (ket) foi introduzida por Paul Dirac.
 \medskip
 Produto interno:
 $$
-\braket{\phi}{\psi}
+\braket{\varphi}{\psi}
 $$
 
 \medskip
@@ -163,7 +163,7 @@ $$
 % \begin{frame}{Operadores lineares}
 % Um \textbf{operador linear} $A:\mathcal{H}\to\mathcal{H}$ satisfaz
 % $$
-% A(\alpha\ket{\psi}+\beta\ket{\phi})=\alpha A\ket{\psi}+\beta A\ket{\phi}.
+% A(\alpha\ket{\psi}+\beta\ket{\varphi})=\alpha A\ket{\psi}+\beta A\ket{\varphi}.
 % $$
 
 % \medskip
@@ -228,19 +228,19 @@ $\{\ket{00},\ket{01},\ket{10},\ket{11}\}$, onde $\ket{00} = \ket{0}\otimes \ket{
 \end{frame}
 
 %------------------------------------------------
-\begin{frame}{Operadores em espaços tensoriais}
-Se $A$ atua em $\mathcal{H}_A$ e $B$ atua em $\mathcal{H}_B$, define-se $A\otimes B$ por:
-$$
-(A\otimes B)(\ket{\psi}\otimes\ket{\phi})=A\ket{\psi}\otimes B\ket{\phi}.
-$$
+% \begin{frame}{Operadores em espaços tensoriais}
+% Se $A$ atua em $\mathcal{H}_A$ e $B$ atua em $\mathcal{H}_B$, define-se $A\otimes B$ por:
+% $$
+% (A\otimes B)(\ket{\psi}\otimes\ket{\varphi})=A\ket{\psi}\otimes B\ket{\varphi}.
+% $$
 
-\medskip
-\textbf{Aplicação típica:} portas que atuam em um qubit de um registrador:
-$$
-U_k = I\otimes\cdots\otimes I\otimes U \otimes I\otimes\cdots\otimes I.
-$$
+% \medskip
+% \textbf{Aplicação típica:} portas que atuam em um qubit de um registrador:
+% $$
+% U_k = I\otimes\cdots\otimes I\otimes U \otimes I\otimes\cdots\otimes I.
+% $$
 
-\end{frame}
+% \end{frame}
 
 % \begin{frame}{Produto de Kronecker}
 
@@ -296,7 +296,7 @@ $$
 \subsection{Postulado 1 - Espaço de estados}
 
 \begin{frame}{Postulado 1 - Espaço de estados}
-\textbf{Postulado 1.} A um sistema físico isolado associa-se um \textbf{espaço de Hilbert complexo}
+\textbf{Postulado 1.} A um sistema quântico isolado associa-se um \textbf{espaço de Hilbert complexo}
 $\mathcal{H}$, chamado \emph{espaço de estados} do sistema. O estado do sistema é completamente descrito por um \textbf{vetor unitário} $\ket{\psi}\in\mathcal{H}$.
 
 \medskip
@@ -481,7 +481,7 @@ $$
 $$
 
 Se $\{\ket{j}\}_{j=1}^n$ é base de $\mathcal{H}_A$ e $\{\ket{k}\}_{k=1}^m$ é base de $\mathcal{H}_B$, então
-$\{\ket{i}\otimes\ket{j}\}$ é base de $\mathcal{H}_{AB}$.
+$\{\ket{j}\otimes\ket{k}\}_{i=j=1}^{j=n,k=m}$ é base de $\mathcal{H}_{AB}$.
 
 \medskip
 \textbf{Dimensão:}
@@ -492,7 +492,7 @@ $$
 \medskip
 \textbf{Operadores em sistemas compostos:}
 $$
-(A\otimes B)(\ket{\psi}\otimes\ket{\phi})=A\ket{\psi}\otimes B\ket{\phi}.
+(A\otimes B)(\ket{\psi}\otimes\ket{\varphi})=A\ket{\psi}\otimes B\ket{\varphi}.
 $$
 \end{frame}
 
@@ -547,9 +547,9 @@ onde cada $U_i$ é unitário.
 \medskip
 \textbf{Componentes fundamentais:}
 \begin{itemize}
-    \item Registradores de qubits
-    \item Portas unitárias
-    \item Medição na base computacional
+    \item Registradores de qubits.
+    \item Portas unitárias.
+    \item Medição na base computacional.
 \end{itemize}
 \end{frame}
 
@@ -750,8 +750,7 @@ x \in \{0,1\}^n.
 $$
 
 \medskip
-Assim, um circuito quântico implementa uma
-\textbf{distribuição de probabilidade} sobre sequências binárias.
+Um circuito quântico implementa uma \textbf{distribuição de probabilidade} sobre sequências binárias.
 \end{frame}
 
 % \begin{frame}{Teorema da não clonagem}
@@ -785,12 +784,12 @@ Assim, um circuito quântico implementa uma
 %         que só é possível se $\ket{\varphi}=\ket{\psi}$ ou se $\ket{\varphi}$ e $\ket{\psi}$ são ortogonais.
 % \end{frame}
 
-\begin{frame}{Teleporte quântico: cenário e objetivo}
+\begin{frame}{Teleporte quântico}
 \textbf{Objetivo:} transferir um qubit desconhecido
 $$
 \ket{\psi}=a\ket{0}+b\ket{1}
 $$
-de Alice para Bob sem um canal de comunicação quântica entre eles.
+de Alice para Bob sem um canal de comunicação quântica.
 
 \medskip
 \textbf{Cenário:}
@@ -1184,12 +1183,7 @@ O algoritmo encontra $x^\star$ com alta probabilidade usando $O(\sqrt{N})$ invoc
 
 %------------------------------------------------
 \begin{frame}{Problemas de Otimização Combinatória}
-Seja $X=\{0,1\}^n$ o conjunto de soluções (strings binárias)
-$$
-z=z_1z_2\cdots z_n \in \{0,1\}^n.
-$$
-
-Um problema de otimização combinatória é dado por funções locais
+Seja $X=\{0,1\}^n$ o conjunto de soluções $z=z_1z_2\cdots z_n \in \{0,1\}^n$ (sequências binárias). Um problema de otimização combinatória é dado por funções locais
 $$
 C_\alpha: X\to \{0,1\},\qquad \alpha=1,\dots,m,
 $$
@@ -1450,7 +1444,7 @@ $$
   $$
   \item Otimizando os $2p$ ângulos maximizamos
   $$
-  F_p(\gamma,\beta)=\braket{\gamma,\beta|C|\gamma,\beta}.
+  F_p(\gamma,\beta)=\braket{\gamma,\beta}{C|\gamma,\beta}.
   $$
   \item Aumentar $p$ aumenta expressividade e conecta-se ao limite adiabático:
   $$
@@ -1464,33 +1458,33 @@ $$
 
     \begin{figure}[ht!]
         \centering
-        \includegraphics[width=0.5\textwidth]{../img/gqaoa.png}
+        \includegraphics[width=0.40\textwidth]{../img/gqaoa.png}
         \caption{Grafo para uso no QAOA.}
         \label{fig:agqaoa}
     \end{figure}
 \end{frame}
 
-% \begin{frame}{QAOA (Qiskit)}
-%   Implementação em Qiskit (\texttt{qaoa.ipynb}).
-
-%     \begin{figure}[ht!]
-%         \centering
-%         \includegraphics[width=0.9\textwidth]{../img/qaoaex.png}
-%         \caption{Circuito do QAOA.}
-%         \label{fig:aqaoaexd}
-%     \end{figure}
-% \end{frame}
-
 \begin{frame}{QAOA (Qiskit)}
-  Corte máximo aparece com maior frequência.
+  Implementação em Qiskit (\texttt{qaoa.ipynb}).
 
-  \begin{figure}[ht!]
-      \centering
-      \includegraphics[width=0.5\textwidth]{../img/qaoafim.png}
-      \caption{Histograma de medida com o resultado correto para o corte máximo.}
-      \label{fig:aqaoafim}
-  \end{figure}
+    \begin{figure}[ht!]
+        \centering
+        \includegraphics[width=0.9\textwidth]{../img/qaoaex.png}
+        \caption{Circuito do QAOA.}
+        \label{fig:aqaoaexd}
+    \end{figure}
 \end{frame}
+
+% \begin{frame}{QAOA (Qiskit)}
+%   Corte máximo aparece com maior frequência.
+
+%   \begin{figure}[ht!]
+%       \centering
+%       \includegraphics[width=0.5\textwidth]{../img/qaoafim.png}
+%       \caption{Histograma de medida com o resultado correto para o corte máximo.}
+%       \label{fig:aqaoafim}
+%   \end{figure}
+% \end{frame}
 
 \begin{frame}{Agradecimentos}
 
