@@ -76,28 +76,6 @@
   \tableofcontents
 \end{frame}
 
-% ============================================================
-\section{Contexto e objetivos}
-
-\begin{frame}{Contexto e objetivos}
-\begin{itemize}
-  \item Apresentar a base matemática para descrever sistemas quânticos:
-  \begin{itemize}
-    \item Espaços de Hilbert
-    \item Operadores lineares
-    \item Produto tensorial
-  \end{itemize}
-  \item Introduzir o modelo de computação quântica a partir dos postulados
-  \item Implementar e discutir os algoritmos:
-  \begin{itemize}
-    \item \textbf{Algoritmo de Grover} (busca não-estruturada);
-    \item \textbf{QAOA} aplicado ao \textbf{MaxCut}.
-  \end{itemize}
-\end{itemize}
-\end{frame}
-
-% ============================================================
-
 \section{Base matemática}
 
 \begin{frame}{Notação Bra-Ket}
@@ -129,79 +107,79 @@ $$
 \end{frame}
 
 %------------------------------------------------
-\begin{frame}{A base computacional}
+% \begin{frame}{A base computacional}
 
-No caso de um qubit:
+% No caso de um qubit:
 
-$$
-\mathcal{H} = \mathbb{C}^2.
-$$
+% $$
+% \mathcal{H} = \mathbb{C}^2.
+% $$
 
-A base computacional é definida por:
+% A base computacional é definida por:
 
-$$
-\ket{0} =
-\begin{bmatrix}
-1 \\
-0
-\end{bmatrix},
-\qquad
-\ket{1} =
-\begin{bmatrix}
-0 \\
-1
-\end{bmatrix}.
-$$
+% $$
+% \ket{0} =
+% \begin{bmatrix}
+% 1 \\
+% 0
+% \end{bmatrix},
+% \qquad
+% \ket{1} =
+% \begin{bmatrix}
+% 0 \\
+% 1
+% \end{bmatrix}.
+% $$
 
-\medskip
-Propriedades:
+% \medskip
+% Propriedades:
 
-$$
-\braket{0}{0} = \braket{1}{1} = 1,
-\quad
-\braket{0}{1} = \braket{1}{0} = 0.
-$$
+% $$
+% \braket{0}{0} = \braket{1}{1} = 1,
+% \quad
+% \braket{0}{1} = \braket{1}{0} = 0.
+% $$
 
-\medskip
-Ou seja, $\{\ket{0},\ket{1}\}$ é uma base ortonormal.
-\end{frame}
+% \medskip
+% Ou seja, $\{\ket{0},\ket{1}\}$ é uma base ortonormal.
+% \end{frame}
 
-\begin{frame}{Espaços de Hilbert}
-Um \textbf{espaço de Hilbert} $\mathcal{H}$ é um espaço vetorial com produto interno $\braket{\cdot}{\cdot}$ e que é completo na norma induzida:
-$$
-\|\ket{\psi}\|=\sqrt{\braket{\psi}{\psi}}.
-$$
+% \begin{frame}{Espaços de Hilbert}
+% Um \textbf{espaço de Hilbert} $\mathcal{H}$ é um espaço vetorial com produto interno $\braket{\cdot}{\cdot}$ e que é completo na norma induzida:
+% $$
+% \|\ket{\psi}\|=\sqrt{\braket{\psi}{\psi}}.
+% $$
 
-\medskip
-\textbf{Exemplo (qubit):}\quad $\mathcal{H}=\mathbb{C}^2$ com base $\{\ket{0},\ket{1}\}$ e produto interno canônico.
+% \medskip
+% \textbf{Exemplo (qubit):}\quad $\mathcal{H}=\mathbb{C}^2$ com base $\{\ket{0},\ket{1}\}$ e produto interno canônico.
 
-$$
-\ket{\psi} = a\ket{0} + b\ket{1}, \qquad |a|^2+|b^2|=1.
-$$
+% $$
+% \ket{\psi} = a\ket{0} + b\ket{1}, \qquad |a|^2+|b^2|=1.
+% $$
 
-\end{frame}
+% \end{frame}
 
 %------------------------------------------------
-\begin{frame}{Operadores lineares}
-Um \textbf{operador linear} $A:\mathcal{H}\to\mathcal{H}$ satisfaz
-$$
-A(\alpha\ket{\psi}+\beta\ket{\phi})=\alpha A\ket{\psi}+\beta A\ket{\phi}.
-$$
+% \begin{frame}{Operadores lineares}
+% Um \textbf{operador linear} $A:\mathcal{H}\to\mathcal{H}$ satisfaz
+% $$
+% A(\alpha\ket{\psi}+\beta\ket{\phi})=\alpha A\ket{\psi}+\beta A\ket{\phi}.
+% $$
 
-\medskip
-\textbf{Adjunto:}\quad Dada a representação matricial de $A$ temos
-$$
-A^\dagger = (A^T)^* = (A^*)^T
-$$
+% \medskip
+% \textbf{Adjunto:}\quad Dada a representação matricial de $A$ temos
+% $$
+% A^\dagger = (A^T)^* = (A^*)^T
+% $$
 
-\medskip
-\textbf{Classes importantes:}
-\begin{itemize}
-    \item \textbf{Hermitiano:} $A=A^\dagger$.
-    \item \textbf{Unitário:} $U^\dagger U=I$.
-    \item \textbf{Projeção:} $P^2=P$ e $P^\dagger=P$.
-\end{itemize}
-\end{frame}
+% \medskip
+% \textbf{Classes importantes:}
+% \begin{itemize}
+%     \item \textbf{Hermitiano:} $A=A^\dagger$.
+%     \item \textbf{Unitário:} $U^\dagger U=I$.
+%     \item \textbf{Projeção:} $P^2=P$ e $P^\dagger=P$.
+% \end{itemize}
+% \end{frame}
 
 %------------------------------------------------
 \begin{frame}{Operadores em base ortonormal (matriz)}
@@ -233,9 +211,9 @@ $$
 \mathcal{H}_{AB}=\mathcal{H}_A\otimes\mathcal{H}_B.
 $$
 
-\medskip
-Se $\{\ket{i}\}_{i=1}^n$ é base de $\mathcal{H}_A$ e $\{\ket{j}\}_{j=1}^m$ é base de $\mathcal{H}_B$, então
-$\{\ket{i}\otimes\ket{j}\}$ é base de $\mathcal{H}_A\otimes\mathcal{H}_B$.
+% \medskip
+% Se $\{\ket{i}\}_{i=1}^n$ é base de $\mathcal{H}_A$ e $\{\ket{j}\}_{j=1}^m$ é base de $\mathcal{H}_B$, então
+% $\{\ket{i}\otimes\ket{j}\}_{i,i=1}^$ é base de $\mathcal{H}_A\otimes\mathcal{H}_B$.
 
 \medskip
 \textbf{Dimensão:}
@@ -264,54 +242,53 @@ $$
 
 \end{frame}
 
-\begin{frame}{Produto de Kronecker}
+% \begin{frame}{Produto de Kronecker}
 
-O \textbf{produto de Kronecker} é a representação matricial do produto tensorial.
+% O \textbf{produto de Kronecker} é a representação matricial do produto tensorial.
 
-\medskip
-Se $A \in \mathbb{C}^{m\times n}$ e $B \in \mathbb{C}^{p\times q}$, define-se
+% \medskip
+% Se $A \in \mathbb{C}^{m\times n}$ e $B \in \mathbb{C}^{p\times q}$, define-se
 
-$$
-A \otimes B =
-\begin{pmatrix}
-a_{11}B & a_{12}B & \cdots & a_{1n}B \\
-a_{21}B & a_{22}B & \cdots & a_{2n}B \\
-\vdots  & \vdots  & \ddots & \vdots \\
-a_{m1}B & a_{m2}B & \cdots & a_{mn}B
-\end{pmatrix}
-\in \mathbb{C}^{mp \times nq}.
-$$
+% $$
+% A \otimes B =
+% \begin{pmatrix}
+% a_{11}B & a_{12}B & \cdots & a_{1n}B \\
+% a_{21}B & a_{22}B & \cdots & a_{2n}B \\
+% \vdots  & \vdots  & \ddots & \vdots \\
+% a_{m1}B & a_{m2}B & \cdots & a_{mn}B
+% \end{pmatrix}
+% \in \mathbb{C}^{mp \times nq}.
+% $$
 
-\medskip
-\textbf{Exemplo (2 qubits):}
+% \medskip
+% \textbf{Exemplo (2 qubits):}
 
-$$
-X \otimes I =
-\begin{pmatrix}
-0 & 1 \\
-1 & 0
-\end{pmatrix}
-\otimes
-\begin{pmatrix}
-1 & 0 \\
-0 & 1
-\end{pmatrix}
-=
-\begin{pmatrix}
-0 & 0 & 1 & 0 \\
-0 & 0 & 0 & 1 \\
-1 & 0 & 0 & 0 \\
-0 & 1 & 0 & 0
-\end{pmatrix}.
-$$
+% $$
+% X \otimes I =
+% \begin{pmatrix}
+% 0 & 1 \\
+% 1 & 0
+% \end{pmatrix}
+% \otimes
+% \begin{pmatrix}
+% 1 & 0 \\
+% 0 & 1
+% \end{pmatrix}
+% =
+% \begin{pmatrix}
+% 0 & 0 & 1 & 0 \\
+% 0 & 0 & 0 & 1 \\
+% 1 & 0 & 0 & 0 \\
+% 0 & 1 & 0 & 0
+% \end{pmatrix}.
+% $$
 
-\medskip
-\small
-Interpretação física: aplicar $X$ no primeiro qubit e identidade no segundo.
-\end{frame}
+% \medskip
+% \small
+% Interpretação física: aplicar $X$ no primeiro qubit e identidade no segundo.
+% \end{frame}
 
 % ============================================================
-
 
 \section{Postulados da mecânica quântica}
 
@@ -331,36 +308,36 @@ $$
 
 \end{frame}
 
-\begin{frame}{Postulado 1 - Qubit e parametrização (Esfera de Bloch)}
-Para um qubit, $\mathcal{H}=\mathbb{C}^2$, na base computacional $\{\ket{0},\ket{1}\}$:
-$$
-\ket{\psi}=a\ket{0}+b\ket{1},\qquad |a|^2+|b|^2=1.
-$$
+% \begin{frame}{Postulado 1 - Qubit e parametrização (Esfera de Bloch)}
+% Para um qubit, $\mathcal{H}=\mathbb{C}^2$, na base computacional $\{\ket{0},\ket{1}\}$:
+% $$
+% \ket{\psi}=a\ket{0}+b\ket{1},\qquad |a|^2+|b|^2=1.
+% $$
 
-Removendo a fase global, pode-se escrever (a menos da equivalência):
-$$
-\ket{\psi}=
-\cos\!\left(\frac{\theta}{2}\right)\ket{0}
-+e^{i\varphi}\sin\!\left(\frac{\theta}{2}\right)\ket{1},
-\quad 0\le\theta\le\pi,\ 0\le\varphi<2\pi.
-$$
+% Removendo a fase global, pode-se escrever (a menos da equivalência):
+% $$
+% \ket{\psi}=
+% \cos\!\left(\frac{\theta}{2}\right)\ket{0}
+% +e^{i\varphi}\sin\!\left(\frac{\theta}{2}\right)\ket{1},
+% \quad 0\le\theta\le\pi,\ 0\le\varphi<2\pi.
+% $$
 
-\medskip
-\textbf{Leitura geométrica:} o par $(\theta,\varphi)$ identifica um ponto na Esfera de Bloch,
-com vetor
-$$
-\vec r=(\sin\theta\cos\varphi,\ \sin\theta\sin\varphi,\ \cos\theta).
-$$
-\end{frame}
+% \medskip
+% \textbf{Leitura geométrica:} o par $(\theta,\varphi)$ identifica um ponto na Esfera de Bloch,
+% com vetor
+% $$
+% \vec r=(\sin\theta\cos\varphi,\ \sin\theta\sin\varphi,\ \cos\theta).
+% $$
+% \end{frame}
 
-\begin{frame}{Postulado 1 - Qubit e parametrização (Esfera de Bloch)}
-  \begin{figure}[ht!]
-      \centering
-      \includegraphics[width=0.4\textwidth]{../img/blochsphere.png}
-      \caption{Estado $\ket{\psi}$ representado na Esfera de Bloch.}
-      \label{fig:aqubiteb}
-  \end{figure}
-\end{frame}
+% \begin{frame}{Postulado 1 - Qubit e parametrização (Esfera de Bloch)}
+%   \begin{figure}[ht!]
+%       \centering
+%       \includegraphics[width=0.4\textwidth]{../img/blochsphere.png}
+%       \caption{Estado $\ket{\psi}$ representado na Esfera de Bloch.}
+%       \label{fig:aqubiteb}
+%   \end{figure}
+% \end{frame}
 
 % ============================================================
 \subsection{Postulado 2 - Evolução}
@@ -386,59 +363,59 @@ $$
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Postulado 2 - Exemplos e evolução contínua}
-\textbf{Exemplos (Pauli).}
-$$
-X=\begin{pmatrix}0&1\\1&0\end{pmatrix},\quad
-Z=\begin{pmatrix}1&0\\0&-1\end{pmatrix}
-\quad\Rightarrow\quad
-X\ket{0}=\ket{1},\ X\ket{1}=\ket{0},\ Z\ket{1}=-\ket{1}.
-$$
+% \begin{frame}{Postulado 2 - Exemplos e evolução contínua}
+% \textbf{Exemplos (Pauli).}
+% $$
+% X=\begin{pmatrix}0&1\\1&0\end{pmatrix},\quad
+% Z=\begin{pmatrix}1&0\\0&-1\end{pmatrix}
+% \quad\Rightarrow\quad
+% X\ket{0}=\ket{1},\ X\ket{1}=\ket{0},\ Z\ket{1}=-\ket{1}.
+% $$
 
-\medskip
-\textbf{Exemplo (Hadamard).}
-$$
-H=\frac{1}{\sqrt2}\begin{pmatrix}1&1\\1&-1\end{pmatrix},
-\qquad
-H\ket{0}=\frac{1}{\sqrt2}(\ket{0}+\ket{1})=\ket{+}.
-$$
-\end{frame}
+% \medskip
+% \textbf{Exemplo (Hadamard).}
+% $$
+% H=\frac{1}{\sqrt2}\begin{pmatrix}1&1\\1&-1\end{pmatrix},
+% \qquad
+% H\ket{0}=\frac{1}{\sqrt2}(\ket{0}+\ket{1})=\ket{+}.
+% $$
+% \end{frame}
 
-\begin{frame}{Postulado 2 - Evolução Contínua}
+% \begin{frame}{Postulado 2 - Evolução Contínua}
 
-A dinâmica contínua é governada pela \textbf{equação de Schrödinger dependente do tempo}:
+% A dinâmica contínua é governada pela \textbf{equação de Schrödinger dependente do tempo}:
 
-$$
-i\hbar \frac{d}{dt}\ket{\psi(t)} = H(t)\ket{\psi(t)},
-$$
+% $$
+% i\hbar \frac{d}{dt}\ket{\psi(t)} = H(t)\ket{\psi(t)},
+% $$
 
-onde: $H(t)$ é o \textbf{Hamiltoniano} (operador hermitiano) e $\hbar$ é a constante de Planck.
+% onde: $H(t)$ é o \textbf{Hamiltoniano} (operador hermitiano) e $\hbar$ é a constante de Planck.
 
-\medskip
-\textbf{Caso independente do tempo:}
+% \medskip
+% \textbf{Caso independente do tempo:}
 
-$$
-U(t_2,t_1) =
-\exp\!\left(
--\frac{i}{\hbar} H (t_2 - t_1)
-\right).
-$$
+% $$
+% U(t_2,t_1) =
+% \exp\!\left(
+% -\frac{i}{\hbar} H (t_2 - t_1)
+% \right).
+% $$
 
-\medskip
-\textbf{Caso dependente do tempo:}
+% \medskip
+% \textbf{Caso dependente do tempo:}
 
-$$
-U(t_2,t_1)
-=
-\mathcal{T}
-\exp\!\left(
--\frac{i}{\hbar}
-\int_{t_1}^{t_2} H(s)\,ds
-\right),
-$$
+% $$
+% U(t_2,t_1)
+% =
+% \mathcal{T}
+% \exp\!\left(
+% -\frac{i}{\hbar}
+% \int_{t_1}^{t_2} H(s)\,ds
+% \right),
+% $$
 
-onde $\mathcal{T}$ é o operador de ordenação temporal.
-\end{frame}
+% onde $\mathcal{T}$ é o operador de ordenação temporal.
+% \end{frame}
 
 % ============================================================
 \subsection{Postulado 3 - Medição quântica}
@@ -466,32 +443,32 @@ Se o sistema está no estado $\ket{\psi}$:
 \textbf{Intuição:} A medição, em geral, introduz aleatoriedade.
 \end{frame}
 
-\begin{frame}{Postulado 3 - Medição projetiva}
-\textbf{Medição projetiva.}
-Um caso importante ocorre quando $M_i=P_i$ são projetores ortogonais:
-$$
-P_i^2=P_i,\quad P_i^\dagger=P_i,\quad P_iP_j=0\ (i\neq j),\quad \sum_i P_i=I.
-$$
+% \begin{frame}{Postulado 3 - Medição projetiva}
+% \textbf{Medição projetiva.}
+% Um caso importante ocorre quando $M_i=P_i$ são projetores ortogonais:
+% $$
+% P_i^2=P_i,\quad P_i^\dagger=P_i,\quad P_iP_j=0\ (i\neq j),\quad \sum_i P_i=I.
+% $$
 
-\medskip
-\textbf{Exemplo: medição na base computacional.}
-$$
-M_0=\ket{0}\bra{0},\qquad M_1=\ket{1}\bra{1},\qquad I=M_0+M_1.
-$$
-Se
-$$
-\ket{\psi}=a\ket{0}+b\ket{1},
-$$
-então:
-$$
-p(0)=|a|^2,\quad p(1)=|b|^2,
-\qquad
-\ket{\psi_0}=\ket{0},\ \ket{\psi_1}=\ket{1}.
-$$
+% \medskip
+% \textbf{Exemplo: medição na base computacional.}
+% $$
+% M_0=\ket{0}\bra{0},\qquad M_1=\ket{1}\bra{1},\qquad I=M_0+M_1.
+% $$
+% Se
+% $$
+% \ket{\psi}=a\ket{0}+b\ket{1},
+% $$
+% então:
+% $$
+% p(0)=|a|^2,\quad p(1)=|b|^2,
+% \qquad
+% \ket{\psi_0}=\ket{0},\ \ket{\psi_1}=\ket{1}.
+% $$
 
-\medskip
-\textbf{Em outras palavras:} Ao medir ``colapsamos'' o estado para um autovetor compatível com o resultado obtido.
-\end{frame}
+% \medskip
+% \textbf{Em outras palavras:} Ao medir ``colapsamos'' o estado para um autovetor compatível com o resultado obtido.
+% \end{frame}
 
 % ============================================================
 \subsection{Postulado 4 - Sistemas compostos}
@@ -519,29 +496,27 @@ $$
 $$
 \end{frame}
 
-\begin{frame}{Postulado 4 - Estados separáveis e emaranhamento}
-\textbf{Estados produto (separáveis).}
-Um estado é separável se pode ser escrito como
-$$
-\ket{\psi_{AB}}=\ket{\psi_A}\otimes\ket{\psi_B}.
-$$
+% \begin{frame}{Postulado 4 - Estados separáveis e emaranhamento}
+% \textbf{Estados produto (separáveis).}
+% Um estado é separável se pode ser escrito como
+% $$
+% \ket{\psi_{AB}}=\ket{\psi_A}\otimes\ket{\psi_B}.
+% $$
 
-\medskip
-\textbf{Emaranhamento.}
-Existem estados do sistema composto que \emph{não} podem ser escritos como produto tensorial.
-Exemplo (estado de Bell):
-$$
-\ket{\beta_{00}}=\frac{1}{\sqrt{2}}\big(\ket{00}+\ket{11}\big)\in \mathbb{C}^2\otimes\mathbb{C}^2.
-$$
+% \medskip
+% \textbf{Emaranhamento.}
+% Existem estados do sistema composto que \emph{não} podem ser escritos como produto tensorial.
+% Exemplo (estado de Bell):
+% $$
+% \ket{\beta_{00}}=\frac{1}{\sqrt{2}}\big(\ket{00}+\ket{11}\big)\in \mathbb{C}^2\otimes\mathbb{C}^2.
+% $$
 
-\medskip
-\textbf{Ideia da prova (esboço):}
-assumindo $\ket{\beta_{00}}=(a\ket{0}+b\ket{1})\otimes(c\ket{0}+d\ket{1})$,
-os coeficientes exigiriam simultaneamente $ac=\frac{1}{\sqrt2}$, $bd=\frac{1}{\sqrt2}$,
-e $ad=bc=0$, o que é impossível.
-\end{frame}
-
-% ==================================================================
+% \medskip
+% \textbf{Ideia da prova (esboço):}
+% assumindo $\ket{\beta_{00}}=(a\ket{0}+b\ket{1})\otimes(c\ket{0}+d\ket{1})$,
+% os coeficientes exigiriam simultaneamente $ac=\frac{1}{\sqrt2}$, $bd=\frac{1}{\sqrt2}$,
+% e $ad=bc=0$, o que é impossível.
+% \end{frame}
 
 % ============================================================
 
@@ -579,110 +554,110 @@ onde cada $U_i$ é unitário.
 \end{frame}
 
 % ============================================================
-\begin{frame}{Registradores e estados iniciais}
+% \begin{frame}{Registradores e estados iniciais}
 
-Um circuito com $n$ qubits atua sobre:
+% Um circuito com $n$ qubits atua sobre:
 
-$$
-\mathcal{H} = (\mathbb{C}^2)^{\otimes n}
-$$
+% $$
+% \mathcal{H} = (\mathbb{C}^2)^{\otimes n}
+% $$
 
-\medskip
-Estado inicial padrão:
+% \medskip
+% Estado inicial padrão:
 
-$$
-\ket{0}^{\otimes n}
-=
-\ket{00\cdots0}
-$$
+% $$
+% \ket{0}^{\otimes n}
+% =
+% \ket{00\cdots0}
+% $$
 
-\medskip
-Estado geral:
+% \medskip
+% Estado geral:
 
-$$
-\ket{\psi}
-=
-\sum_{x\in\{0,1\}^n}
-\alpha_x \ket{x}
-\quad
-\text{com}
-\quad
-\sum_x |\alpha_x|^2 = 1.
-$$
+% $$
+% \ket{\psi}
+% =
+% \sum_{x\in\{0,1\}^n}
+% \alpha_x \ket{x}
+% \quad
+% \text{com}
+% \quad
+% \sum_x |\alpha_x|^2 = 1.
+% $$
 
-\medskip
-Dimensão do espaço:
-$$
-\dim(\mathcal{H}) = 2^n.
-$$
-\end{frame}
-
-% ============================================================
-\begin{frame}{Portas de 1 qubit}
-
-Uma porta de 1 qubit é um operador unitário $U:\C^2\to \C^2$.
-
-\medskip
-Exemplos:
-
-$$
-X=
-\begin{pmatrix}
-0 & 1 \\
-1 & 0
-\end{pmatrix},
-\quad
-Z=
-\begin{pmatrix}
-1 & 0 \\
-0 & -1
-\end{pmatrix},
-$$
-
-$$
-H=\frac{1}{\sqrt{2}}
-\begin{pmatrix}
-1 & 1 \\
-1 & -1
-\end{pmatrix}.
-$$
-
-\medskip
-Aplicação em $n$ qubits:
-
-$$
-H_k =
-I \otimes \cdots \otimes H \otimes \cdots \otimes I.
-$$
-\end{frame}
+% \medskip
+% Dimensão do espaço:
+% $$
+% \dim(\mathcal{H}) = 2^n.
+% $$
+% \end{frame}
 
 % ============================================================
-\begin{frame}{Portas de múltiplos qubits}
+% \begin{frame}{Portas de 1 qubit}
 
-Portas que atuam simultaneamente em dois ou mais qubits
-introduzem correlações.
+% Uma porta de 1 qubit é um operador unitário $U:\C^2\to \C^2$.
 
-\medskip
-Exemplo: \textbf{CNOT}
+% \medskip
+% Exemplos:
 
-$$
-\text{CNOT}\ket{x,y}
-=
-\ket{x, y \oplus x}.
-$$
+% $$
+% X=
+% \begin{pmatrix}
+% 0 & 1 \\
+% 1 & 0
+% \end{pmatrix},
+% \quad
+% Z=
+% \begin{pmatrix}
+% 1 & 0 \\
+% 0 & -1
+% \end{pmatrix},
+% $$
 
-Matriz:
+% $$
+% H=\frac{1}{\sqrt{2}}
+% \begin{pmatrix}
+% 1 & 1 \\
+% 1 & -1
+% \end{pmatrix}.
+% $$
 
-$$
-\begin{pmatrix}
-1&0&0&0\\
-0&1&0&0\\
-0&0&0&1\\
-0&0&1&0
-\end{pmatrix}.
-$$
+% \medskip
+% Aplicação em $n$ qubits:
 
-\end{frame}
+% $$
+% H_k =
+% I \otimes \cdots \otimes H \otimes \cdots \otimes I.
+% $$
+% \end{frame}
+
+% ============================================================
+% \begin{frame}{Portas de múltiplos qubits}
+
+% Portas que atuam simultaneamente em dois ou mais qubits
+% introduzem correlações.
+
+% \medskip
+% Exemplo: \textbf{CNOT}
+
+% $$
+% \text{CNOT}\ket{x,y}
+% =
+% \ket{x, y \oplus x}.
+% $$
+
+% Matriz:
+
+% $$
+% \begin{pmatrix}
+% 1&0&0&0\\
+% 0&1&0&0\\
+% 0&0&0&1\\
+% 0&0&1&0
+% \end{pmatrix}.
+% $$
+
+% \end{frame}
 
 \begin{frame}{Emaranhamento: Estados de Bell}
 
@@ -697,59 +672,59 @@ Aplicando $H$ no primeiro qubit e depois $\text{CNOT}_{1,2}$:
            &=\ket{\beta_{00}}.
 \end{align*}
 
-\medskip
-\textbf{Os quatro estados de Bell:}
+% \medskip
+% \textbf{Os quatro estados de Bell:}
 
-\begin{align*}
-\ket{\beta_{00}}=\frac{1}{\sqrt{2}}(\ket{00}+\ket{11}), \quad \ket{\beta_{01}}=\frac{1}{\sqrt{2}}(\ket{01}+\ket{10}), \\
-\ket{\beta_{10}}=\frac{1}{\sqrt{2}}(\ket{00}-\ket{11}), \quad \ket{\beta_{11}}=\frac{1}{\sqrt{2}}(\ket{01}-\ket{10}).  
-\end{align*}
-
-\end{frame}
-
-% ============================================================
-\begin{frame}{Profundidade do circuito}
-
-\medskip
-\textbf{Profundidade:}
-número máximo de camadas de portas que devem ser aplicadas sequencialmente.
-
-O circuito a baixo tem profundidade 2.
-
-  \begin{figure}[ht!]
-      \centering
-      \includegraphics[width=0.4\textwidth]{../img/b00.png}
-      \caption{Circuito para geração do estado $\ket{\beta_{00}}$.}
-      \label{fig:ab00}
-  \end{figure}
-
+% \begin{align*}
+% \ket{\beta_{00}}=\frac{1}{\sqrt{2}}(\ket{00}+\ket{11}), \quad \ket{\beta_{01}}=\frac{1}{\sqrt{2}}(\ket{01}+\ket{10}), \\
+% \ket{\beta_{10}}=\frac{1}{\sqrt{2}}(\ket{00}-\ket{11}), \quad \ket{\beta_{11}}=\frac{1}{\sqrt{2}}(\ket{01}-\ket{10}).  
+% \end{align*}
 
 \end{frame}
 
 % ============================================================
-\begin{frame}{Universalidade}
+% \begin{frame}{Profundidade do circuito}
 
-Um conjunto de portas é \textbf{universal} se pode aproximar
-qualquer operador unitário com precisão arbitrária.
+% \medskip
+% \textbf{Profundidade:}
+% número máximo de camadas de portas que devem ser aplicadas sequencialmente.
 
-\medskip
-Exemplo de conjunto universal:
+% O circuito a seguir tem profundidade 2.
 
-$$
-\{H, T, \text{CNOT}\}
-$$
+%   \begin{figure}[ht!]
+%       \centering
+%       \includegraphics[width=0.4\textwidth]{../img/b00.png}
+%       \caption{Circuito para geração do estado $\ket{\beta_{00}}$.}
+%       \label{fig:ab00}
+%   \end{figure}
 
-onde
 
-$$
-T=
-\begin{pmatrix}
-1 & 0 \\
-0 & e^{i\pi/4}
-\end{pmatrix}.
-$$
+% \end{frame}
 
-\end{frame}
+% ============================================================
+% \begin{frame}{Universalidade}
+
+% Um conjunto de portas é \textbf{universal} se pode aproximar
+% qualquer operador unitário com precisão arbitrária.
+
+% \medskip
+% Exemplo de conjunto universal:
+
+% $$
+% \{H, T, \text{CNOT}\}
+% $$
+
+% onde
+
+% $$
+% T=
+% \begin{pmatrix}
+% 1 & 0 \\
+% 0 & e^{i\pi/4}
+% \end{pmatrix}.
+% $$
+
+% \end{frame}
 
 % ============================================================
 \begin{frame}{Medição no modelo de circuitos}
@@ -779,36 +754,36 @@ Assim, um circuito quântico implementa uma
 \textbf{distribuição de probabilidade} sobre sequências binárias.
 \end{frame}
 
-\begin{frame}{Teorema da não clonagem}
-  \begin{teorema}[Não clonagem para um qubit]\label{th:clone}
-    Não existem $\ket{s}\in \C^2$ e $U:\C^4\to \C^4$, um operador unitário, tais que $U(\ket{\psi}\otimes \ket{s}) = \ket{\psi}\otimes\ket{\psi}$ para todo $\ket{\psi}\in \C^2$. Em outras palavras, não é possível construir um circuito quântico que realize a cópia de um qubit arbitrário $\ket{\psi}$.
-  \end{teorema}
-\end{frame}
+% \begin{frame}{Teorema da não clonagem}
+%   \begin{teorema}[Não clonagem para um qubit]\label{th:clone}
+%     Não existem $\ket{s}\in \C^2$ e $U:\C^4\to \C^4$, um operador unitário, tais que $U(\ket{\psi}\otimes \ket{s}) = \ket{\psi}\otimes\ket{\psi}$ para todo $\ket{\psi}\in \C^2$. Em outras palavras, não é possível construir um circuito quântico que realize a cópia de um qubit arbitrário $\ket{\psi}$.
+%   \end{teorema}
+% \end{frame}
 
-\begin{frame}{Teorema da não clonagem}
-    Se a cópia funciona para os estados $\ket{\psi}$ e $\ket{\varphi}$, temos
-        %
-            \begin{align*}
-                U(\ket{\psi}\otimes\ket{s}) = \ket{\psi}\otimes\ket{\psi} \\
-                U(\ket{\varphi}\otimes\ket{s}) = \ket{\varphi}\otimes\ket{\varphi}.
-            \end{align*}
-        %
-        Ao tomar o produto interno das equações acima temos
-        %
-        \begin{align*}
-            \braket{U(\ket{\psi}\otimes\ket{s})}{U(\ket{\varphi}\otimes\ket{s})}  &= \braket{(\ket{\psi}\otimes\ket{s})}{(\ket{\varphi}\otimes\ket{s})} \\
-                        &=\braket{\psi}{\varphi} \\
-                        &= \braket{(\ket{\psi}\otimes\ket{\varphi})}{(\ket{\psi}\otimes\ket{\varphi})} \\
-                        &= \braket{\psi}{\varphi}^2,
-        \end{align*}
-        %
-        portanto,
-        %
-        \begin{equation*}
-            \braket{\psi}{\varphi}= \braket{\psi}{\varphi}^2 \implies \braket{\psi}{\varphi}=0 \text{ ou } \braket{\psi}{\varphi}=1,
-        \end{equation*}
-        que só é possível se $\ket{\varphi}=\ket{\psi}$ ou se $\ket{\varphi}$ e $\ket{\psi}$ são ortogonais.
-\end{frame}
+% \begin{frame}{Teorema da não clonagem}
+%     Se a cópia funciona para os estados $\ket{\psi}$ e $\ket{\varphi}$, temos
+%         %
+%             \begin{align*}
+%                 U(\ket{\psi}\otimes\ket{s}) = \ket{\psi}\otimes\ket{\psi} \\
+%                 U(\ket{\varphi}\otimes\ket{s}) = \ket{\varphi}\otimes\ket{\varphi}.
+%             \end{align*}
+%         %
+%         Ao tomar o produto interno das equações acima temos
+%         %
+%         \begin{align*}
+%             \braket{U(\ket{\psi}\otimes\ket{s})}{U(\ket{\varphi}\otimes\ket{s})}  &= \braket{(\ket{\psi}\otimes\ket{s})}{(\ket{\varphi}\otimes\ket{s})} \\
+%                         &=\braket{\psi}{\varphi} \\
+%                         &= \braket{(\ket{\psi}\otimes\ket{\varphi})}{(\ket{\psi}\otimes\ket{\varphi})} \\
+%                         &= \braket{\psi}{\varphi}^2,
+%         \end{align*}
+%         %
+%         portanto,
+%         %
+%         \begin{equation*}
+%             \braket{\psi}{\varphi}= \braket{\psi}{\varphi}^2 \implies \braket{\psi}{\varphi}=0 \text{ ou } \braket{\psi}{\varphi}=1,
+%         \end{equation*}
+%         que só é possível se $\ket{\varphi}=\ket{\psi}$ ou se $\ket{\varphi}$ e $\ket{\psi}$ são ortogonais.
+% \end{frame}
 
 \begin{frame}{Teleporte quântico: cenário e objetivo}
 \textbf{Objetivo:} transferir um qubit desconhecido
@@ -830,20 +805,20 @@ de Alice para Bob sem um canal de comunicação quântica entre eles.
 \end{frame}
 
 %------------------------------------------------
-\begin{frame}{Pontos importantes}
-\textbf{Dificuldades fundamentais:}
-\begin{itemize}
-    \item Alice possui \emph{apenas uma cópia} de $\ket{\psi}$.
-    \item Pelo \textbf{teorema da não-clonagem}, ela não pode copiar $\ket{\psi}$.
-    \item Uma medição direta altera o estado, pois o estado pós-medida depende do resultado.
-\end{itemize}
+% \begin{frame}{Pontos importantes}
+% \textbf{Dificuldades fundamentais:}
+% \begin{itemize}
+%     \item Alice possui \emph{apenas uma cópia} de $\ket{\psi}$.
+%     \item Pelo \textbf{teorema da não-clonagem}, ela não pode copiar $\ket{\psi}$.
+%     \item Uma medição direta altera o estado, pois o estado pós-medida depende do resultado.
+% \end{itemize}
 
-\medskip
-Mesmo que Alice conhecesse $\ket{\psi}$, descrevê-lo exatamente exigiria especificar parâmetros em um conjunto contínuo.
+% \medskip
+% Mesmo que Alice conhecesse $\ket{\psi}$, descrevê-lo exatamente exigiria especificar parâmetros em um conjunto contínuo.
 
-\medskip
-\textbf{Solução:} explorar o par EPR compartilhado para reconstruir $\ket{\psi}$ em Bob.
-\end{frame}
+% \medskip
+% \textbf{Solução:} explorar o par EPR compartilhado para reconstruir $\ket{\psi}$ em Bob.
+% \end{frame}
 
 %------------------------------------------------
 \begin{frame}{Circuito do teleporte}
@@ -864,68 +839,68 @@ Mesmo que Alice conhecesse $\ket{\psi}$, descrevê-lo exatamente exigiria especi
 \end{frame}
 
 %------------------------------------------------
-\begin{frame}{Estado de entrada e aplicação do CNOT}
-Assuma $\ket{\psi}=a\ket{0}+b\ket{1}$ e o par EPR $\ket{\beta_{00}}=\frac{1}{\sqrt2}(\ket{00}+\ket{11})$.
+% \begin{frame}{Estado de entrada e aplicação do CNOT}
+% Assuma $\ket{\psi}=a\ket{0}+b\ket{1}$ e o par EPR $\ket{\beta_{00}}=\frac{1}{\sqrt2}(\ket{00}+\ket{11})$.
 
-\medskip
-\textbf{Estado de entrada:}
-\begin{align*}
-\ket{\psi_0}
-&=\ket{\psi}\otimes\ket{\beta_{00}}\\
-&=\frac{1}{\sqrt2}\Big(a\ket{0}\otimes(\ket{00}+\ket{11})+b\ket{1}\otimes(\ket{00}+\ket{11})\Big).
-\end{align*}
+% \medskip
+% \textbf{Estado de entrada:}
+% \begin{align*}
+% \ket{\psi_0}
+% &=\ket{\psi}\otimes\ket{\beta_{00}}\\
+% &=\frac{1}{\sqrt2}\Big(a\ket{0}\otimes(\ket{00}+\ket{11})+b\ket{1}\otimes(\ket{00}+\ket{11})\Big).
+% \end{align*}
 
-\medskip
-Convenção: os dois primeiros qubits são de Alice e o terceiro é de Bob.
+% \medskip
+% Convenção: os dois primeiros qubits são de Alice e o terceiro é de Bob.
 
-\medskip
-\textbf{Após CNOT (controle = qubit $\ket{\psi}$; alvo = metade do EPR de Alice):}
-$$
-\ket{\psi_1}=\frac{1}{\sqrt2}\Big(a\ket{0}\otimes(\ket{00}+\ket{11})+b\ket{1}\otimes(\ket{10}+\ket{01})\Big).
-$$
-\end{frame}
-
-%------------------------------------------------
-\begin{frame}{Aplicação do Hadamard e decomposição em 4 casos}
-Após aplicar Hadamard no primeiro qubit de Alice:
-\begin{equation*}
-\begin{split}
-\ket{\psi_2}
-&=\frac{1}{2}\Big(a(\ket{0}+\ket{1})\otimes(\ket{00}+\ket{11})
-+b(\ket{0}-\ket{1})\otimes(\ket{10}+\ket{01})\Big)\\
-&=\frac{1}{2}\Big( \\
-&\qquad +\ket{00}(a\ket{0}+b\ket{1})  \\
-&\qquad +\ket{01}(a\ket{1}+b\ket{0}) \\
-&\qquad +\ket{10}(a\ket{0}-b\ket{1}) \\
-&\qquad +\ket{11}(a\ket{1}-b\ket{0}) \\
-&\quad\Big).
-\end{split}
-\end{equation*}
-
-\medskip
-Os qubits de Alice determinam um dentre quatro termos (resultados clássicos $00,01,10,11$).
-\end{frame}
+% \medskip
+% \textbf{Após CNOT (controle = qubit $\ket{\psi}$; alvo = metade do EPR de Alice):}
+% $$
+% \ket{\psi_1}=\frac{1}{\sqrt2}\Big(a\ket{0}\otimes(\ket{00}+\ket{11})+b\ket{1}\otimes(\ket{10}+\ket{01})\Big).
+% $$
+% \end{frame}
 
 %------------------------------------------------
-\begin{frame}{Medição de Alice, comunicação clássica e correções de Bob}
-\textbf{Estado de Bob condicionado ao resultado de Alice:}
-\begin{align*}
-00 &\mapsto \ket{\psi_3(00)} = a\ket{0}+b\ket{1} \\
-01 &\mapsto \ket{\psi_3(01)} = a\ket{1}+b\ket{0} \\
-10 &\mapsto \ket{\psi_3(10)} = a\ket{0}-b\ket{1} \\
-11 &\mapsto \ket{\psi_3(11)} = a\ket{1}-b\ket{0}
-\end{align*}
+% \begin{frame}{Aplicação do Hadamard e decomposição em 4 casos}
+% Após aplicar Hadamard no primeiro qubit de Alice:
+% \begin{equation*}
+% \begin{split}
+% \ket{\psi_2}
+% &=\frac{1}{2}\Big(a(\ket{0}+\ket{1})\otimes(\ket{00}+\ket{11})
+% +b(\ket{0}-\ket{1})\otimes(\ket{10}+\ket{01})\Big)\\
+% &=\frac{1}{2}\Big( \\
+% &\qquad +\ket{00}(a\ket{0}+b\ket{1})  \\
+% &\qquad +\ket{01}(a\ket{1}+b\ket{0}) \\
+% &\qquad +\ket{10}(a\ket{0}-b\ket{1}) \\
+% &\qquad +\ket{11}(a\ket{1}-b\ket{0}) \\
+% &\quad\Big).
+% \end{split}
+% \end{equation*}
 
-\medskip
-\textbf{Correção em Bob:}
-\begin{itemize}
-    \item $00$: $I$ (não faz nada)
-    \item $01$: aplica $X$
-    \item $10$: aplica $Z$
-    \item $11$: aplica $X$ e depois $Z$
-\end{itemize}
+% \medskip
+% Os qubits de Alice determinam um dentre quatro termos (resultados clássicos $00,01,10,11$).
+% \end{frame}
 
-\end{frame}
+%------------------------------------------------
+% \begin{frame}{Medição de Alice, comunicação clássica e correções de Bob}
+% \textbf{Estado de Bob condicionado ao resultado de Alice:}
+% \begin{align*}
+% 00 &\mapsto \ket{\psi_3(00)} = a\ket{0}+b\ket{1} \\
+% 01 &\mapsto \ket{\psi_3(01)} = a\ket{1}+b\ket{0} \\
+% 10 &\mapsto \ket{\psi_3(10)} = a\ket{0}-b\ket{1} \\
+% 11 &\mapsto \ket{\psi_3(11)} = a\ket{1}-b\ket{0}
+% \end{align*}
+
+% \medskip
+% \textbf{Correção em Bob:}
+% \begin{itemize}
+%     \item $00$: $I$ (não faz nada)
+%     \item $01$: aplica $X$
+%     \item $10$: aplica $Z$
+%     \item $11$: aplica $X$ e depois $Z$
+% \end{itemize}
+
+% \end{frame}
 
 \begin{frame}{Teleporte quântico (Qiskit)}
   Implementação em Qiskit (\texttt{quantum-teleportation.ipynb}).
@@ -938,16 +913,16 @@ Os qubits de Alice determinam um dentre quatro termos (resultados clássicos $00
   \end{figure}
 \end{frame}
 
-\begin{frame}{Teleporte quântico (Qiskit)}
-  Qubit teleportado sempre aparece com resultado $\ket{0}$.
+% \begin{frame}{Teleporte quântico (Qiskit)}
+%   Qubit teleportado sempre aparece com resultado $\ket{0}$.
 
-    \begin{figure}[ht!]
-      \centering
-      \includegraphics[width=0.5\textwidth]{../img/tqsimdraw.png}
-      \caption{Histograma para simulação de medições no circuito do teleporte quântico.}
-      \label{fig:atqsimdraw}
-  \end{figure}
-\end{frame}
+%     \begin{figure}[ht!]
+%       \centering
+%       \includegraphics[width=0.5\textwidth]{../img/tqsimdraw.png}
+%       \caption{Histograma para simulação de medições no circuito do teleporte quântico.}
+%       \label{fig:atqsimdraw}
+%   \end{figure}
+% \end{frame}
 
 \begin{frame}{Comparativo}
 \begin{columns}[T]
@@ -1039,10 +1014,10 @@ No subespaço $V$:
 
 $$
 U_f =
-\begin{pmatrix}
+\begin{bmatrix}
 -1 & 0 \\
 0 & 1
-\end{pmatrix}, \qquad \ket{s} = \begin{bmatrix}
+\end{bmatrix}, \qquad \ket{s} = \begin{bmatrix}
   \sen \theta \\
   \cos \theta
 \end{bmatrix}
@@ -1062,10 +1037,10 @@ $$
 Definimos no subespaço $V$
 
 $$
-D = 2\ket{s}\!\bra{s} - I. = \begin{pmatrix}
+D = 2\ket{s}\!\bra{s} - I. = \begin{bmatrix}
   -\cos(2\theta) & \sen(2\theta) \\
   \sen(2\theta) & \cos(2\theta)
-\end{pmatrix}.
+\end{bmatrix}.
 $$
 
 Como $\ket{s}\bra{s}=\big(H^{\otimes^n}\ket{0}\big)\big(\bra{0}H^{\otimes^n}\big)$, podemos implementar $D$ como:
@@ -1095,10 +1070,10 @@ No subespaço $V$:
 
 $$
 G =
-\begin{pmatrix}
+\begin{bmatrix}
 \cos(2\theta) & \sen(2\theta) \\
 -\sen(2\theta) & \cos(2\theta)
-\end{pmatrix}.
+\end{bmatrix}.
 $$
 
 \begin{itemize}
@@ -1158,30 +1133,30 @@ O algoritmo encontra $x^\star$ com alta probabilidade usando $O(\sqrt{N})$ invoc
 \end{frame}
 
 %------------------------------------------------
-\begin{frame}{Caso com $M$ Soluções}
+% \begin{frame}{Caso com $M$ Soluções}
 
-Definimos
+% Definimos
 
-$$
-\ket{x^\star} = \frac{1}{\sqrt{M}}\sum_{f(x)=1}\ket{x}, \qquad \ket{x^\star_\perp} = \frac{1}{\sqrt{N-M}}\sum_{f(x)=0}\ket{x}.
-$$
+% $$
+% \ket{x^\star} = \frac{1}{\sqrt{M}}\sum_{f(x)=1}\ket{x}, \qquad \ket{x^\star_\perp} = \frac{1}{\sqrt{N-M}}\sum_{f(x)=0}\ket{x}.
+% $$
 
-Assim,
+% Assim,
 
-$$
-\ket{s} = \frac{1}{\sqrt{N}} \sum_{x\in \{0, 1\}^n} \ket{x} = \frac{M}{N}\ket{x^\star} + \frac{N-M}{N}\ket{x^\star_\perp}.
-$$
+% $$
+% \ket{s} = \frac{1}{\sqrt{N}} \sum_{x\in \{0, 1\}^n} \ket{x} = \frac{M}{N}\ket{x^\star} + \frac{N-M}{N}\ket{x^\star_\perp}.
+% $$
 
-Tomando $\sen\theta = \sqrt{M/N}$ obtemos de forma análoga
+% Tomando $\sen\theta = \sqrt{M/N}$ obtemos de forma análoga
 
-$$
-r \approx
-\left\lfloor
-\frac{\pi}{4}\sqrt{\frac{N}{M}}
-\right\rfloor.
-$$
+% $$
+% r \approx
+% \left\lfloor
+% \frac{\pi}{4}\sqrt{\frac{N}{M}}
+% \right\rfloor.
+% $$
 
-\end{frame}
+% \end{frame}
 
 \begin{frame}{Algoritmo de Grover (Qiskit)}
   Implementação em Qiskit (\texttt{grovers-algorithm.ipynb}).
@@ -1194,16 +1169,16 @@ $$
   \end{figure}
 \end{frame}
 
-\begin{frame}{Algoritmo de Grover (Qiskit)}
-  Estados marcados aparecem com maior frequência.
+% \begin{frame}{Algoritmo de Grover (Qiskit)}
+%   Estados marcados aparecem com maior frequência.
 
-  \begin{figure}[ht!]
-      \centering
-      \includegraphics[width=0.5\textwidth]{../img/groveralghist.png}
-      \caption{Histograma de medição para o algoritmo de Grover.}
-      \label{fig:agroveralghist}
-  \end{figure}
-\end{frame}
+%   \begin{figure}[ht!]
+%       \centering
+%       \includegraphics[width=0.5\textwidth]{../img/groveralghist.png}
+%       \caption{Histograma de medição para o algoritmo de Grover.}
+%       \label{fig:agroveralghist}
+%   \end{figure}
+% \end{frame}
 
 \subsection{QAOA}
 
@@ -1362,7 +1337,7 @@ $$
 $$
 
 \begin{itemize}
-\item O ótimo “global” é atingido no autoespaço do maior autovalor.
+\item O valor ótimo é atingido no autoespaço do maior autovalor.
 \item No QAOA, os estados permitidos são restritos à família $\ket{\gamma,\beta}$.
 \end{itemize}
 \end{frame}
@@ -1495,16 +1470,16 @@ $$
     \end{figure}
 \end{frame}
 
-\begin{frame}{QAOA (Qiskit)}
-  Implementação em Qiskit (\texttt{qaoa.ipynb}).
+% \begin{frame}{QAOA (Qiskit)}
+%   Implementação em Qiskit (\texttt{qaoa.ipynb}).
 
-    \begin{figure}[ht!]
-        \centering
-        \includegraphics[width=0.9\textwidth]{../img/qaoaex.png}
-        \caption{Circuito do QAOA.}
-        \label{fig:aqaoaexd}
-    \end{figure}
-\end{frame}
+%     \begin{figure}[ht!]
+%         \centering
+%         \includegraphics[width=0.9\textwidth]{../img/qaoaex.png}
+%         \caption{Circuito do QAOA.}
+%         \label{fig:aqaoaexd}
+%     \end{figure}
+% \end{frame}
 
 \begin{frame}{QAOA (Qiskit)}
   Corte máximo aparece com maior frequência.
