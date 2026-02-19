@@ -76,7 +76,7 @@
   \tableofcontents
 \end{frame}
 
-\section{Base matemática}
+\section{Notação}
 
 \begin{frame}{Notação Bra-Ket}
 
@@ -198,7 +198,7 @@ A=\sum_{i,j}^n \braket{i}{A |j}\ \ket{i}\bra{j} = \sum_{i,j}^n A_{ij} \ket{i}\br
 $$
 
 \medskip
-\textbf{Relação de completude:}
+\textbf{Relação de completude para vetores ortonormais:}
 $$
 \sum_{i=0}^{n}\ket{i}\bra{i}=I
 $$
@@ -215,11 +215,11 @@ $$
 % Se $\{\ket{i}\}_{i=1}^n$ é base de $\mathcal{H}_A$ e $\{\ket{j}\}_{j=1}^m$ é base de $\mathcal{H}_B$, então
 % $\{\ket{i}\otimes\ket{j}\}_{i,i=1}^$ é base de $\mathcal{H}_A\otimes\mathcal{H}_B$.
 
-\medskip
-\textbf{Dimensão:}
-$$
-\dim(\mathcal{H}_A\otimes\mathcal{H}_B)=\dim(\mathcal{H}_A)\cdot\dim(\mathcal{H}_B) = n \cdot m.
-$$
+% \medskip
+% \textbf{Dimensão:}
+% $$
+% \dim(\mathcal{H}_A\otimes\mathcal{H}_B)=\dim(\mathcal{H}_A)\cdot\dim(\mathcal{H}_B) = n \cdot m.
+% $$
 
 \medskip
 \textbf{Exemplo (2 qubits):}\quad $\mathbb{C}^2\otimes\mathbb{C}^2\simeq\mathbb{C}^4$ com base
@@ -349,10 +349,7 @@ $t_2$:
 $$
 \ket{\psi'} = U\ket{\psi},
 $$
-onde $U$ depende apenas do sistema e dos instantes $t_1,t_2$, e satisfazendo
-$$
-U^\dagger U = U U^\dagger= I.
-$$
+onde $U$ depende apenas do sistema e dos instantes $t_1,t_2$.
 
 \medskip
 \textbf{Consequências:}
@@ -912,16 +909,16 @@ de Alice para Bob sem um canal de comunicação quântica.
   \end{figure}
 \end{frame}
 
-% \begin{frame}{Teleporte quântico (Qiskit)}
-%   Qubit teleportado sempre aparece com resultado $\ket{0}$.
+\begin{frame}{Teleporte quântico (Qiskit)}
+  Qubit teleportado sempre aparece com resultado $\ket{0}$.
 
-%     \begin{figure}[ht!]
-%       \centering
-%       \includegraphics[width=0.5\textwidth]{../img/tqsimdraw.png}
-%       \caption{Histograma para simulação de medições no circuito do teleporte quântico.}
-%       \label{fig:atqsimdraw}
-%   \end{figure}
-% \end{frame}
+    \begin{figure}[ht!]
+      \centering
+      \includegraphics[width=0.5\textwidth]{../img/tqsimdraw.png}
+      \caption{Histograma para simulação de medições no circuito do teleporte quântico.}
+      \label{fig:atqsimdraw}
+  \end{figure}
+\end{frame}
 
 \begin{frame}{Comparativo}
 \begin{columns}[T]
@@ -1168,16 +1165,16 @@ O algoritmo encontra $x^\star$ com alta probabilidade usando $O(\sqrt{N})$ invoc
   \end{figure}
 \end{frame}
 
-% \begin{frame}{Algoritmo de Grover (Qiskit)}
-%   Estados marcados aparecem com maior frequência.
+\begin{frame}{Algoritmo de Grover (Qiskit)}
+  Estados marcados aparecem com maior frequência.
 
-%   \begin{figure}[ht!]
-%       \centering
-%       \includegraphics[width=0.5\textwidth]{../img/groveralghist.png}
-%       \caption{Histograma de medição para o algoritmo de Grover.}
-%       \label{fig:agroveralghist}
-%   \end{figure}
-% \end{frame}
+  \begin{figure}[ht!]
+      \centering
+      \includegraphics[width=0.5\textwidth]{../img/groveralghist.png}
+      \caption{Histograma de medição para o algoritmo de Grover.}
+      \label{fig:agroveralghist}
+  \end{figure}
+\end{frame}
 
 \subsection{QAOA}
 
@@ -1366,8 +1363,8 @@ $$
 $$
 
 \begin{itemize}
-\item Aproxima a exponencial do hamiltoniano somado por produto de exponenciais.
-\item Permite implementar evolução composta usando blocos simples (custo/mistura).
+\item Aproxima a exponencial do hamiltoniano pelo produto de exponenciais.
+\item Permite implementar evolução usando blocos simples (custo/mistura).
 \end{itemize}
 \end{frame}
 
@@ -1475,16 +1472,16 @@ $$
     \end{figure}
 \end{frame}
 
-% \begin{frame}{QAOA (Qiskit)}
-%   Corte máximo aparece com maior frequência.
+\begin{frame}{QAOA (Qiskit)}
+  Corte máximo aparece com maior frequência.
 
-%   \begin{figure}[ht!]
-%       \centering
-%       \includegraphics[width=0.5\textwidth]{../img/qaoafim.png}
-%       \caption{Histograma de medida com o resultado correto para o corte máximo.}
-%       \label{fig:aqaoafim}
-%   \end{figure}
-% \end{frame}
+  \begin{figure}[ht!]
+      \centering
+      \includegraphics[width=0.5\textwidth]{../img/qaoafim.png}
+      \caption{Histograma de medida com o resultado correto para o corte máximo.}
+      \label{fig:aqaoafim}
+  \end{figure}
+\end{frame}
 
 \begin{frame}{Agradecimentos}
 
