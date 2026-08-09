@@ -5,7 +5,7 @@
 
 \section{Introdução}
 
-Neste capítulo será feito o estudo de dois algoritmos quânticos, o algoritmo de Grover e o Algoritmo Quântico de Otimização Aproximada (QAOA). O algoritmo de Grover é um algoritmo para busca não estruturada em um conjunto de dados que utiliza uma função oráculo para avaliar o valor (ou valores) procurados, publicado em 1996 \cite{groveralgo}. A vantagem deste algoritmo é que é exigido somente $O(\sqrt{N})$ avaliações do oráculo para encontrar os valores, onde $N$ é a cardinalidade do domínio da busca. A busca não estruturada clássica possui complexidade $O(N)$, o algorítmo de Grover oferece um ganho bastante expressivo em relação aos algoritmos clássicos. O segundo algoritmo, QAOA, publicado em \cite{farhi2014quantumapproximateoptimizationalgorithm}, é um algoritmo quântico utilizado para otimização combinatória, com o objetivo de encontrar soluções aproximadas, podendo a precisão ser aumentada com um aumento linear no tamanho do circuito quântico. O QAOA é de grande interesse pois oferece uma alternativa quântica aos algoritmos clássicos para busca de soluções aproximadas em problemas combinatórios. Alguns exemplos de problemas que podem ser mapeados como problemas de otimização combinatória e pertencem à classe \textsf{NP-HARD} são o Problema do Caixeiro Viajante, Problema da Mochila, Coloração de Grafos, Córte Máximo em grafos entre outros. Neste capítulo, o QAOA será aplicado para buscar de corte máximo aproximado em grafos.
+Neste capítulo será feito o estudo de dois algoritmos quânticos, o algoritmo de Grover e o Algoritmo Quântico de Otimização Aproximada (QAOA). O algoritmo de Grover é um algoritmo para busca não estruturada em um conjunto de dados que utiliza uma função oráculo para avaliar o valor (ou valores) procurados, publicado em 1996 \cite{groveralgo}. A vantagem deste algoritmo é que é exigido somente $O(\sqrt{N})$ avaliações do oráculo para encontrar os valores, onde $N$ é a cardinalidade do domínio da busca. A busca não estruturada clássica possui complexidade $O(N)$, o algoritmo de Grover oferece um ganho bastante expressivo em relação aos algoritmos clássicos. O segundo algoritmo, QAOA, publicado em \cite{farhi2014quantumapproximateoptimizationalgorithm}, é um algoritmo quântico heurístico utilizado em problemas de otimização combinatória com o objetivo de encontrar soluções aproximadas, cujas aproximações podem ser aumentadas com o aumento do número de camadas do circuito, embora tal melhoria não seja garantida para valores finitos de camadas do circuito. O QAOA é de grande interesse pois oferece uma alternativa quântica aos algoritmos clássicos para busca de soluções aproximadas em problemas combinatórios. Alguns exemplos de problemas que podem ser mapeados como problemas de otimização combinatória e pertencem à classe \textsf{NP-HARD} são o Problema do Caixeiro Viajante, Problema da Mochila, Coloração de Grafos, Corte Máximo em grafos entre outros. Neste capítulo, o QAOA será aplicado para buscar de corte máximo aproximado em grafos.
 
 \section{Algoritmo de Grover (busca não-estruturada)}
 
@@ -17,10 +17,91 @@ $$
 f:\{0,1\}^n \to \{0,1\}
 $$
 que satisfaça $f(x^\star)=1$ e $f(x)=0$ para $x \neq x^\star$ (caso de uma única solução). A suposição é que nós não temos nenhuma informação sobre a função $f$, mas é permitido calcular $f(x)$ para todo elemento $x$. O problema é encontrar um único $x^\star$ tal que $f(x^\star)=1$. A Computação de $f(x)$ pode ser realizada pelo operador unitário
-\begin{equation}
+\begin{equation}\label{eq:oracle}
 U_f \ket{x} = (-1)^{f(x)}\ket{x}.
 \end{equation}
 O operador $U_f$ é um operador do espaço de Hilbert gerado pela base ortonormal $\ket{x}$ onde $x \in \{0,1\}^n$. Note que, $U_f$  aplica uma fase $-1$ exatamente no estado marcado.
+
+A implementação do operador $U_f$ depende da forma como a função booleana $f$ é calculada. Em particular, assume-se que existe um circuito quântico que calcula $f(x)$ com custo polinomial no número $n$ de bits da entrada. A partir desse circuito, pode-se construir $U$ dado pela equação \eqref{eq:oracle}. Uma técnica utilizada para calcular $U_f\ket{x}$ é chamada de \textit{phase kickback}, calcula-se $f(x)$ em um qubit auxiliar preparado em um autoestado apropriado da porta $X$ e, em seguida, desfaz-se a computação auxiliar, permanecendo apenas a fase $(-1)^{f(x)}$ associada ao estado $\ket{x}$. Assim, se $f$ admite uma implementação por um circuito de tamanho polinomial em $n$, então o operador $U_f$ também pode ser implementado com custo polinomial em $n$. É importante observar que o algoritmo de Grover mede sua complexidade principalmente pelo número de consultas ao oráculo; o custo interno de cada consulta depende da aplicação considerada \cite[Seção~6.1.2]{nielsen2010quantum}. O exemplo \ref{ex:opkb} mostra a implementação de $U_f$ para $f(x_1,x_2)=x_1\wedge x_2$ utilizando o \text{phase kickback}.
+
+\begin{example}[Implementação de um oráculo por \textit{phase kickback}]\label{ex:opkb}
+Considere a função booleana $\mathrm{AND}$ dada por
+\begin{equation}
+    f:\{0,1\}^2\longrightarrow\{0,1\},
+    \qquad
+    f(x_0,x_1)=x_0 \wedge x_1,
+\end{equation}
+isto é, $f(x_0,x_1)=1$ se, e somente se, $x_0=x_1=1$. Para implementar o operador
+Para implementar o operador
+$$
+    U_f\ket{x}=(-1)^{f(x)}\ket{x},
+$$
+introduzimos um qubit auxiliar preparado no estado
+$$
+    \ket{-}
+    =
+    \frac{\ket{0}-\ket{1}}{\sqrt{2}}.
+$$
+A função $f$ pode ser implementada utilizando a porta
+Toffoli, denotada por $\mathrm{CCX}$, com os qubits $x_0$ e $x_1$
+como controles e o qubit auxiliar como alvo. Sua ação é dada por
+$$
+    \mathrm{CCX}\ket{x_0x_1y}
+    =
+    \ket{x_0x_1\left(y\oplus x_0x_1\right)}.
+$$
+Aplicando a porta ao estado
+$$
+    \ket{x_0x_1}\ket{-},
+$$
+temos dois casos. Se $x_0x_1\neq 11$, pelo menos um dos qubits de
+controle é igual a zero e a porta $\mathrm{CCX}$ não altera o qubit
+auxiliar. Portanto,
+$$
+    \mathrm{CCX}\ket{x_0x_1}\ket{-}
+    =
+    \ket{x_0x_1}\ket{-}.
+$$
+Por outro lado, se $x_0=x_1=1$, a porta $\mathrm{CCX}$ aplica o
+operador $X$ ao qubit auxiliar. Como
+$$
+    X\ket{-}=-\ket{-},
+$$
+segue que
+$$
+    \mathrm{CCX}\ket{11}\ket{-}
+    =
+    \ket{11}X\ket{-}
+    =
+    -\ket{11}\ket{-}.
+$$
+Desse modo,
+$$
+\begin{aligned}
+    \mathrm{CCX}\ket{00}\ket{-}
+        &= \ket{00}\ket{-},\\
+    \mathrm{CCX}\ket{01}\ket{-}
+        &= \ket{01}\ket{-},\\
+    \mathrm{CCX}\ket{10}\ket{-}
+        &= \ket{10}\ket{-},\\
+    \mathrm{CCX}\ket{11}\ket{-}
+        &= -\ket{11}\ket{-}.
+\end{aligned}
+$$
+Como $f(x)=0$ para $x\in\{00,01,10\}$ e $f(11)=1$, podemos escrever
+o resultado de forma compacta como
+$$
+    \mathrm{CCX}\ket{x}\ket{-}
+    =
+    (-1)^{f(x)}\ket{x}\ket{-}.
+$$
+Portanto, desconsiderando o qubit auxiliar, a porta Toffoli implementa,
+por \textit{phase kickback}, o operador
+$$
+    U_f\ket{x}=(-1)^{f(x)}\ket{x},
+$$
+invertendo a fase apenas do estado $\ket{11}$.
+\end{example}
 
 \subsection{O algoritmo de Grover}
 Iniciamos a computação por aplicar o operador de Hadamard (ver exemplo \ref{ex:h}) em todos os qubits e calculamos
@@ -126,7 +207,7 @@ Descrevemos brevemente a variação do algoritmo para vários estados marcados. 
 \end{equation}
 assim,
 \begin{equation}
-    \ket{s} = \frac{1}{\sqrt{N}}\sum_{x\in \{0,1\}^n}\ket{x} \implies \ket{s} = \frac{M}{N}\ket{x^\star} + \frac{N-M}{N}\ket{x^\star_\perp}.
+    \ket{s} = \frac{1}{\sqrt{N}}\sum_{x\in \{0,1\}^n}\ket{x} \implies \ket{s} = \sqrt{\frac{M}{N}}\ket{x^\star} + \sqrt{\frac{N-M}{N}}\ket{x^\star_\perp}.
 \end{equation}
 
 Tomando $\sen(\theta)=\sqrt{M/N}$, obtemos, com o mesmo raciocínio,
@@ -353,9 +434,9 @@ Note que a inversão de índice no produtório é intencional, indicando a ordem
 
 De acordo com a equação \eqref{eq:expec}, a expectativa do operador $C$ no estado $\ket{\gamma, \beta}$ é dada por
 \begin{equation}
-    F_p(\gamma, \beta) = \braket{\gamma, \beta|C|\gamma, \beta},
+    F_p(\gamma, \beta) = \braket{\gamma, \beta|C|\gamma, \beta}.
 \end{equation}
-denotamos o máximo de $F_p$ para os $2p$ ângulos por
+Denotamos o máximo de $F_p$ para os $2p$ ângulos por
 \begin{equation}\label{eq:mp}
     M_p = \max_{\gamma,\beta} F_p(\gamma, \beta),
 \end{equation}
@@ -365,9 +446,9 @@ onde $\ket{\gamma, \beta}$ é unitário. Observe que
 \end{equation}
 pois, para duas sequências de $p-1$ ângulos $\gamma=\gamma_1, \dotso \gamma_{p-1}$, $\beta=\beta_1, \dotso, \beta_{p-1}$, denote por $\gamma'$ e por $\beta'$ as sequências de comprimento $p$ que obtemos por adicionar ângulos $\gamma_p=\beta_p=0$ na $p$-ésima posição. Temos que
 \begin{equation}
-    F_p(\gamma', \beta') = F_{p-1}(\gamma, \beta),
+    F_p(\gamma', \beta') = F_{p-1}(\gamma, \beta).
 \end{equation}
-deste modo, $M_p=M_{p-1}$. Por outro lado, note que o valor máximo absoluto de $M_p$ é dado pelo lema \ref{lm:pvoc}.
+Por outro lado, note que o valor máximo absoluto de $M_p$ é dado pelo lema \ref{lm:pvoc}.
 
 \begin{lemma}[Princípio variacional para o operador custo]\label{lm:pvoc}
     Seja $C$ um operador hermitiano atuando em um espaço de Hilbert $\mathcal{H}$ de dimensão finita,
@@ -414,7 +495,8 @@ deste modo, $M_p=M_{p-1}$. Por outro lado, note que o valor máximo absoluto de 
     \end{proof}
 \end{lemma}
 
-No QAOA, os estados permitidos são restritos aos estados unitários na forma $\ket{\gamma, \beta}$ conforme equação \eqref{eq:gammabeta}, assim, não necessariamente temos
+No QAOA, os estados permitidos são restritos aos estados unitários na forma $\ket{\gamma, \beta}$\footnote{A determinação dos parâmetros $\boldsymbol{\gamma}$ e $\boldsymbol{\beta}$ constitui uma etapa importante do QAOA. Além de métodos clássicos de otimização, diferentes estratégias para essa escolha têm sido propostas. Entre elas encontram-se métodos de aprendizado por reforço, nos quais a escolha dos parâmetros é formulada como um problema de aprendizado de uma política \cite{pmlr-v107-yao20a}, redes neurais treinadas para prever boas inicializações dos parâmetros \cite{Xie_2023}, otimização bayesiana e estratégias baseadas na transferência de parâmetros previamente otimizados entre diferentes instâncias do problema \cite{galda2021transferabilityoptimalqaoaparameters}. Tais abordagens buscam reduzir o custo da otimização clássica dos $2p$ parâmetros ou fornecer pontos iniciais favoráveis para essa otimização. Em geral, entretanto, esses
+procedimentos não fornecem uma garantia de que o máximo global de $F_p$ seja encontrado, mantendo-se o caráter heurístico da escolha dos parâmetros do QAOA.} conforme equação \eqref{eq:gammabeta}, assim, não necessariamente temos
 \begin{equation}
     \ket{\gamma, \beta} = \ket{e_1}, \quad \text{para algum $(\gamma, \beta)$}.
 \end{equation}
@@ -422,6 +504,7 @@ No entanto, a medida que $p$ aumenta, a família de estados $\ket{\gamma, \beta}
 \begin{equation}\label{eq:maxfp}
     \lim_{p\to\infty} M_p = \max_{z\in X} C(z).
 \end{equation}
+
 Vamos justificar, informalmente, a equação \eqref{eq:maxfp}. Inicialmente, vejamos um resultado preliminar \cite[seção~4.7.2]{nielsen2010quantum}.
 
 \begin{theorem}[Fórmula de Lie-Trotter]\label{tm:lt}
@@ -431,7 +514,7 @@ Vamos justificar, informalmente, a equação \eqref{eq:maxfp}. Inicialmente, vej
     \end{equation}
     O termo $O(\Delta t^2)$ deve ser entendido no sentido da norma de operadores \cite[seção~5.6]{horn_johnson_matrix_analysis}. Mais precisamente, existe um real $c > 0$, dependente apenas dos operadores $B$ e $C$, tal que
     $$
-        ||e^{i(B+C)\Delta t} - e^{iB\Delta t}\, e^{iC\Delta t}|| \leq  c\, \Delta t^2.
+        \|e^{i(B+C)\Delta t} - e^{iB\Delta t}\, e^{iC\Delta t}\| \leq  c\, \Delta t^2.
     $$
 \end{theorem}
 
@@ -498,7 +581,7 @@ o que evidencia que o QAOA pode ser interpretado como uma discretização da evo
 
 Vamos implementar o QAOA para resolver o problema do Corte Máximo (MaxCut) em um grafo. É possível encontrar um tutorial específico para a implementação em Qiskit em \cite{ibm_qaoa_tutorial}, no entanto, a implementação a seguir difere um pouco do tutorial.
 
-Seja $G=(V,E)$ um grafo não direcionado, com um conjunto $V$ de vértices e $E$ de arestas. Um corte de $G$ é uma partição do conjunto de vértices em dois subconjuntos disjuntos. Por exemplo, podemos escolher $A\subseteq V$ e tomando $\bar{A}=V\setminus A$, um corte de $G$ pode ser visto como a escolha de um subconjunto $A$ de $V$. O valor do corte é o número de arestas que tem uma extremidade em $A$ e outra fora de $A$,
+Seja $G=(V,E)$ um grafo não direcionado, com um conjunto $V$ de vértices e $E$ de arestas. Um corte de $G$ é uma partição do conjunto de vértices em dois subconjuntos. Por exemplo, podemos escolher $A\subseteq V$ e tomar $\bar{A}=V\setminus A$, assim, um corte de $G$ pode ser visto como a escolha de um subconjunto $A$ de $V$. O valor do corte é o número de arestas que tem uma extremidade em $A$ e outra fora de $A$,
 \begin{equation}
     \text{Cut}(A) = |\{\{i,j\}\in E: i\in A, j\in \bar{A}\}|.
 \end{equation}
@@ -510,11 +593,11 @@ O problema do corte máximo consiste em encontrar conjunto $A\subseteq V$ cujo v
 \subsection{Modelagem}
 
 
-Seja $A \subseteq V$ um corte de um grafo como visto na seção~\ref{sec:cm}. Associamos a cada vértice $i\in V$ uma variável binária
+Seja $\text{Cut}(A) \subseteq V$ um corte de um grafo como visto na seção~\ref{sec:cm}. Associamos a cada vértice $i\in V$ uma variável binária
 \begin{equation}
-    z_i\in \{0, 1\}, \qquad z_i = 1 \iff i \in A.
+    z_i\in \{0, 1\}, \qquad z_i = 1 \iff i \in \text{Cut}(A).
 \end{equation}
-Assim, uma aresta $\{i,j\}$ contribui para o corte se e somente se $z_i\neq z_j$. Sendo $\oplus$ a operação de adição modulo 2, para $1\leq i,j \leq n$, definimos a função $C_{ij}: X\to \{0,1\}$ como
+Assim, uma aresta $\{i,j\}$ contribui para o corte se e somente se $z_i\neq z_j$. Sendo $\oplus$ a operação de adição modulo 2, para $1\leq i,j \leq n$, definimos a função $C_{ij}: \{0,1\}^n\to \{0,1\}$ como
 \begin{equation}
     C_{ij}(z) = z_i\oplus z_j.
 \end{equation}

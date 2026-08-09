@@ -5,7 +5,7 @@
 
 \section{Introdução}
 
-Neste capítulo apresentamos as notações utilizadas ao longo do texto. A computação quântica possui um conjunto de notações herdadas da física, da matemática e da computação. Essa mescla de áreas do conhecimento da origem a uma notação bastante elegante, mas que exige uma boa preparação para que o leitor possa desfrutar dos resultados apresentados.
+Neste capítulo apresentamos as notações utilizadas ao longo do texto. A computação quântica possui um conjunto de notações herdadas da física, da matemática e da computação. Essa mescla de áreas do conhecimento dá origem a uma notação bastante elegante, mas que exige uma boa preparação para que o leitor possa desfrutar dos resultados apresentados.
 
 O texto apresentado adiante admite que o leitor está familiarizado com resultados de álgebra linear tais como espaços vetoriais, vetores, matrizes, bases, independência linear, operadores lineares e outros resultados comuns. Uma boa sugestão de leitura para tais tópicos é \cite{coelho2001curso}. Também é esperado que o leitor tenha conhecimento básico de computabilidade, análise de algoritmos e complexidade computacional tal como notação assintótica ou de Landau; uma boa referência de leitura é \cite{arora2009computational}. Os resultados e notações aqui apresentadas são baseadas no capítulo 2 de \cite{nielsen2010quantum}.
 
@@ -17,7 +17,7 @@ Denotamos por $\C$ o conjunto dos números complexos. Dado $z \in \C$, denotamos
 	z = a+bi \iff z^* = a-bi.
 \end{equation*}
 %
-Todos os espaços vetoriais utilizados serão espaços vetoriais de dimensão finita sobre o corpo dos números complexos e serão denotados por letras latinas maiúsculas, por exemplo, $V,Z,W, \dotso$ ou pela letra curva $\mathcal{H}$, sem índices subscritos ou com índices tal como $\mathcal{H}_1, \mathcal{H}_2, \dotso, \mathcal{H}_A, \mathcal{H}_B, \dotso$. Se dissermos que um sistema quântico é formado por um espaço vetorial com produto interno, estamos nos referindo a um espaço vetorial de dimensão finita com produto interno sobre o corpo dos complexos. Um elemento arbitrário do espaço vetorial (um vetor) será denotado por $\ket{\cdot}$ (``\textit{ket}'') onde o símbolo ``$\cdot$'' poderá ser uma letra minúscula do alfabeto latino ou grego, por exemplo, $\ket{a}, \ket{b}, \ket{c}, \dotso, \ket{\psi}, \ket{\varphi}, \dotso$. A única exceção a esta regra é o vetor nulo que será denotado por $0$, o vetor $\ket{0}$, como veremos mais a frente, não denotará o vetor nulo. Omitiremos o corpo ao qual os espaços vetoriais estão definidos, o leitor deve assumir que o corpo de todos os espaços vetoriais apresentados é o corpo dos números complexos.
+Todos os espaços vetoriais utilizados serão espaços vetoriais de dimensão finita sobre o corpo dos números complexos e serão denotados por letras latinas maiúsculas, por exemplo, $V,Z,W, \dotso$ ou pela letra curva $\mathcal{H}$, sem índices subscritos ou com índices tal como $\mathcal{H}_1, \mathcal{H}_2, \dotso, \mathcal{H}_A, \mathcal{H}_B, \dotso$. Se dissermos que um sistema quântico é formado por um espaço vetorial com produto interno, estamos nos referindo a um espaço vetorial de dimensão finita com produto interno sobre o corpo dos complexos. Um elemento arbitrário do espaço vetorial (um vetor) será denotado por $\ket{\cdot}$ (``\textit{ket}'') onde o símbolo ``$\cdot$'' poderá ser uma letra minúscula do alfabeto latino ou grego, por exemplo, $\ket{a}, \ket{b}, \ket{c}, \dotso, \ket{\psi}, \ket{\varphi}, \dotso$. A única exceção a esta regra é o vetor nulo, denotado por $0$. O vetor $\ket{0}$, como veremos mais a frente, não denotará o vetor nulo. Nos casos onde o corpo ao qual os espaços vetoriais estão definidos não for explicitado, o leitor deve assumir que o corpo utilizado é o corpo dos números complexos.
 
 Representaremos o produto interno definido entre dois vetores $\ket{\psi}$ e $\ket{\varphi}$, em um espaço vetorial $V$, por $\braket{\psi|\varphi}$. Além disso, se $V$ possui produto interno definido, indicamos por $\bra{\psi}$ (``\textit{bra}'') o vetor dual relativo ao produto interno de $\ket{\psi}$. Deste modo, $\bra{\psi}$ é o funcional linear no espaço dual ao espaço de $\ket{\psi}$ tal que
 %
@@ -35,13 +35,13 @@ que indica que a notação para o vetor dual é bastante intuitiva e decorre com
 \end{theorem}
 %
 \noindent
-Dois vetores $\ket{v_1}$, $\ket{v_2}$ são ortogonais se $\braket{v_1|v_2} = 0$. Sendo $V$ um espaço vetorial, uma função $||\cdot||: V\to \R$ que satisfaz as propriedades:
+Dois vetores $\ket{v_1}$, $\ket{v_2}$ são ortogonais se $\braket{v_1|v_2} = 0$. Sendo $V$ um espaço vetorial, uma função $\|\cdot\|: V\to \R$ que satisfaz as propriedades:
 \begin{itemize}
-	\item $||\ket{v}||\geq 0$
-	\item $||\lambda \ket{v}|| = |\lambda||\ket{v}||$
-	\item $||\ket{v}+\ket{w}|| \leq ||\ket{v}|| + ||\ket{w}||$,
+	\item $\|\ket{v}\|\geq 0$
+	\item $\|\lambda \ket{v}\| = |\lambda|\|\ket{v}\|$
+	\item $\|\ket{v}+\ket{w}\| \leq \|\ket{v}\| + \|\ket{w}\|$,
 \end{itemize}
-é denominada \emph{norma}. A função $||\ket{v}|| = \sqrt{\braket{v|v}}$ é a norma induzida pelo produto interno. Se $\ket{v}$ é tal que $||\ket{v}||=1$ então $\ket{v}$ é um vetor \emph{unitário}. Para qualquer $\ket{w}\neq 0$ podemos produzir um vetor unitário tomando $\ket{v} = \ket{w}/||\ket{w}||$.
+é denominada \emph{norma}. A função $\|\ket{v}\| = \sqrt{\braket{v|v}}$ é a norma induzida pelo produto interno. Se $\ket{v}$ é tal que $\|\ket{v}\|=1$ então $\ket{v}$ é um vetor \emph{unitário}. Para qualquer $\ket{w}\neq 0$ podemos produzir um vetor unitário tomando $\ket{v} = \ket{w}/\|\ket{w}\|$.
 
 Uma base é dita \emph{ortogonal} se para todo par de vetores $\ket{v_i} e \ket{v_j}$ distintos ocorrer $\braket{v_i|v_j} = 0$. Se além de ortogonais, todos os vetores da base forem unitários diremos que a base é \emph{ortonormal}. Caso uma base não seja ortogonal podemos utilizar o processo de ortogonalização de vetores de Gram-Schmidt para obter uma base ortonormal.
 
@@ -50,16 +50,16 @@ Uma base é dita \emph{ortogonal} se para todo par de vetores $\ket{v_i} e \ket{
 
 	\begin{enumerate}
 		\item $\ket{v_1} := \ket{w_1}$
-		\item $\ket{v_{k+1}} := \ket{w_{k+1}}-\sum_{i=1}^k\frac{\braket{v_i|w_{k+1}}\ket{v_i}}{||\ket{v_i}||^2}$.
+		\item $\ket{v_{k+1}} := \ket{w_{k+1}}-\sum_{i=1}^k\frac{\braket{v_i|w_{k+1}}\ket{v_i}}{\|\ket{v_i}\|^2}$.
 	\end{enumerate}
 	Então, o conjunto $\{\ket{v_1}\}_{i=1}^d$ é base ortogonal para $V$. Além disso, se fizermos, para cada $i=1, \dotso, d$,
 $$
-	\ket{v'_i} = \frac{\ket{v_i}}{||\ket{v_i}||},
+	\ket{v'_i} = \frac{\ket{v_i}}{\|\ket{v_i}\|},
 $$
 então $\{\ket{v'_i}\}_{i=1}^d$ é base ortonormal de $V$.
 \end{theorem}
 
-Por vezes, ao nos referirmos a um sistema quântico, ao invés de mencionar, por exemplo, que um sistema quântico é um espaço vetorial sobre $\C$ com produto interno, diremos apenas que o sistema quântico é um \emph{espaço de Hilbert} sobre $\C$ ou, simplesmente, um espaço de Hilbert. Um espaço de Hilbert é um espaço vetorial com produto interno que é completo em relação a norma induzida pelo produto interno. Como trabalharemos somente com espaços vetoriais de dimensão finita e com o produto interno canônico dos complexos temos que tais espaços vetoriais são completos.
+Por vezes, ao nos referirmos a um sistema quântico, ao invés de mencionar, por exemplo, que um sistema quântico é um espaço vetorial sobre $\C$ com produto interno, diremos apenas que o sistema quântico é um \emph{espaço de Hilbert} sobre $\C$ ou, simplesmente, um espaço de Hilbert. Um espaço de Hilbert é um espaço vetorial com produto interno que é completo em relação à norma induzida pelo produto interno. Como trabalharemos somente com espaços vetoriais de dimensão finita e com o produto interno canônico dos complexos temos que tais espaços vetoriais são completos.
 
 \begin{example}\label{defket0}
 	$\mathcal{H}=\C^2$ sobre o corpo $\mathbb{C}$ e com o produto interno canônico dos complexos é um espaço de Hilbert. Além disso, os vetores
@@ -261,6 +261,53 @@ Seja $A$ um operador em um espaço de Hilbert $V$ chamamos de $A^\dagger$ o úni
 \end{equation}
 Nos casos onde $A=A^\dagger$ dizemos que $A$ é um operador autoadjunto ou hermitiano. Um operador linear $U$ é chamado de unitário quando ocorrer de $U^\dagger U = I$, operadores unitários tem papel fundamental na mecânica quântica, pois preservam a norma de vetores, além de serem operadores invertíveis que, para mecânica quântica, significa que eles correspondem a \emph{operações reversíveis}.
 
+\section{Funções de operadores}
+\label{sec:funcoes_operadores}
+
+Em diversas situações da mecânica quântica e da computação quântica, é necessário definir funções cujo argumento é um operador linear, tipicamente um operador hermitiano ou unitário. Exemplos fundamentais incluem a exponencial de operadores, utilizada na evolução temporal $e^{-iHt}$ e funções associadas a hamiltonianos de custo no QAOA.
+
+Nesta seção apresentamos a definição de funções de operadores em dimensão finita, com ênfase no caso hermitiano.
+
+\subsection{Decomposição espectral}
+
+Quando $A$ é um operador normal (em particular, hermitiano), podemos utilizar sua decomposição espectral para definir funções de operadores.
+
+\begin{theorem}[Teorema espectral]
+Seja $A:\mathcal{H}\to \mathcal{H}$ um operador hermitiano em um espaço de Hilbert finito. Então existe uma base ortonormal $\{\ket{\psi_j}_{j=1}^n\}$ de autovetores de $A$ tal que
+\begin{equation}
+    A = \sum_{j}^n \lambda_j \ket{\psi_j}\bra{\psi_j},
+\end{equation}
+onde $\lambda_j \in \mathbb{R}$ são os autovalores de $A$.
+\end{theorem}
+Para qualquer função $f : \mathbb{R} \to \mathbb{C}$ define-se
+\begin{equation}
+    f(A) = \sum_{j} f(\lambda_j)\ket{\psi_j}\bra{\psi_j}.
+\end{equation}
+Observe que a função atua apenas sobre os autovalores, preservando os autovetores.
+
+\begin{example}[Exponencial de operador]\label{ex:opex}
+	A função mais importante em mecânica quântica é a exponencial. Se $H$ é um operador hermitiano, define-se
+	\begin{equation}
+		e^{-iHt} = \sum_{k=0}^{\infty} \frac{(-it)^k}{k!} H^k.
+	\end{equation}
+
+	Pela decomposição espectral de $H = \sum_j \lambda_j \ket{v_j}\bra{v_j}$, obtemos
+	\begin{equation}
+		e^{-iHt}
+		=
+		\sum_j e^{-i\lambda_j t} \ket{v_j}\bra{v_j}.
+	\end{equation}
+
+	Segue imediatamente que $e^{-iHt}$ é unitário, pois
+	\begin{equation}
+		e^{-iHt} \left(e^{-iHt}\right)^\dagger
+		=
+		\sum_j |e^{-i\lambda_j t}|^2 \ket{v_j}\bra{v_j}
+		=
+		I.
+	\end{equation}
+\end{example}
+
 \section{Produto tensorial}
 \label{sec:tensor}
 
@@ -309,7 +356,7 @@ Dados $\ket{x} = \sum_{k=1}^n \ket{v_k}\otimes \ket{w_k}, \ket{y}=\sum_{l=1}^m\k
 \begin{equation}
 	\braket{x|y} = \sum_{k=1}^n\sum_{l=1}^{m}\braket{v_k|v_l'}\braket{w_k|w'_l}.
 \end{equation}
-Dado o espaço de Hilbert $\mathcal{H}$ podemos construir o espaço $\mathcal{H}^{\otimes^n} = \bigotimes_{i=1}^n\mathcal{H}$. Sendo $A: \mathcal{H}\to \mathcal{H}$ um operador, denotamos por $A^{\otimes^n}: \mathcal{H}^{\otimes^n}\to \mathcal{H}^{\otimes^n}$ o operador
+Dado o espaço de Hilbert $\mathcal{H}$ podemos construir o espaço $\mathcal{H}^{\otimes^n} = \bigotimes_{i=1}^n\mathcal{H}$. Sendo $A: \mathcal{H}\to \mathcal{H}$ um operador, denotamos por $A^{\otimes^n}: \mathcal{H}^{\otimes^n}\to \mathcal{H}^{\otimes^n}$ o operador linear
 \begin{equation}
 	A^{\otimes^n}\ket{\psi} = A\ket{\psi_1}\otimes A\ket{\psi_2}\dotso \otimes A\ket{\psi_n}, \quad \text{para todo } \ket{\psi} = \bigotimes_{i=1}^n\ket{\psi_i} \in \mathcal{H}^{\otimes^n}.
 \end{equation}

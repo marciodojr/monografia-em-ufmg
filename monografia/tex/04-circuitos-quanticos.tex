@@ -155,7 +155,7 @@ este operador transforma $\ket{0}$ em $(\ket{0}+ \ket{1})/\sqrt{2}$ e transforma
 
 De modo geral, portas lógicas quânticas podem ser descritas por matrizes unitárias (matrizes $2\times 2$ no caso de um único qubit) e esta é a única restrição necessária para portas lógicas quânticas. Como matrizes unitárias são invertíveis temos que toda operação realizada por uma porta lógica quântica é reversível.
 
-Podemos generalizar as portas lógicas quânticas para múltiplos qubits. No lado esquerdo da figura \ref{fig:egate}, são apresentadas algumas portas lógicas comuns da computação clássica. Um resultado bastante conhecido é de que a porta lógica \textsf{NAND} é universal \cite[seção~3.6]{mano2013digital-sec36}, ou seja, qualquer função booleana pode ser construída somente com combinações de portas lógicas \textsf{NAND}. No lado direito da mesma figura, vemos um protótipo de uma porta lógica quântica para múltiplos qubits chamado \textsf{controlled-NOT} ou \textsf{CNOT}. Esta porta lógica quântica possui dois qubits de entrada, conhecidos como qubits de controle e alvo. Em geral, portas lógicas de sistemas quânticos com múltiplos qubits podem ser construídas usando operações de produto tensiorial para operadores (seção~\ref{sec:tensor}), bastando que o operador seja unitário.
+Podemos generalizar as portas lógicas quânticas para múltiplos qubits. No lado esquerdo da figura \ref{fig:egate}, são apresentadas algumas portas lógicas comuns da computação clássica. Um resultado bastante conhecido é de que a porta lógica \textsf{NAND} é universal \cite[seção~3.6]{mano2013digital-sec36}, ou seja, qualquer função booleana pode ser construída somente com combinações de portas lógicas \textsf{NAND}. No lado direito da mesma figura, vemos um protótipo de uma porta lógica quântica para múltiplos qubits chamado \textsf{controlled-NOT} ou \textsf{CNOT}. Esta porta lógica quântica possui dois qubits de entrada, conhecidos como qubits de controle e alvo. Em geral, portas lógicas de sistemas quânticos com múltiplos qubits podem ser construídas usando operações de produto tensorial para operadores (seção~\ref{sec:tensor}), bastando que o operador seja unitário.
 
 \begin{figure}[ht!]
     \centering
@@ -344,7 +344,7 @@ Considere a tarefa de copiar um bit clássico. Podemos realizar essa tarefa util
     \label{fig:bitcopy}
 \end{figure}
 
-Suponha agora que tentemos copiar o qubit $\ket{\psi} = a\ket{0} + a\ket{1}$ da mesma forma que fizemos no caso do bit clássico. Escrevemos a entrada como
+Suponha agora que tentemos copiar o qubit $\ket{\psi} = a\ket{0} + b\ket{1}$ da mesma forma que fizemos no caso do bit clássico. Escrevemos a entrada como
 %
 \begin{equation}
     \big(a\ket{0} + b\ket{1}\big)\ket{0} = a\ket{00} + b\ket{10},
@@ -372,7 +372,7 @@ Este resultado nos dá uma indicação de que a cópia de qubits pode ser feita 
         Dado um sistema quântico de dois qubits, nomeados $A$ e $B$, $A$ é a entrada, que inicialmente assume o estado $\ket{\psi}$ e $B$ a saída para a cópia, inicialmente no estado $\ket{s}$. O estado inicial do sistema é dado por
         %
         \begin{equation}
-            \ket{\psi}\otimes \ket{s}
+            \ket{\psi}\otimes \ket{s}.
         \end{equation}
         %
         Suponha que seja possível realizar a cópia, então existe um operador unitário $U$ tal que
@@ -384,18 +384,18 @@ Este resultado nos dá uma indicação de que a cópia de qubits pode ser feita 
         Se a cópia funciona para os estados $\ket{\psi}$ e $\ket{\varphi}$, temos
         %
             \begin{align}
-                U(\ket{\psi}\otimes\ket{s}) = \ket{\psi}\otimes\ket{\psi} \\
+                U(\ket{\psi}\otimes\ket{s}) = \ket{\psi}\otimes\ket{\psi}, \\
                 U(\ket{\varphi}\otimes\ket{s}) = \ket{\varphi}\otimes\ket{\varphi}.
             \end{align}
         %
         Ao tomar o produto interno das equações acima temos
         %
         \begin{align}
-            \braket{U(\ket{\psi}\otimes\ket{s}) | U(\ket{\varphi}\otimes\ket{s})}  &= \braket{(\ket{\psi}\otimes\ket{s})|(\ket{\varphi}\otimes\ket{s})} \\
-                        &=\braket{\psi|\varphi}\braket{s|s} \\
-                        &=\braket{\psi|\varphi} \\
-                        &= \braket{(\ket{\psi}\otimes\ket{\varphi})|(\ket{\psi}\otimes\ket{\varphi})} \\
-                        &= \braket{\psi|\varphi}^2,
+            \braket{\psi|\varphi}^2 &= \braket{(\ket{\psi}\otimes\ket{\varphi})|(\ket{\psi}\otimes\ket{\varphi})} \\
+                                    &= (\ket{\psi}\otimes \ket{s}) U^\dagger U(\ket{\psi}\otimes\ket{s}) \\
+                                    &= \braket{(\ket{\psi}\otimes\ket{s})|(\ket{\varphi}\otimes\ket{s})} \\
+                                    &= \braket{\psi|\varphi}\braket{s|s} \\
+                                    &= \braket{\psi|\varphi},
         \end{align}
         %
         portanto,
@@ -403,7 +403,7 @@ Este resultado nos dá uma indicação de que a cópia de qubits pode ser feita 
         \begin{equation}
             \braket{\psi|\varphi} =\braket{\psi|\varphi}^2 \implies \braket{\psi|\varphi}=0 \text{ ou } \braket{\psi|\varphi}=1,
         \end{equation}
-        que só é possível se $\ket{\varphi}=\ket{\psi}$ ou se $\ket{\varphi}$ e $\ket{\psi}$ são ortogonais. Logo, a cópia de estados quaisquer não é possível.
+        que só é possível se $\ket{\varphi}=\ket{\psi}$ ou se $\ket{\varphi}$ e $\ket{\psi}$ são ortogonais. Logo, não existem $U$ e $\ket{s}$ que funcionem  como clonadores universais.
     \end{proof}
 \end{theorem}
 

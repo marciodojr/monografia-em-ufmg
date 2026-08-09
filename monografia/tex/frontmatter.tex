@@ -201,7 +201,7 @@ seja pela distância, seja por me ouvir falar sobre matemática sempre que retor
 \setlength{\absparsep}{18pt} % ajusta o espaçamento dos parágrafos do resumo
 \begin{resumo}
 
-Este trabalho apresenta um estudo introdutório da computação quântica a partir dos conceitos matemáticos de álgebra linear até a a implementação prática de algoritmos quânticos por meio de circuitos utilizando a biblioteca de circuitos quânticos da IBM denominada Qiskit. Inicialmente, são introduzidos conceitos essenciais de álgebra linear, tais como espaços de Hilbert, operadores lineares e produto tensorial, estabelecendo a base matemática mínima necessária para a descrição de sistemas quânticos. Em seguida, são discutidos os postulados da mecânica quântica, com destaque para a evolução unitária, o processo de medição e a descrição de sistemas compostos, fundamentais para a compreensão do comportamento quântico e de fenômenos como superposição e emaranhamento.
+Este trabalho apresenta um estudo introdutório da computação quântica a partir dos conceitos matemáticos de álgebra linear até a implementação prática de algoritmos quânticos por meio de circuitos utilizando a biblioteca de circuitos quânticos da IBM denominada Qiskit. Inicialmente, são introduzidos conceitos essenciais de álgebra linear, tais como espaços de Hilbert, operadores lineares e produto tensorial, estabelecendo a base matemática mínima necessária para a descrição de sistemas quânticos. Em seguida, são discutidos os postulados da mecânica quântica, com destaque para a evolução unitária, o processo de medição e a descrição de sistemas compostos, fundamentais para a compreensão do comportamento quântico e de fenômenos como superposição e emaranhamento.
 
 Na sequência, o trabalho aborda o modelo de computação baseado em circuitos quânticos, fazendo um paralelo com circuitos clássicos e enfatizando as restrições impostas pela reversibilidade e pela impossibilidade de clonagem de estados quânticos. São apresentados exemplos centrais da computação quântica, como a geração de estados de Bell e o protocolo de teleporte quântico, além de uma introdução prática ao framework Qiskit, utilizado para construção, simulação e execução de circuitos quânticos.
 
@@ -263,8 +263,12 @@ Por fim, são estudados e implementados dois algoritmos quânticos: o algoritmo 
 % TODO
 \begin{simbolos}
 
-  \item[$\mathbb{C}$] Conjunto dos números complexos
   \item[$\mathbb{R}$] Conjunto dos números reais
+  \item[$\mathbb{C}$] Conjunto dos números complexos
+  
+  \item[$z^*$] Conjugado do número complexo $z$
+  
+  \item[$\mathbb{\wedge}$] função boleana $\mathrm{AND}$
 
   \item[$\mathcal{H}$] Espaço de Hilbert complexo associado a um sistema quântico
   \item[$\dim(\mathcal{H})$] Dimensão do espaço de Hilbert
@@ -275,8 +279,12 @@ Por fim, são estudados e implementados dois algoritmos quânticos: o algoritmo 
   \item[$\ket{\phi}\bra{\psi}$] Produto externo (ou produto ``ket por bra'')
 
   \item[$\otimes$] Produto tensorial
+  
   \item[$I$] Operador identidade
   \item[$U$] Operador unitário
+  
+  \item[$A^T$] Matriz transposta da matriz $A$
+  \item[$A^\dagger$] Matriz conjugada da matriz $A^T$
 
   \item[$H$] Porta de Hadamard
   \item[$X$] Matriz de Pauli $X$

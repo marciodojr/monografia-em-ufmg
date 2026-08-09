@@ -18,8 +18,10 @@ $$
 Vetores que diferem apenas por uma fase global $e^{i\theta}$ representam o mesmo estado físico,
 isto é,
 \begin{equation}\label{eq:gf}
-\ket{\psi} \sim e^{i\theta}\ket{\psi}, \qquad \theta \in \mathbb{R}
+\ket{\psi} \sim e^{i\theta}\ket{\psi}, \qquad \theta \in \mathbb{R}.
 \end{equation}
+
+O estado de um sistema quântico permite codificar todas as probabilidades de medições possíveis no sistema, em outras palavras, pode ser visto como um conjunto completo de previsões probabilisticas sobre o sistema \cite{ibmqsv2026}. Implementações físicas variam grandemente, por exemplo, supercondutores \cite{10.1063/5.0082975}, íons aprisionados \cite{Bruzewicz_2019}, átomos neutros \cite{Henriet_2020} entre outros.
 
 O sistema quântico mais simples é o \emph{qubit}. Um qubit possui um espaço de estados bidimensional. Seja $B=\{\ket{0}, \ket{1}\}$ base ortonormal de $\C^2$. Então, um vetor de estado arbitrário nesse espaço pode ser escrito como
 \begin{equation}
@@ -56,7 +58,7 @@ Como $0 \le |a| \le 1$, existe um ângulo $\theta \in [0,\pi]$ tal que
 \begin{equation}
 |a| = \cos\!\left(\frac{\theta}{2}\right).
 \end{equation}
-Como $||\ket{\psi}||=1$, segue que
+Como $\|\ket{\psi}\|=1$, segue que
 \begin{equation}
 |b| = \sqrt{1-|a|^2} = \sen\!\left(\frac{\theta}{2}\right).
 \end{equation}
@@ -79,6 +81,8 @@ Observe que ao definir as coordenadas de $\vec r$ dobramos o ângulo $\theta$, o
 \end{figure}
 
 \FloatBarrier
+
+A esfera de Bloch pode ser estudada em maior profundidade utilizando operadores de densidade \cite[Seção~2.4.2, Exercício~2.72]{nielsen2010quantum}.
 
 \section{Postulado 2 - Evolução}\label{sec:post2}
 
@@ -140,7 +144,7 @@ O Postulado 2 afirma que a evolução temporal de um sistema quântico fechado �
 \begin{equation}
 U(t) = e^{-iHt/\hbar}.
 \end{equation}
-Na última igualdade, $\hbar$ é a constante de Planck que, em geral, pode ser incorporada em $H$ de modo que $\tilde{H}=H/\hbar$ e
+Na última igualdade, $U$ é definido conforme exemplo \ref{ex:opex} e $\hbar$ é a constante de Planck que, em geral, pode ser incorporada em $H$ de modo que $\tilde{H}=H/\hbar$ e
 \begin{equation}
 U(t) = e^{-i\tilde{H}t}.
 \end{equation}
@@ -159,7 +163,9 @@ completude
 \begin{equation}
 \sum_{i=1}^m M_i^\dagger M_i = I.
 \end{equation}
-Observe que, não é necessário que o espaço de estados tenha dimensão igual ao número de operadores de medição (caso onde $\{M_i\}_{i=1}^m$ seriam projeções para autoespaços de dimensão igual a um), basta que a relação de completude seja satisfeita. Se o sistema está no estado $\ket{\psi}$ imediatamente antes da medição, então a probabilidade de se obter o resultado $i \in \{1, \dotso, m\}$ é dada por
+Observe que, não é necessário que o espaço de estados tenha dimensão igual ao número de operadores de medição (caso onde $\{M_i\}_{i=1}^m$ seriam projeções para autoespaços de dimensão igual a um), basta que a relação de completude seja satisfeita. O caso onde o espaço de estados e o número de operadores de medição coincidem ocorre naturalmente quando desejamos determinar em qual vetor de uma base ortonormal o sistema se encontra.
+
+Se o sistema está no estado $\ket{\psi}$ imediatamente antes da medição, então a probabilidade de se obter o resultado $i \in \{1, \dotso, m\}$ é dada por
 \begin{equation}
 p(i) = \braket{\psi | M_i^\dagger M_i | \psi}.
 \end{equation}
@@ -209,27 +215,95 @@ Um caso especial de operadores de medida são as projeções, vejamos o exemplo 
 \begin{example}\label{ex:proj}
     Seja $M$ um operador hermitiano em um espaço de estados de um sistema sendo observado. Assuma que $M$ tem decomposição espectral
 \begin{equation}
-    M = \sum_{i=1}^n i P_i,
+    M = \sum_{i=1}^n \lambda_i P_i,
 \end{equation}
-de modo que $P_i$ é projeção sobre o autoespaço de $M$ associado ao autovalor $i$. Ao realizar a medição em $\ket{\psi}$, obtemos $i$ com probabilidade
+de modo que $P_i$ é projeção sobre o autoespaço de $M$ associado ao autovalor $\lambda_i$. Ao realizar a medição em $\ket{\psi}$, obtemos $\lambda_i$ com probabilidade
 \begin{equation}
-    p(i) = \braket{\psi|P_i|\psi}.
+    p(\lambda_i) = \braket{\psi|P_i|\psi}.
 \end{equation}
-Dado que o resultado $i$ ocorre, o estado $\ket{\psi'}$ do sistema imediatamente após a medição é dado por
+Dado que o resultado $\lambda_i$ ocorre, o estado $\ket{\psi'}$ do sistema imediatamente após a medição é dado por
 \begin{equation}
-    \ket{\psi'} = \frac{P_i\ket{\psi}}{\sqrt{p(i)}}.
+    \ket{\psi'} = \frac{P_i\ket{\psi}}{\sqrt{p(\lambda_i)}}.
 \end{equation}
 \end{example}
 
 Medições projetivas são bastante úteis pois simplificam alguns cálculos, por exemplo, o valor esperado (ou média) de um operador pode ser facilmente calculado. Por definição, a média de uma medida é dada por
 \begin{equation}\label{eq:expec}
-    E(M) = \sum_{i=1}^n i p(i) = \sum_{i=1}^n i \braket{\psi|P_i|\psi} = \braket{\psi|\sum_{i=1}^n i P_i|\psi} = \braket{\psi|M|\psi}.
+    E(M) = \sum_{i=1}^n \lambda_i p(\lambda_i) = \sum_{i=1}^n \lambda_i \braket{\psi|P_i|\psi} = \braket{\psi|\sum_{i=1}^n \lambda_i P_i|\psi} = \braket{\psi|M|\psi}.
 \end{equation}
 O desvio padrão $\Delta(M)$ para o operador $M$ é dado por
 \begin{equation}
 (\Delta M)^2
 = \bra{\psi} M^2 \ket{\psi} - \braket{\psi | M |\psi}^2.
 \end{equation}
+
+Uma limitação importante das medições projetivas aparece quando se deseja distinguir estados que não são ortogonais, conforme exemplo \ref{ex:nproj}.
+
+\begin{example}\label{ex:nproj}
+Considere os estados os estados
+$$
+    \ket{\psi_1}=\ket{0}
+    \qquad\text{e}\qquad
+    \ket{\psi_2}=\frac{\ket{0}+\ket{1}}{\sqrt{2}}.
+$$
+Observe que esses estados não são ortogonais, pois
+$$
+    \braket{\psi_1|\psi_2}
+    =
+    \bra{0}
+    \left(
+        \frac{\ket{0}+\ket{1}}{\sqrt{2}}
+    \right)
+    =
+    \frac{1}{\sqrt{2}}
+    \neq 0.
+$$
+Suponha que não saibamos qual dos dois estados foi preparado e
+realizemos uma medição projetiva na base computacional. Os operadores
+de medida são
+$$
+    P_0=\ket{0}\bra{0},
+    \qquad
+    P_1=\ket{1}\bra{1}.
+$$
+
+Se o estado preparado for $\ket{\psi_1}=\ket{0}$, então
+$$
+    p(0|\psi_1)
+    =
+    \bra{\psi_1}P_0\ket{\psi_1}
+    =1,
+$$
+e
+$$
+    p(1|\psi_1)
+    =
+    \bra{\psi_1}P_1\ket{\psi_1}
+    =0.
+$$
+
+Por outro lado, se o estado preparado for $\ket{\psi_2}=(\ket{0}+\ket{1})/\sqrt{2}$, então
+$$
+    p(0|\psi_2)
+    =
+    \bra{\psi_2}P_0\ket{\psi_2}
+    =
+    \frac{1}{2},
+$$
+e
+$$
+    p(1|\psi_2)
+    =
+    \bra{\psi_2}P_1\ket{\psi_2}
+    =
+    \frac{1}{2}.
+$$
+Portanto, se o resultado da medição for $1$, podemos concluir com
+certeza que o estado preparado era $\ket{\psi_2}$, pois
+$\ket{\psi_1}$ jamais produz esse resultado. Entretanto, se o
+resultado for $0$, não é possível determinar qual dos dois estados
+foi preparado, uma vez que esse resultado pode ocorrer para ambos. Uma alternativa mais robusta é o uso de operadores POVM (\textit{Positive Operator-Valued Measure}) \cite[p.~92]{nielsen2010quantum}.
+\end{example}
 
 \section{Postulado 4 - Sistemas Compostos}
 
